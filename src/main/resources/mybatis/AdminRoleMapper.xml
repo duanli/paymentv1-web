@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.AdminRoleMapper">
+	<resultMap type="AdminRole" id="adminRoleResultMap">
+  	   <id column="sar_adminId" property="adminId" />
+  	   <result column="sar_roleId" property="roleId" />
+	</resultMap>
+	
+	<insert id="save" parameterType="AdminRole" useGeneratedKeys="true" keyProperty="adminId">
+	  INSERT INTO sys_admin_role(sar_adminId,sar_roleId)
+	  VALUES (#{adminId},#{roleId})
+	</insert>
+
+	<delete id="deleteByPKs">
+	  DELETE FROM sys_admin_role WHERE sar_adminId IN
+		<foreach collection="array" item="adminId" open="(" separator="," close=")">
+			 #{adminId}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="AdminRole">
+		UPDATE sys_admin_role SET
+		sar_adminId=#{adminId},sar_roleId=#{roleId}
+		WHERE sar_adminId=#{adminId}
+	</update>
+	
+	<select id="selectById" parameterType="long" resultMap="adminRoleResultMap">
+	    SELECT * FROM sys_admin_role WHERE sar_adminId=#{adminId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="adminRoleResultMap">
+		SELECT * FROM sys_admin_role WHERE sar_adminId=#{adminId}
+	</select>
+	
+	<select id="selectByProperty" parameterType="AdminRole" resultMap="adminRoleResultMap">
+	  SELECT * FROM sys_admin_role WHERE 1=1
+	    <if test="adminId !=null and adminId!=''">
+	      AND sar_adminId = #{adminId}
+	    </if>
+	    <if test="roleId !=null and roleId!=''">
+	      AND sar_roleId = #{roleId}
+	    </if>
+	</select>
+	
+	<select id="selectByPage" parameterType="AdminRole" resultMap="adminRoleResultMap">
+	    SELECT * FROM sys_admin_role 
+	</select>
+	
+	<delete id="deleteByRoleIds" >
+		  DELETE FROM sys_admin_role WHERE sar_roleId IN
+		<foreach collection="array" item="roleId" open="(" separator="," close=")">
+			 #{roleId}
+		</foreach>
+	</delete>
+</mapper>

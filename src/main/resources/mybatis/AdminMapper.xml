@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.AdminMapper">
+	<resultMap type="Admin" id="adminResultMap">
+  	   <id column="sa_id" property="id" />
+  	   <result column="sa_merId" property="merId" />
+  	   <result column="sa_merAgentId" property="merAgentId" />
+  	   <result column="sa_proAgentId" property="proAgentId" />
+  	   <result column="sa_userName" property="userName" />
+  	   <result column="sa_pswd" property="pswd" />
+  	   <result column="sa_salt" property="salt" />
+  	   <result column="sa_name" property="name" />
+  	   <result column="ss_mateName" property="mateName" />
+  	   <result column="sa_gender" property="gender" />
+  	   <result column="sa_cellPhone" property="cellPhone" />
+  	   <result column="sa_photo" property="photo" />
+  	   <result column="sa_accNo" property="accNo" />
+  	   <result column="sa_email" property="email" />
+  	   <result column="sa_qq" property="qq" />
+  	   <result column="sa_state" property="state" />
+  	   <result column="sa_duty" property="duty" />
+  	   <result column="sa_locked" property="locked" />
+  	   <result column="sa_loginCount" property="loginCount" />
+  	   <result column="sa_lastActivity" property="lastActivity" />
+  	   <result column="sa_accounts" property="accounts" />
+  	   <result column="sa_remark" property="remark" />
+  	   <result column="sa_isDel" property="isDel" />
+  	   <result column="sa_createDate" property="createDate" />
+  	   <result column="sa_updateDate" property="updateDate" />
+  	   <result column="sa_reserved1" property="reserved1" />
+  	   <result column="sa_reserved2" property="reserved2" />
+	</resultMap>
+	<resultMap id="adminResultMap1" type="Admin" extends="adminResultMap">
+		<collection column="sa_id" property="roles" select="cn.com.payment.admin.mapper.RoleMapper.selectAdminRolesByFK"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="Admin" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO sys_admin(sa_merId,sa_merAgentId,sa_proAgentId,sa_id,sa_userName,sa_pswd,sa_salt,sa_name,ss_mateName,sa_gender,sa_cellPhone,sa_photo,sa_accNo,sa_email,sa_qq,sa_state,sa_duty,sa_locked,sa_loginCount,sa_lastActivity,sa_accounts,sa_remark,sa_isDel,sa_createDate,sa_updateDate,sa_reserved1,sa_reserved2)
+	  VALUES (#{merId},#{merAgentId},#{proAgentId},#{id},#{userName},#{pswd},#{salt},#{name},#{mateName},#{gender},#{cellPhone},#{photo},#{accNo},#{email},#{qq},#{state},#{duty},#{locked},#{loginCount},#{lastActivity},#{accounts},#{remark},0,NOW(),NOW(),#{reserved1},#{reserved2})
+	</insert>
+
+	<delete id="deleteByPKs">
+	  DELETE FROM sys_admin WHERE sa_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Admin">
+		UPDATE sys_admin SET
+		sa_merId=#{merId},sa_merAgentId=#{merAgentId},sa_proAgentId=#{proAgentId},sa_id=#{id},sa_userName=#{userName},sa_pswd=#{pswd},sa_salt=#{salt},sa_name=#{name},ss_mateName=#{mateName},sa_gender=#{gender},sa_cellPhone=#{cellPhone},sa_photo=#{photo},sa_accNo=#{accNo},sa_email=#{email},sa_qq=#{qq},sa_state=#{state},sa_duty=#{duty},sa_locked=#{locked},sa_loginCount=#{loginCount},sa_lastActivity=#{lastActivity},sa_accounts=#{accounts},sa_remark=#{remark},sa_isDel=#{isDel},sa_updateDate=NOW(),sa_reserved1=#{reserved1},sa_reserved2=#{reserved2}
+		WHERE sa_id=#{id}
+	</update>
+	
+	<update id="updateForDepartmentId" parameterType="Admin">
+		UPDATE sys_admin SET
+		sa_proAgentId=null
+		WHERE sa_id=#{id}
+	</update>
+	
+	<select id="selectById" parameterType="long" resultMap="adminResultMap1">
+	    SELECT * FROM sys_admin WHERE sa_id=#{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="adminResultMap1">
+		SELECT * FROM sys_admin WHERE sa_id=#{id}
+	</select>
+	
+	<select id="selectByProperty" parameterType="Admin" resultMap="adminResultMap1">
+	  SELECT * FROM sys_admin WHERE 1=1
+	    <if test="id !=null and id!=''">
+	      AND sa_id = #{id}
+	    </if>
+	    <if test="merId !=null and merId!=''">
+	      AND sa_merId = #{merId}
+	    </if>
+	    <if test="merAgentId !=null and merAgentId!=''">
+	      AND sa_merAgentId = #{merAgentId}
+	    </if>
+	    <if test="proAgentId !=null and proAgentId!=''">
+	      AND sa_proAgentId = #{proAgentId}
+	    </if>
+	    <if test="userName !=null and userName!=''">
+	      AND sa_userName = #{userName}
+	    </if>
+	    <if test="name !=null and name!=''">
+	      AND sa_name = #{name}
+	    </if>
+	    <if test="gender !=null and gender!=''">
+	      AND sa_gender = #{gender}
+	    </if>
+	    <if test="cellPhone !=null and cellPhone!=''">
+	      AND sa_cellPhone = #{cellPhone}
+	    </if>
+	    <if test="state !=null and state!=''">
+	      AND sa_state = #{state}
+	    </if>
+	    <if test="locked !=null and locked!=''">
+	      AND sa_locked = #{locked}
+	    </if>
+        <if test="isDel !=null and isDel >=0">
+	      AND sa_isDel = #{isDel}
+	    </if>
+	</select>
+	
+	<select id="selectByPage" parameterType="Admin" resultMap="adminResultMap1">
+	    SELECT 
+	    	sa_id,sa_userName,sa_name,sa_gender,sa_cellPhone,sa_photo,sa_accNo,sa_email,
+	    	sa_state,sa_duty,sa_locked,sa_loginCount,sa_lastActivity,sa_createDate
+        FROM sys_admin WHERE 1=1
+        <if test="name !=null and name!=''">
+          AND sa_name like CONCAT('%',#{name},'%')  
+	    </if>
+	</select>
+	<!-- ******************************************************************************** -->
+	<select id="selectAdminAndRole" parameterType="Admin" resultMap="adminResultMap1">
+		 SELECT * FROM sys_admin WHERE 1=1
+	    <if test="id !=null and id!=''">
+	      AND sa_id = #{id}
+	    </if>
+	    <if test="userName !=null and userName!=''">
+	      AND sa_userName = #{userName}
+	    </if>
+        <if test="isDel !=null and isDel >=0">
+	      AND sa_isDel = #{isDel}
+	    </if>
+	</select>
+	<select id="selectByFK" resultMap="adminResultMap">
+		SELECT sa_id,sa_name FROM sys_admin WHERE sa_id = #{_parameter}
+	</select>
+</mapper>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantOrganizationMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantOrganization" id="merchantOrganizationResultMap">
+		<id column="org_orgId" jdbcType="BIGINT" property="orgId" />
+		<result column="org_orgNo" jdbcType="VARCHAR" property="orgNo" />
+		<result column="org_orgName" jdbcType="VARCHAR" property="orgName" />
+		<result column="org_orgDesc" jdbcType="VARCHAR" property="orgDesc" />
+		<result column="org_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="org_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="org_email" jdbcType="VARCHAR" property="email" />
+		<result column="org_contacts" jdbcType="VARCHAR" property="contacts" />
+		<result column="org_contactsCell" jdbcType="VARCHAR" property="contactsCell" />
+		<result column="org_orgAPPId" jdbcType="VARCHAR" property="orgAPPId" />
+		<result column="org_orgKey" jdbcType="VARCHAR" property="orgKey" />
+		<result column="org_rsaKey" jdbcType="VARCHAR" property="rsaKey" />
+		<result column="org_state" jdbcType="VARCHAR" property="state" />
+		<result column="org_isDel" jdbcType="VARCHAR" property="isDel" />
+	</resultMap>
+	
+	<insert id="save" parameterType="MerchantOrganization" useGeneratedKeys="true" keyProperty="orgId">
+	  INSERT INTO pay_merchant_organization
+	  (org_orgNo,org_orgName,org_orgDesc,org_createTime,org_updateTime,org_email,org_contacts,org_contactsCell,org_orgAPPId,org_orgKey,org_rsaKey,org_state,org_isDel)
+	  VALUES 
+	  (#{orgNo},#{orgName},#{orgDesc},NOW(),NOW(),#{email},#{contacts},#{contactsCell},#{orgAPPId},#{orgKey},#{rsaKey},#{state},#{isDel})
+	</insert>
+
+	<insert id="insertBatch" parameterType="MerchantOrganization">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_merchant_organization
+		(org_orgNo,org_orgName,org_orgDesc,org_createTime,org_updateTime,org_email,org_contacts,org_contactsCell,org_orgAPPId,org_orgKey,org_rsaKey,org_state,org_isDel)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="merchantOrganization" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{orgNo} as org_orgNo,
+					 #{orgName} as org_orgName,
+					 #{orgDesc} as org_orgDesc,
+					 #{createTime} as org_createTime,
+					 #{updateTime} as org_updateTime,
+					 #{email} as org_email,
+					 #{contacts} as org_contacts,
+					 #{contactsCell} as org_contactsCell,
+					 #{orgAPPId} as org_orgAPPId,
+					 #{orgKey} as org_orgKey,
+					 #{rsaKey} as org_rsaKey,
+					 #{state} as org_state,
+					 #{isDel} as org_isDel
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="MerchantOrganization">
+		UPDATE pay_merchant_organization
+		<set>
+		  <if test="orgId !=null and orgId >= 0 "> 
+			 org_orgId = #{orgId},
+	      </if>
+		  <if test="orgNo !=null and orgNo!='' ">
+			 org_orgNo=#{orgNo},  
+		  </if> 
+		  <if test="orgName !=null and orgName!='' ">
+			 org_orgName=#{orgName},  
+		  </if> 
+		  <if test="orgDesc !=null and orgDesc!='' ">
+			 org_orgDesc=#{orgDesc},  
+		  </if> 
+		  <if test="email !=null and email!='' ">
+			 org_email=#{email},  
+		  </if> 
+		  <if test="contacts !=null and contacts!='' ">
+			 org_contacts=#{contacts},  
+		  </if> 
+		  <if test="contactsCell !=null and contactsCell!='' ">
+			 org_contactsCell=#{contactsCell},  
+		  </if> 
+		  <if test="orgAPPId !=null and orgAPPId!='' ">
+			 org_orgAPPId=#{orgAPPId},  
+		  </if> 
+		  <if test="orgKey !=null and orgKey!='' ">
+			 org_orgKey=#{orgKey},  
+		  </if> 
+		  <if test="rsaKey !=null and rsaKey!='' ">
+			 org_rsaKey=#{rsaKey},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 org_state=#{state},  
+		  </if> 
+		  <if test="isDel !=null and isDel!='' ">
+			 org_isDel=#{isDel},
+		  </if> 
+		     org_updateTime=NOW()
+		</set>
+		WHERE org_orgId = #{orgId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_merchant_organization WHERE org_orgId = #{orgId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_merchant_organization WHERE org_orgId IN
+		<foreach collection="array" item="orgId" open="(" separator="," close=")">
+			 #{orgId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="MerchantOrganization"> 
+		DELETE FROM pay_merchant_organization WHERE org_orgId = #{orgId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_merchant_organization where org_orgId = #{orgId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantOrganizationResultMap">
+		select * from pay_merchant_organization
+		where org_orgId = #{orgId}
+	</select>
+	
+	<select id="selectAll" resultMap="merchantOrganizationResultMap">
+		select * from pay_merchant_organization
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantOrganizationResultMap">
+		select * from pay_merchant_organization
+		where org_orgId in
+		<foreach collection="array" item="orgId" open="(" separator="," close=")">
+			 #{orgId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="MerchantOrganization" resultMap="merchantOrganizationResultMap">
+	  SELECT * FROM pay_merchant_organization 
+		<where>
+		  <if test="orgId !=null and orgId >= 0 ">
+			 org_orgId=#{orgId}  
+		  </if> 
+	      <if test="orgNo !=null and orgNo!='' ">
+			AND org_orgNo=#{orgNo}  
+		  </if> 
+	      <if test="orgName !=null and orgName!='' ">
+			AND org_orgName=#{orgName}  
+		  </if> 
+	      <if test="orgDesc !=null and orgDesc!='' ">
+			AND org_orgDesc=#{orgDesc}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND org_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND org_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="email !=null and email!='' ">
+			AND org_email=#{email}  
+		  </if> 
+	      <if test="contacts !=null and contacts!='' ">
+			AND org_contacts=#{contacts}  
+		  </if> 
+	      <if test="contactsCell !=null and contactsCell!='' ">
+			AND org_contactsCell=#{contactsCell}  
+		  </if> 
+	      <if test="orgAPPId !=null and orgAPPId!='' ">
+			AND org_orgAPPId=#{orgAPPId}  
+		  </if> 
+	      <if test="orgKey !=null and orgKey!='' ">
+			AND org_orgKey=#{orgKey}  
+		  </if> 
+	      <if test="rsaKey !=null and rsaKey!='' ">
+			AND org_rsaKey=#{rsaKey}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND org_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND org_isDel=#{isDel}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="MerchantOrganization" resultMap="merchantOrganizationResultMap">
+	  SELECT * FROM pay_merchant_organization 
+		<where>
+		  <if test="orgId !=null and orgId >= 0 ">
+			 org_orgId=#{orgId}  
+		  </if> 
+	      <if test="orgNo !=null and orgNo!='' ">
+			AND org_orgNo=#{orgNo}  
+		  </if> 
+	      <if test="orgName !=null and orgName!='' ">
+			AND org_orgName=#{orgName}  
+		  </if> 
+	      <if test="orgDesc !=null and orgDesc!='' ">
+			AND org_orgDesc=#{orgDesc}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND org_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND org_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="email !=null and email!='' ">
+			AND org_email=#{email}  
+		  </if> 
+	      <if test="contacts !=null and contacts!='' ">
+			AND org_contacts=#{contacts}  
+		  </if> 
+	      <if test="contactsCell !=null and contactsCell!='' ">
+			AND org_contactsCell=#{contactsCell}  
+		  </if> 
+	      <if test="orgAPPId !=null and orgAPPId!='' ">
+			AND org_orgAPPId=#{orgAPPId}  
+		  </if> 
+	      <if test="orgKey !=null and orgKey!='' ">
+			AND org_orgKey=#{orgKey}  
+		  </if> 
+	      <if test="rsaKey !=null and rsaKey!='' ">
+			AND org_rsaKey=#{rsaKey}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND org_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND org_isDel=#{isDel}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		org_orgNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_orgName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_orgDesc LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_email LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_contacts LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_contactsCell LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_orgAPPId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_orgKey LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_rsaKey LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		org_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

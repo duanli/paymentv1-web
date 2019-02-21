@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.TransRecordScanMapper">
+	<resultMap type="cn.com.payment.admin.model.TransRecordScan" id="transRecordScanResultMap">
+		<id column="ptr_id" jdbcType="BIGINT" property="id" />
+		<result column="ptr_transBrandId" jdbcType="BIGINT" property="transBrandId" />
+		<result column="ptr_transBrandName" jdbcType="VARCHAR" property="transBrandName" />
+		<result column="ptr_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="ptr_transModeName" jdbcType="VARCHAR" property="transModeName" />
+		<result column="ptr_merParentId" jdbcType="BIGINT" property="merParentId" />
+		<result column="ptr_merId" jdbcType="BIGINT" property="merId" />
+		<result column="ptr_providerId" jdbcType="BIGINT" property="providerId" />
+		<result column="ptr_providerAccId" jdbcType="BIGINT" property="providerAccId" />
+		<result column="ptr_providerMchNo" jdbcType="VARCHAR" property="providerMchNo" />
+		<result column="ptr_providerName" jdbcType="VARCHAR" property="providerName" />
+		<result column="ptr_productId" jdbcType="BIGINT" property="productId" />
+		<result column="ptr_productName" jdbcType="VARCHAR" property="productName" />
+		<result column="ptr_ralAccProductId" jdbcType="BIGINT" property="ralAccProductId" />
+		<result column="ptr_outTradeNo" jdbcType="VARCHAR" property="outTradeNo" />
+		<result column="ptr_amount" jdbcType="BIGINT" property="amount" />
+		<result column="ptr_actulAmt" jdbcType="BIGINT" property="actulAmt" />
+		<result column="ptr_state" jdbcType="VARCHAR" property="state" />
+		<result column="ptr_stateMsg" jdbcType="VARCHAR" property="stateMsg" />
+		<result column="ptr_stateRemark" jdbcType="VARCHAR" property="stateRemark" />
+		<result column="ptr_type" jdbcType="VARCHAR" property="type" />
+		<result column="ptr_srcOutTradeNo" jdbcType="VARCHAR" property="srcOutTradeNo" />
+		<result column="ptr_outTransactionId" jdbcType="VARCHAR" property="outTransactionId" />
+		<result column="ptr_terminalIP" jdbcType="VARCHAR" property="terminalIP" />
+		<result column="ptr_goodsName" jdbcType="VARCHAR" property="goodsName" />
+		<result column="ptr_goodsDesc" jdbcType="VARCHAR" property="goodsDesc" />
+		<result column="ptr_bizOrderNo" jdbcType="VARCHAR" property="bizOrderNo" />
+		<result column="ptr_notifyUrl" jdbcType="VARCHAR" property="notifyUrl" />
+		<result column="ptr_resultUrl" jdbcType="VARCHAR" property="resultUrl" />
+		<result column="ptr_payWayUserId" jdbcType="VARCHAR" property="payWayUserId" />
+		<result column="ptr_spTransactionId" jdbcType="VARCHAR" property="spTransactionId" />
+		<result column="ptr_spTransTime" jdbcType="TIMESTAMP" property="spTransTime" />
+		<result column="ptr_spTransDate" jdbcType="VARCHAR" property="spTransDate" />
+		<result column="ptr_spRespCode" jdbcType="VARCHAR" property="spRespCode" />
+		<result column="ptr_spRespMsg" jdbcType="VARCHAR" property="spRespMsg" />
+		<result column="ptr_providerFee" jdbcType="BIGINT" property="providerFee" />
+		<result column="ptr_providerFeeRate" jdbcType="INTEGER" property="providerFeeRate" />
+		<result column="ptr_merFee" jdbcType="BIGINT" property="merFee" />
+		<result column="ptr_merfeeRate" jdbcType="INTEGER" property="merfeeRate" />
+		<result column="ptr_noticeState" jdbcType="VARCHAR" property="noticeState" />
+		<result column="ptr_settleState" jdbcType="VARCHAR" property="settleState" />
+		<result column="ptr_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="ptr_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="transRecordScanResultMap1" type="cn.com.payment.admin.model.TransRecordScan" extends="transRecordScanResultMap">
+		<collection column="ptr_ralAccProductId" property="ralAccountTransMode" select="cn.com.payment.admin.mapper.RalAccountTransModeMapper.selectOne"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="TransRecordScan" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO pay_trans_record_scan
+	  (ptr_ralAccProductId,ptr_transBrandId,ptr_transBrandName,ptr_transModeId,ptr_transModeName,ptr_merParentId,ptr_merId,ptr_providerId,ptr_providerAccId,ptr_providerMchNo,ptr_providerName,ptr_productId,ptr_productName,ptr_outTradeNo,ptr_amount,ptr_actulAmt,ptr_state,ptr_stateMsg,ptr_stateRemark,ptr_type,ptr_srcOutTradeNo,ptr_outTransactionId,ptr_terminalIP,ptr_goodsName,ptr_goodsDesc,ptr_bizOrderNo,ptr_notifyUrl,ptr_resultUrl,ptr_payWayUserId,ptr_spTransactionId,ptr_spTransTime,ptr_spTransDate,ptr_spRespCode,ptr_spRespMsg,ptr_providerFee,ptr_providerFeeRate,ptr_merFee,ptr_merfeeRate,ptr_noticeState,ptr_settleState,ptr_createTime,ptr_updateTime)
+	  VALUES 
+	  (#{ralAccProductId},#{transBrandId},#{transBrandName},#{transModeId},#{transModeName},#{merParentId},#{merId},#{providerId},#{providerAccId},#{providerMchNo},#{providerName},#{productId},#{productName},#{outTradeNo},#{amount},#{actulAmt},#{state},#{stateMsg},#{stateRemark},#{type},#{srcOutTradeNo},#{outTransactionId},#{terminalIP},#{goodsName},#{goodsDesc},#{bizOrderNo},#{notifyUrl},#{resultUrl},#{payWayUserId},#{spTransactionId},#{spTransTime},#{spTransDate},#{spRespCode},#{spRespMsg},#{providerFee},#{providerFeeRate},#{merFee},#{merfeeRate},#{noticeState},#{settleState},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="TransRecordScan">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_trans_record_scan
+		(ptr_transBrandId,ptr_transBrandName,ptr_transModeId,ptr_transModeName,ptr_merParentId,ptr_merId,ptr_providerId,ptr_providerAccId,ptr_providerMchNo,ptr_providerName,ptr_productId,ptr_productName,ptr_outTradeNo,ptr_amount,ptr_actulAmt,ptr_state,ptr_stateMsg,ptr_stateRemark,ptr_type,ptr_srcOutTradeNo,ptr_outTransactionId,ptr_terminalIP,ptr_goodsName,ptr_goodsDesc,ptr_bizOrderNo,ptr_notifyUrl,ptr_resultUrl,ptr_payWayUserId,ptr_spTransactionId,ptr_spTransTime,ptr_spTransDate,ptr_spRespCode,ptr_spRespMsg,ptr_providerFee,ptr_providerFeeRate,ptr_merFee,ptr_merfeeRate,ptr_noticeState,ptr_settleState,ptr_createTime,ptr_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="transRecordScan" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{transBrandId} as ptr_transBrandId,
+					 #{transBrandName} as ptr_transBrandName,
+					 #{transModeId} as ptr_transModeId,
+					 #{transModeName} as ptr_transModeName,
+					 #{merParentId} as ptr_merParentId,
+					 #{merId} as ptr_merId,
+					 #{providerId} as ptr_providerId,
+					 #{providerAccId} as ptr_providerAccId,
+					 #{providerMchNo} as ptr_providerMchNo,
+					 #{providerName} as ptr_providerName,
+					 #{productId} as ptr_productId,
+					 #{productName} as ptr_productName,
+					 #{outTradeNo} as ptr_outTradeNo,
+					 #{amount} as ptr_amount,
+					 #{actulAmt} as ptr_actulAmt,
+					 #{state} as ptr_state,
+					 #{stateMsg} as ptr_stateMsg,
+					 #{stateRemark} as ptr_stateRemark,
+					 #{type} as ptr_type,
+					 #{srcOutTradeNo} as ptr_srcOutTradeNo,
+					 #{outTransactionId} as ptr_outTransactionId,
+					 #{terminalIP} as ptr_terminalIP,
+					 #{goodsName} as ptr_goodsName,
+					 #{goodsDesc} as ptr_goodsDesc,
+					 #{bizOrderNo} as ptr_bizOrderNo,
+					 #{notifyUrl} as ptr_notifyUrl,
+					 #{resultUrl} as ptr_resultUrl,
+					 #{payWayUserId} as ptr_payWayUserId,
+					 #{spTransactionId} as ptr_spTransactionId,
+					 #{spTransTime} as ptr_spTransTime,
+					 #{spTransDate} as ptr_spTransDate,
+					 #{spRespCode} as ptr_spRespCode,
+					 #{spRespMsg} as ptr_spRespMsg,
+					 #{providerFee} as ptr_providerFee,
+					 #{providerFeeRate} as ptr_providerFeeRate,
+					 #{merFee} as ptr_merFee,
+					 #{merfeeRate} as ptr_merfeeRate,
+					 #{noticeState} as ptr_noticeState,
+					 #{settleState} as ptr_settleState,
+					 #{createTime} as ptr_createTime,
+					 #{updateTime} as ptr_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="TransRecordScan">
+		UPDATE pay_trans_record_scan
+		<set>
+		  <if test="id !=null and id >= 0 "> 
+			 ptr_id = #{id},
+	      </if>
+		  <if test="transBrandId !=null and transBrandId >= 0 "> 
+			 ptr_transBrandId = #{transBrandId},
+	      </if>
+		  <if test="transBrandName !=null and transBrandName!='' ">
+			 ptr_transBrandName=#{transBrandName},  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 ptr_transModeId = #{transModeId},
+	      </if>
+		  <if test="transModeName !=null and transModeName!='' ">
+			 ptr_transModeName=#{transModeName},  
+		  </if> 
+		  <if test="merParentId !=null and merParentId >= 0 "> 
+			 ptr_merParentId = #{merParentId},
+	      </if>
+		  <if test="merId !=null and merId >= 0 "> 
+			 ptr_merId = #{merId},
+	      </if>
+		  <if test="providerId !=null and providerId >= 0 "> 
+			 ptr_providerId = #{providerId},
+	      </if>
+		  <if test="providerAccId !=null and providerAccId >= 0 "> 
+			 ptr_providerAccId = #{providerAccId},
+	      </if>
+		  <if test="providerMchNo !=null and providerMchNo!='' ">
+			 ptr_providerMchNo=#{providerMchNo},  
+		  </if> 
+		  <if test="providerName !=null and providerName!='' ">
+			 ptr_providerName=#{providerName},  
+		  </if> 
+		  <if test="productId !=null and productId >= 0 "> 
+			 ptr_productId = #{productId},
+	      </if>
+		  <if test="productName !=null and productName!='' ">
+			 ptr_productName=#{productName},  
+		  </if> 
+		  <if test="outTradeNo !=null and outTradeNo!='' ">
+			 ptr_outTradeNo=#{outTradeNo},  
+		  </if> 
+		  <if test="amount !=null and amount >= 0 "> 
+			 ptr_amount = #{amount},
+	      </if>
+		  <if test="actulAmt !=null and actulAmt >= 0 "> 
+			 ptr_actulAmt = #{actulAmt},
+	      </if>
+		  <if test="state !=null and state!='' ">
+			 ptr_state=#{state},  
+		  </if> 
+		  <if test="stateMsg !=null and stateMsg!='' ">
+			 ptr_stateMsg=#{stateMsg},  
+		  </if> 
+		  <if test="stateRemark !=null and stateRemark!='' ">
+			 ptr_stateRemark=#{stateRemark},  
+		  </if> 
+		  <if test="type !=null and type!='' ">
+			 ptr_type=#{type},  
+		  </if> 
+		  <if test="srcOutTradeNo !=null and srcOutTradeNo!='' ">
+			 ptr_srcOutTradeNo=#{srcOutTradeNo},  
+		  </if> 
+		  <if test="outTransactionId !=null and outTransactionId!='' ">
+			 ptr_outTransactionId=#{outTransactionId},  
+		  </if> 
+		  <if test="terminalIP !=null and terminalIP!='' ">
+			 ptr_terminalIP=#{terminalIP},  
+		  </if> 
+		  <if test="goodsName !=null and goodsName!='' ">
+			 ptr_goodsName=#{goodsName},  
+		  </if> 
+		  <if test="goodsDesc !=null and goodsDesc!='' ">
+			 ptr_goodsDesc=#{goodsDesc},  
+		  </if> 
+		  <if test="bizOrderNo !=null and bizOrderNo!='' ">
+			 ptr_bizOrderNo=#{bizOrderNo},  
+		  </if> 
+		  <if test="notifyUrl !=null and notifyUrl!='' ">
+			 ptr_notifyUrl=#{notifyUrl},  
+		  </if> 
+		  <if test="resultUrl !=null and resultUrl!='' ">
+			 ptr_resultUrl=#{resultUrl},  
+		  </if> 
+		  <if test="payWayUserId !=null and payWayUserId!='' ">
+			 ptr_payWayUserId=#{payWayUserId},  
+		  </if> 
+		  <if test="spTransactionId !=null and spTransactionId!='' ">
+			 ptr_spTransactionId=#{spTransactionId},  
+		  </if> 
+		  <if test="spTransTime !=null and spTransTime!='' ">
+			 ptr_spTransTime=#{spTransTime},  
+		  </if> 
+		  <if test="spTransDate !=null and spTransDate!='' ">
+			 ptr_spTransDate=#{spTransDate},  
+		  </if> 
+		  <if test="spRespCode !=null and spRespCode!='' ">
+			 ptr_spRespCode=#{spRespCode},  
+		  </if> 
+		  <if test="spRespMsg !=null and spRespMsg!='' ">
+			 ptr_spRespMsg=#{spRespMsg},  
+		  </if> 
+		  <if test="providerFee !=null and providerFee >= 0 "> 
+			 ptr_providerFee = #{providerFee},
+	      </if>
+		  <if test="providerFeeRate !=null and providerFeeRate!='' ">
+			 ptr_providerFeeRate=#{providerFeeRate},  
+		  </if> 
+		  <if test="merFee !=null and merFee >= 0 "> 
+			 ptr_merFee = #{merFee},
+	      </if>
+		  <if test="merfeeRate !=null and merfeeRate!='' ">
+			 ptr_merfeeRate=#{merfeeRate},  
+		  </if> 
+		  <if test="noticeState !=null and noticeState!='' ">
+			 ptr_noticeState=#{noticeState},  
+		  </if> 
+		  <if test="settleState !=null and settleState!='' ">
+			 ptr_settleState=#{settleState},  
+		  </if> 
+			 ptr_updateTime=NOW()
+		</set>
+		WHERE ptr_id = #{id}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_trans_record_scan WHERE ptr_id = #{id}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_trans_record_scan WHERE ptr_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="TransRecordScan"> 
+		DELETE FROM pay_trans_record_scan WHERE ptr_id = #{id}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_trans_record_scan where ptr_id = #{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="transRecordScanResultMap">
+		select * from pay_trans_record_scan
+		where ptr_id = #{id}
+	</select>
+	
+	<select id="selectOneByBizOrderNo" parameterType="java.lang.String" resultMap="transRecordScanResultMap1">
+		select * from pay_trans_record_scan
+		where ptr_bizOrderNo=#{bizOrderNo}
+		limit 1
+	</select>
+	
+	<select id="selectOneByBizOrderNoForUpdate" parameterType="java.lang.String" resultMap="transRecordScanResultMap1">
+		select * from pay_trans_record_scan
+		where ptr_bizOrderNo=#{bizOrderNo} for update
+	</select>
+	
+	<select id="selectOneByOutTradeNo" parameterType="java.lang.String" resultMap="transRecordScanResultMap1">
+		select * from pay_trans_record_scan
+		where ptr_outTradeNo=#{outTradeNo}
+		limit 1
+	</select>
+	
+	<select id="selectOneByOutTradeNoForUpdate" parameterType="java.lang.String" resultMap="transRecordScanResultMap1">
+		select * from pay_trans_record_scan
+		where ptr_outTradeNo=#{outTradeNo} for update
+		limit 1
+	</select>
+	
+	<select id="selectOneBySpTransactionId" parameterType="java.lang.String" resultMap="transRecordScanResultMap1">
+		select * from pay_trans_record_scan
+		where ptr_spTransactionId=#{spTransactionId}
+		limit 1
+	</select>
+	
+	<select id="selectAll" resultMap="transRecordScanResultMap">
+		select * from pay_trans_record_scan
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="transRecordScanResultMap">
+		select * from pay_trans_record_scan
+		where ptr_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="TransRecordScan" resultMap="transRecordScanResultMap">
+	  SELECT * FROM pay_trans_record_scan 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 ptr_id=#{id}  
+		  </if> 
+		  <if test="transBrandId !=null and transBrandId >= 0 ">
+			AND ptr_transBrandId=#{transBrandId} 
+		  </if> 
+	      <if test="transBrandName !=null and transBrandName!='' ">
+			AND ptr_transBrandName=#{transBrandName}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND ptr_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="transModeName !=null and transModeName!='' ">
+			AND ptr_transModeName=#{transModeName}  
+		  </if> 
+		  <if test="merParentId !=null and merParentId >= 0 ">
+			AND ptr_merParentId=#{merParentId} 
+		  </if> 
+		  <if test="merId !=null and merId >= 0 ">
+			AND ptr_merId=#{merId} 
+		  </if> 
+		  <if test="providerId !=null and providerId >= 0 ">
+			AND ptr_providerId=#{providerId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND ptr_providerAccId=#{providerAccId} 
+		  </if> 
+	      <if test="providerMchNo !=null and providerMchNo!='' ">
+			AND ptr_providerMchNo=#{providerMchNo}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND ptr_providerName=#{providerName}  
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND ptr_productId=#{productId} 
+		  </if> 
+	      <if test="productName !=null and productName!='' ">
+			AND ptr_productName=#{productName}  
+		  </if> 
+	      <if test="outTradeNo !=null and outTradeNo!='' ">
+			AND ptr_outTradeNo=#{outTradeNo}  
+		  </if> 
+		  <if test="amount !=null and amount >= 0 ">
+			AND ptr_amount=#{amount} 
+		  </if> 
+		  <if test="actulAmt !=null and actulAmt >= 0 ">
+			AND ptr_actulAmt=#{actulAmt} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ptr_state=#{state}  
+		  </if> 
+	      <if test="stateMsg !=null and stateMsg!='' ">
+			AND ptr_stateMsg=#{stateMsg}  
+		  </if> 
+	      <if test="stateRemark !=null and stateRemark!='' ">
+			AND ptr_stateRemark=#{stateRemark}  
+		  </if> 
+	      <if test="type !=null and type!='' ">
+			AND ptr_type=#{type}  
+		  </if> 
+	      <if test="srcOutTradeNo !=null and srcOutTradeNo!='' ">
+			AND ptr_srcOutTradeNo=#{srcOutTradeNo}  
+		  </if> 
+	      <if test="outTransactionId !=null and outTransactionId!='' ">
+			AND ptr_outTransactionId=#{outTransactionId}  
+		  </if> 
+	      <if test="terminalIP !=null and terminalIP!='' ">
+			AND ptr_terminalIP=#{terminalIP}  
+		  </if> 
+	      <if test="goodsName !=null and goodsName!='' ">
+			AND ptr_goodsName=#{goodsName}  
+		  </if> 
+	      <if test="goodsDesc !=null and goodsDesc!='' ">
+			AND ptr_goodsDesc=#{goodsDesc}  
+		  </if> 
+	      <if test="bizOrderNo !=null and bizOrderNo!='' ">
+			AND ptr_bizOrderNo=#{bizOrderNo}  
+		  </if> 
+	      <if test="notifyUrl !=null and notifyUrl!='' ">
+			AND ptr_notifyUrl=#{notifyUrl}  
+		  </if> 
+	      <if test="resultUrl !=null and resultUrl!='' ">
+			AND ptr_resultUrl=#{resultUrl}  
+		  </if> 
+	      <if test="payWayUserId !=null and payWayUserId!='' ">
+			AND ptr_payWayUserId=#{payWayUserId}  
+		  </if> 
+	      <if test="spTransactionId !=null and spTransactionId!='' ">
+			AND ptr_spTransactionId=#{spTransactionId}  
+		  </if> 
+	      <if test="spTransTime !=null and spTransTime!='' ">
+			AND ptr_spTransTime=#{spTransTime}  
+		  </if> 
+	      <if test="spTransDate !=null and spTransDate!='' ">
+			AND ptr_spTransDate=#{spTransDate}  
+		  </if> 
+	      <if test="spRespCode !=null and spRespCode!='' ">
+			AND ptr_spRespCode=#{spRespCode}  
+		  </if> 
+	      <if test="spRespMsg !=null and spRespMsg!='' ">
+			AND ptr_spRespMsg=#{spRespMsg}  
+		  </if> 
+		  <if test="providerFee !=null and providerFee >= 0 ">
+			AND ptr_providerFee=#{providerFee} 
+		  </if> 
+	      <if test="providerFeeRate !=null and providerFeeRate!='' ">
+			AND ptr_providerFeeRate=#{providerFeeRate}  
+		  </if> 
+		  <if test="merFee !=null and merFee >= 0 ">
+			AND ptr_merFee=#{merFee} 
+		  </if> 
+	      <if test="merfeeRate !=null and merfeeRate!='' ">
+			AND ptr_merfeeRate=#{merfeeRate}  
+		  </if> 
+	      <if test="noticeState !=null and noticeState!='' ">
+			AND ptr_noticeState=#{noticeState}  
+		  </if> 
+	      <if test="settleState !=null and settleState!='' ">
+			AND ptr_settleState=#{settleState}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ptr_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ptr_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="TransRecordScan" resultMap="transRecordScanResultMap">
+	  SELECT * FROM pay_trans_record_scan 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 ptr_id=#{id}  
+		  </if> 
+		  <if test="transBrandId !=null and transBrandId >= 0 ">
+			AND ptr_transBrandId=#{transBrandId} 
+		  </if> 
+	      <if test="transBrandName !=null and transBrandName!='' ">
+			AND ptr_transBrandName=#{transBrandName}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND ptr_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="transModeName !=null and transModeName!='' ">
+			AND ptr_transModeName=#{transModeName}  
+		  </if> 
+		  <if test="merParentId !=null and merParentId >= 0 ">
+			AND ptr_merParentId=#{merParentId} 
+		  </if> 
+		  <if test="merId !=null and merId >= 0 ">
+			AND ptr_merId=#{merId} 
+		  </if> 
+		  <if test="providerId !=null and providerId >= 0 ">
+			AND ptr_providerId=#{providerId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND ptr_providerAccId=#{providerAccId} 
+		  </if> 
+	      <if test="providerMchNo !=null and providerMchNo!='' ">
+			AND ptr_providerMchNo=#{providerMchNo}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND ptr_providerName=#{providerName}  
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND ptr_productId=#{productId} 
+		  </if> 
+	      <if test="productName !=null and productName!='' ">
+			AND ptr_productName=#{productName}  
+		  </if> 
+	      <if test="outTradeNo !=null and outTradeNo!='' ">
+			AND ptr_outTradeNo=#{outTradeNo}  
+		  </if> 
+		  <if test="amount !=null and amount >= 0 ">
+			AND ptr_amount=#{amount} 
+		  </if> 
+		  <if test="actulAmt !=null and actulAmt >= 0 ">
+			AND ptr_actulAmt=#{actulAmt} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ptr_state=#{state}  
+		  </if> 
+	      <if test="stateMsg !=null and stateMsg!='' ">
+			AND ptr_stateMsg=#{stateMsg}  
+		  </if> 
+	      <if test="stateRemark !=null and stateRemark!='' ">
+			AND ptr_stateRemark=#{stateRemark}  
+		  </if> 
+	      <if test="type !=null and type!='' ">
+			AND ptr_type=#{type}  
+		  </if> 
+	      <if test="srcOutTradeNo !=null and srcOutTradeNo!='' ">
+			AND ptr_srcOutTradeNo=#{srcOutTradeNo}  
+		  </if> 
+	      <if test="outTransactionId !=null and outTransactionId!='' ">
+			AND ptr_outTransactionId=#{outTransactionId}  
+		  </if> 
+	      <if test="terminalIP !=null and terminalIP!='' ">
+			AND ptr_terminalIP=#{terminalIP}  
+		  </if> 
+	      <if test="goodsName !=null and goodsName!='' ">
+			AND ptr_goodsName=#{goodsName}  
+		  </if> 
+	      <if test="goodsDesc !=null and goodsDesc!='' ">
+			AND ptr_goodsDesc=#{goodsDesc}  
+		  </if> 
+	      <if test="bizOrderNo !=null and bizOrderNo!='' ">
+			AND ptr_bizOrderNo=#{bizOrderNo}  
+		  </if> 
+	      <if test="notifyUrl !=null and notifyUrl!='' ">
+			AND ptr_notifyUrl=#{notifyUrl}  
+		  </if> 
+	      <if test="resultUrl !=null and resultUrl!='' ">
+			AND ptr_resultUrl=#{resultUrl}  
+		  </if> 
+	      <if test="payWayUserId !=null and payWayUserId!='' ">
+			AND ptr_payWayUserId=#{payWayUserId}  
+		  </if> 
+	      <if test="spTransactionId !=null and spTransactionId!='' ">
+			AND ptr_spTransactionId=#{spTransactionId}  
+		  </if> 
+	      <if test="spTransTime !=null and spTransTime!='' ">
+			AND ptr_spTransTime=#{spTransTime}  
+		  </if> 
+	      <if test="spTransDate !=null and spTransDate!='' ">
+			AND ptr_spTransDate=#{spTransDate}  
+		  </if> 
+	      <if test="spRespCode !=null and spRespCode!='' ">
+			AND ptr_spRespCode=#{spRespCode}  
+		  </if> 
+	      <if test="spRespMsg !=null and spRespMsg!='' ">
+			AND ptr_spRespMsg=#{spRespMsg}  
+		  </if> 
+		  <if test="providerFee !=null and providerFee >= 0 ">
+			AND ptr_providerFee=#{providerFee} 
+		  </if> 
+	      <if test="providerFeeRate !=null and providerFeeRate!='' ">
+			AND ptr_providerFeeRate=#{providerFeeRate}  
+		  </if> 
+		  <if test="merFee !=null and merFee >= 0 ">
+			AND ptr_merFee=#{merFee} 
+		  </if> 
+	      <if test="merfeeRate !=null and merfeeRate!='' ">
+			AND ptr_merfeeRate=#{merfeeRate}  
+		  </if> 
+	      <if test="noticeState !=null and noticeState!='' ">
+			AND ptr_noticeState=#{noticeState}  
+		  </if> 
+	      <if test="settleState !=null and settleState!='' ">
+			AND ptr_settleState=#{settleState}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ptr_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ptr_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		ptr_transBrandName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_transModeName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_providerMchNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_providerName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_productName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_outTradeNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_stateMsg LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_stateRemark LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_type LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_srcOutTradeNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_outTransactionId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_terminalIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_goodsName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_goodsDesc LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_bizOrderNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_notifyUrl LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_resultUrl LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_payWayUserId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_spTransactionId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_spTransDate LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_spRespCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_spRespMsg LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_noticeState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptr_settleState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

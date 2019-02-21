@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MenuMapper">
+	<resultMap type="Menu" id="menuResultMap">
+  	   <id column="sm_id" property="id" />
+  	   <result column="sm_parentId" property="parentId" />
+  	   <result column="sm_parentIds" property="parentIds" />
+  	   <result column="sm_name" property="name" />
+  	   <result column="sm_menuType" property="menuType" />
+  	   <result column="sm_url" property="url" />
+  	   <result column="sm_permission" property="permission" />
+  	   <result column="sm_sort" property="sort" />
+  	   <result column="sm_icon" property="icon" />
+  	   <result column="sm_target" property="target" />
+  	   <result column="sm_level" property="level" />
+  	   <result column="sm_desc" property="desc" />
+  	   <result column="sm_isDel" property="isDel" />
+  	   <result column="sm_createDate" property="createDate" />
+  	   <result column="sm_updateDate" property="updateDate" />
+  	   <result column="sm_reserved1" property="reserved1" />
+  	   <result column="sm_reserved2" property="reserved2" />
+	</resultMap>
+	
+	<resultMap type="Menu" id="menuTreeResultMap" extends="menuResultMap">
+ 	   	<collection column="sm_id" property="children" ofType="Menu"
+			javaType="java.util.ArrayList" select="cn.com.payment.admin.mapper.MenuMapper.selectChildrens">
+		</collection>
+	</resultMap>
+	
+	<insert id="insert" parameterType="Menu" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO sys_menu(sm_parentId,sm_parentIds,sm_name,sm_menuType,sm_url,sm_permission,sm_sort,sm_icon,sm_target,sm_level,sm_desc,sm_isDel,sm_createDate,sm_updateDate,sm_reserved1,sm_reserved2)
+	  VALUES (#{parentId},#{parentIds},#{name},#{menuType},#{url},#{permission},#{sort},#{icon},#{target},#{level},#{desc},0,NOW(),NOW(),#{reserved1},#{reserved2})
+	</insert>
+	
+	<insert id="save" parameterType="Menu" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO sys_menu(sm_parentId,sm_parentIds,sm_name,sm_menuType,sm_url,sm_permission,sm_sort,sm_icon,sm_target,sm_level,sm_desc,sm_isDel,sm_createDate,sm_updateDate,sm_reserved1,sm_reserved2)
+	  VALUES (#{parentId},#{parentIds},#{name},#{menuType},#{url},#{permission},#{sort},#{icon},#{target},#{level},#{desc},0,NOW(),NOW(),#{reserved1},#{reserved2})
+	</insert>
+	
+	<delete id="delByIds">
+	  DELETE FROM sys_menu WHERE sm_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteByPKs">
+	  DELETE FROM sys_menu WHERE sm_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Menu">
+		UPDATE sys_menu SET
+		sm_id=#{id},sm_parentId=#{parentId},sm_parentIds=#{parentIds},sm_name=#{name},sm_menuType=#{menuType},sm_url=#{url},sm_permission=#{permission},sm_sort=#{sort},sm_icon=#{icon},sm_target=#{target},sm_level=#{level},sm_desc=#{desc},sm_isDel=#{isDel},sm_updateDate=NOW(),sm_reserved1=#{reserved1},sm_reserved2=#{reserved2}
+		WHERE sm_id=#{id}
+	</update>
+	
+	<select id="selectById" parameterType="long" resultMap="menuResultMap">
+	    SELECT * FROM sys_menu WHERE sm_id=#{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="menuResultMap">
+		SELECT * FROM sys_menu WHERE sm_id=#{id}
+	</select>
+	
+	<select id="selectByProperty" parameterType="Menu" resultMap="menuResultMap">
+	  SELECT * FROM sys_menu WHERE 1=1
+	    <if test="id !=null and id!=''">
+	      AND sm_id = #{id}
+	    </if>
+	    <if test="parentId !=null and parentId >=0">
+	      AND sm_parentId = #{parentId}
+	    </if>
+	    <if test="parentIds !=null and parentIds!=''">
+	      AND sm_parentIds = #{parentIds}
+	    </if>
+	    <if test="name !=null and name!=''">
+	      AND sm_name = #{name}
+	    </if>
+	    <if test="menuType !=null and menuType >=0">
+	      AND sm_menuType = #{menuType}
+	    </if>
+	</select>
+	
+	<!-- ********************************* -->
+	<select id="selectByPage" parameterType="Menu" resultMap="menuResultMap">
+	    SELECT * FROM sys_menu 
+	</select>
+	
+	<select id="selectTreeMenu" parameterType="Menu" resultMap="menuTreeResultMap">
+		SELECT m.sm_id,m.sm_parentId,m.sm_parentIds,m.sm_name,m.sm_sort,m.sm_target,m.sm_url,m.sm_icon,m.sm_desc,m.sm_level,m.sm_menuType,m.sm_isDel,m.sm_permission,m.sm_updateDate,m.sm_createDate,m.sm_name AS text FROM sys_menu m WHERE 1=1
+		<if test="parentId >=0">
+		 AND m.sm_parentId=#{parentId}
+		</if> 
+		ORDER BY m.sm_sort ASC
+	</select>
+	
+	<select id="selectChildrens" resultMap="menuTreeResultMap">
+		SELECT m.sm_id,m.sm_parentId,m.sm_parentIds,m.sm_name,m.sm_sort,m.sm_target,m.sm_url,m.sm_icon,m.sm_desc,m.sm_level,m.sm_menuType,m.sm_isDel,m.sm_permission,m.sm_updateDate,m.sm_createDate,m.sm_name AS text FROM sys_menu m WHERE m.sm_parentId=#{_parameter} ORDER BY m.sm_sort ASC 
+	</select>
+	
+	<select id="selectRoleMenu" parameterType="Menu" resultMap="menuResultMap">
+		SELECT m.* FROM sys_menu m
+		INNER JOIN sys_role_auth ra ON m.sm_id = ra.sra_menuId
+		WHERE 1=1
+		<if test="null!=roleId and roleId>0">
+			AND ra.sra_roleId = #{roleId}
+		</if>
+	    <if test="null!=roleIds and roleIds.length>0">
+	         AND ra.sra_roleId IN
+	    	<foreach collection="roleIds" item="rid" open="(" separator="," close=")">
+				 #{rid}
+			</foreach>
+	    </if>
+		<if test="null!=menuType and menuType>=0">
+			AND m.sm_menuType = #{menuType}
+		</if>
+	    <if test="parentId !=null and parentId >=0">
+	      AND sm_parentId = #{parentId}
+	    </if>
+		GROUP BY m.sm_id
+		ORDER BY m.sm_sort ASC
+	</select>
+	
+	<select id="selectRoleMenuTree" parameterType="Menu" resultMap="menuTreeResultMap">
+		SELECT m.* FROM sys_menu m
+		INNER JOIN sys_role_auth ra ON m.sm_id = ra.sra_menuId
+		WHERE 1=1
+		<if test="null!=roleId and roleId>0">
+			AND ra.sra_roleId = #{roleId}
+		</if>
+	    <if test="null!=roleIds and roleIds.length>0">
+	         AND ra.sra_roleId IN
+	    	<foreach collection="roleIds" item="rid" open="(" separator="," close=")">
+				 #{rid}
+			</foreach>
+	    </if>
+		<if test="null!=menuType and menuType >=0">
+			AND m.sm_menuType = #{menuType}
+		</if>
+	    <if test="parentId !=null and parentId >=0">
+	      AND m.sm_parentId = #{parentId}
+	    </if>
+		GROUP BY m.sm_id
+		ORDER BY m.sm_sort ASC
+	</select>
+</mapper>

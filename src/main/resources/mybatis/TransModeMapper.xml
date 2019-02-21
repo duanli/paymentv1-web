@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.TransModeMapper">
+	<resultMap type="cn.com.payment.admin.model.TransMode" id="transModeResultMap">
+		<id column="ptm_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="ptm_transBrandId" jdbcType="BIGINT" property="transBrandId" />
+		<result column="ptm_transModeCode" jdbcType="VARCHAR" property="transModeCode" />
+		<result column="ptm_transModeName" jdbcType="VARCHAR" property="transModeName" />
+		<result column="ptm_state" jdbcType="VARCHAR" property="state" />
+		<result column="ptm_remark" jdbcType="VARCHAR" property="remark" />
+		<result column="ptm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="ptm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<resultMap id="transModeResultMap1" type="cn.com.payment.admin.model.TransMode" extends="transModeResultMap">
+		<collection column="ptm_transBrandId" property="transBrand" select="cn.com.payment.admin.mapper.TransBrandMapper.selectOne"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="TransMode" useGeneratedKeys="true" keyProperty="transModeId">
+	  INSERT INTO pay_trans_mode
+	  (ptm_transBrandId,ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
+	  VALUES 
+	  (#{transBrandId},#{transModeCode},#{transModeName},#{state},#{remark},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="TransMode">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_trans_mode
+		(ptm_transBrandId,ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="transMode" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{transBrandId} as ptm_transBrandId,
+					 #{transModeCode} as ptm_transModeCode,
+					 #{transModeName} as ptm_transModeName,
+					 #{state} as ptm_state,
+					 #{remark} as ptm_remark,
+					 #{createTime} as ptm_createTime,
+					 #{updateTime} as ptm_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="TransMode">
+		UPDATE pay_trans_mode
+		<set>
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 ptm_transModeId = #{transModeId},
+	      </if>
+		  <if test="transBrandId !=null and transBrandId >= 0 "> 
+			 ptm_transBrandId = #{transBrandId},
+	      </if>
+		  <if test="transModeCode !=null and transModeCode!='' ">
+			 ptm_transModeCode=#{transModeCode},  
+		  </if> 
+		  <if test="transModeName !=null and transModeName!='' ">
+			 ptm_transModeName=#{transModeName},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 ptm_state=#{state},  
+		  </if> 
+		  <if test="remark !=null and remark!='' ">
+			 ptm_remark=#{remark},  
+		  </if> 
+			 ptm_updateTime=NOW() 
+		</set>
+		WHERE ptm_transModeId = #{transModeId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_trans_mode WHERE ptm_transModeId = #{transModeId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_trans_mode WHERE ptm_transModeId IN
+		<foreach collection="array" item="transModeId" open="(" separator="," close=")">
+			 #{transModeId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="TransMode"> 
+		DELETE FROM pay_trans_mode WHERE ptm_transModeId = #{transModeId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_trans_mode where ptm_transModeId = #{transModeId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="transModeResultMap1">
+		select * from pay_trans_mode
+		where ptm_transModeId = #{transModeId}
+	</select>
+	
+	<select id="selectAll" resultMap="transModeResultMap">
+		select * from pay_trans_mode
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="transModeResultMap">
+		select * from pay_trans_mode
+		where ptm_transModeId in
+		<foreach collection="array" item="transModeId" open="(" separator="," close=")">
+			 #{transModeId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="TransMode" resultMap="transModeResultMap1">
+	  SELECT * FROM pay_trans_mode 
+		<where>
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			 ptm_transModeId=#{transModeId}  
+		  </if> 
+		  <if test="transBrandId !=null and transBrandId >= 0 ">
+			AND ptm_transBrandId=#{transBrandId} 
+		  </if> 
+	      <if test="transModeCode !=null and transModeCode!='' ">
+			AND ptm_transModeCode=#{transModeCode}  
+		  </if> 
+	      <if test="transModeName !=null and transModeName!='' ">
+			AND ptm_transModeName=#{transModeName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ptm_state=#{state}  
+		  </if> 
+	      <if test="remark !=null and remark!='' ">
+			AND ptm_remark=#{remark}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ptm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ptm_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="TransMode" resultMap="transModeResultMap">
+	  SELECT * FROM pay_trans_mode 
+		<where>
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			 ptm_transModeId=#{transModeId}  
+		  </if> 
+		  <if test="transBrandId !=null and transBrandId >= 0 ">
+			AND ptm_transBrandId=#{transBrandId} 
+		  </if> 
+	      <if test="transModeCode !=null and transModeCode!='' ">
+			AND ptm_transModeCode=#{transModeCode}  
+		  </if> 
+	      <if test="transModeName !=null and transModeName!='' ">
+			AND ptm_transModeName=#{transModeName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ptm_state=#{state}  
+		  </if> 
+	      <if test="remark !=null and remark!='' ">
+			AND ptm_remark=#{remark}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ptm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ptm_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		ptm_transModeCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptm_transModeName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ptm_remark LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

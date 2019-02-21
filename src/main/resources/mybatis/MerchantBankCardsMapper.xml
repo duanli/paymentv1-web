@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantBankCardsMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantBankCards" id="merchantBankCardsResultMap">
+		<id column="pb_bankCardId" jdbcType="BIGINT" property="bankCardId" />
+		<result column="pb_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="pb_useType" jdbcType="VARCHAR" property="useType" />
+		<result column="pb_bankCode" jdbcType="VARCHAR" property="bankCode" />
+		<result column="pb_bankName" jdbcType="VARCHAR" property="bankName" />
+		<result column="pb_bankAccType" jdbcType="VARCHAR" property="bankAccType" />
+		<result column="pb_bankCardType" jdbcType="VARCHAR" property="bankCardType" />
+		<result column="pb_bankReservedPhone" jdbcType="VARCHAR" property="bankReservedPhone" />
+		<result column="pb_bankCardNo" jdbcType="VARCHAR" property="bankCardNo" />
+		<result column="pb_bankProvince" jdbcType="VARCHAR" property="bankProvince" />
+		<result column="pb_bankCity" jdbcType="VARCHAR" property="bankCity" />
+		<result column="pb_bankLineNo" jdbcType="BIGINT" property="bankLineNo" />
+		<result column="pb_subBankName" jdbcType="VARCHAR" property="subBankName" />
+		<result column="pb_idCardNo" jdbcType="VARCHAR" property="idCardNo" />
+		<result column="pb_realName" jdbcType="VARCHAR" property="realName" />
+		<result column="pb_state" jdbcType="VARCHAR" property="state" />
+		<result column="pb_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="pb_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="MerchantBankCards" useGeneratedKeys="true" keyProperty="bankCardId">
+	  INSERT INTO pay_merchant_bank_cards
+	  (pb_mchId,pb_useType,pb_bankCode,pb_bankName,pb_bankAccType,pb_bankCardType,pb_bankReservedPhone,pb_bankCardNo,pb_bankProvince,pb_bankCity,pb_bankLineNo,pb_subBankName,pb_idCardNo,pb_realName,pb_state,pb_createTime,pb_updateTime)
+	  VALUES 
+	  (#{mchId},#{useType},#{bankCode},#{bankName},#{bankAccType},#{bankCardType},#{bankReservedPhone},#{bankCardNo},#{bankProvince},#{bankCity},#{bankLineNo},#{subBankName},#{idCardNo},#{realName},#{state},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="MerchantBankCards">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_merchant_bank_cards
+		(pb_mchId,pb_useType,pb_bankCode,pb_bankName,pb_bankAccType,pb_bankCardType,pb_bankReservedPhone,pb_bankCardNo,pb_bankProvince,pb_bankCity,pb_bankLineNo,pb_subBankName,pb_idCardNo,pb_realName,pb_state,pb_createTime,pb_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="merchantBankCards" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{mchId} as pb_mchId,
+					 #{useType} as pb_useType,
+					 #{bankCode} as pb_bankCode,
+					 #{bankName} as pb_bankName,
+					 #{bankAccType} as pb_bankAccType,
+					 #{bankCardType} as pb_bankCardType,
+					 #{bankReservedPhone} as pb_bankReservedPhone,
+					 #{bankCardNo} as pb_bankCardNo,
+					 #{bankProvince} as pb_bankProvince,
+					 #{bankCity} as pb_bankCity,
+					 #{bankLineNo} as pb_bankLineNo,
+					 #{subBankName} as pb_subBankName,
+					 #{idCardNo} as pb_idCardNo,
+					 #{realName} as pb_realName,
+					 #{state} as pb_state,
+					 #{createTime} as pb_createTime,
+					 #{updateTime} as pb_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="MerchantBankCards">
+		UPDATE pay_merchant_bank_cards
+		<set>
+		  <if test="bankCardId !=null and bankCardId >= 0 "> 
+			 pb_bankCardId = #{bankCardId},
+	      </if>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 pb_mchId = #{mchId},
+	      </if>
+		  <if test="useType !=null and useType!='' ">
+			 pb_useType=#{useType},  
+		  </if> 
+		  <if test="bankCode !=null and bankCode!='' ">
+			 pb_bankCode=#{bankCode},  
+		  </if> 
+		  <if test="bankName !=null and bankName!='' ">
+			 pb_bankName=#{bankName},  
+		  </if> 
+		  <if test="bankAccType !=null and bankAccType!='' ">
+			 pb_bankAccType=#{bankAccType},  
+		  </if> 
+		  <if test="bankCardType !=null and bankCardType!='' ">
+			 pb_bankCardType=#{bankCardType},  
+		  </if> 
+		  <if test="bankReservedPhone !=null and bankReservedPhone!='' ">
+			 pb_bankReservedPhone=#{bankReservedPhone},  
+		  </if> 
+		  <if test="bankCardNo !=null and bankCardNo!='' ">
+			 pb_bankCardNo=#{bankCardNo},  
+		  </if> 
+		  <if test="bankProvince !=null and bankProvince!='' ">
+			 pb_bankProvince=#{bankProvince},  
+		  </if> 
+		  <if test="bankCity !=null and bankCity!='' ">
+			 pb_bankCity=#{bankCity},  
+		  </if> 
+		  <if test="bankLineNo !=null and bankLineNo >= 0 "> 
+			 pb_bankLineNo = #{bankLineNo},
+	      </if>
+		  <if test="subBankName !=null and subBankName!='' ">
+			 pb_subBankName=#{subBankName},  
+		  </if> 
+		  <if test="idCardNo !=null and idCardNo!='' ">
+			 pb_idCardNo=#{idCardNo},  
+		  </if> 
+		  <if test="realName !=null and realName!='' ">
+			 pb_realName=#{realName},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 pb_state=#{state},  
+		  </if> 
+			 pb_updateTime=NOW() 
+		</set>
+		WHERE pb_bankCardId = #{bankCardId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_merchant_bank_cards WHERE pb_bankCardId = #{bankCardId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_merchant_bank_cards WHERE pb_bankCardId IN
+		<foreach collection="array" item="bankCardId" open="(" separator="," close=")">
+			 #{bankCardId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="MerchantBankCards"> 
+		DELETE FROM pay_merchant_bank_cards WHERE pb_bankCardId = #{bankCardId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_merchant_bank_cards where pb_bankCardId = #{bankCardId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantBankCardsResultMap">
+		select * from pay_merchant_bank_cards
+		where pb_bankCardId = #{bankCardId}
+	</select>
+	
+	<select id="selectAll" resultMap="merchantBankCardsResultMap">
+		select * from pay_merchant_bank_cards
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantBankCardsResultMap">
+		select * from pay_merchant_bank_cards
+		where pb_bankCardId in
+		<foreach collection="array" item="bankCardId" open="(" separator="," close=")">
+			 #{bankCardId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="MerchantBankCards" resultMap="merchantBankCardsResultMap">
+	  SELECT * FROM pay_merchant_bank_cards 
+		<where>
+		  <if test="bankCardId !=null and bankCardId >= 0 ">
+			 pb_bankCardId=#{bankCardId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND pb_mchId=#{mchId} 
+		  </if> 
+	      <if test="useType !=null and useType!='' ">
+			AND pb_useType=#{useType}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pb_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pb_bankName=#{bankName}  
+		  </if> 
+	      <if test="bankAccType !=null and bankAccType!='' ">
+			AND pb_bankAccType=#{bankAccType}  
+		  </if> 
+	      <if test="bankCardType !=null and bankCardType!='' ">
+			AND pb_bankCardType=#{bankCardType}  
+		  </if> 
+	      <if test="bankReservedPhone !=null and bankReservedPhone!='' ">
+			AND pb_bankReservedPhone=#{bankReservedPhone}  
+		  </if> 
+	      <if test="bankCardNo !=null and bankCardNo!='' ">
+			AND pb_bankCardNo=#{bankCardNo}  
+		  </if> 
+	      <if test="bankProvince !=null and bankProvince!='' ">
+			AND pb_bankProvince=#{bankProvince}  
+		  </if> 
+	      <if test="bankCity !=null and bankCity!='' ">
+			AND pb_bankCity=#{bankCity}  
+		  </if> 
+		  <if test="bankLineNo !=null and bankLineNo >= 0 ">
+			AND pb_bankLineNo=#{bankLineNo} 
+		  </if> 
+	      <if test="subBankName !=null and subBankName!='' ">
+			AND pb_subBankName=#{subBankName}  
+		  </if> 
+	      <if test="idCardNo !=null and idCardNo!='' ">
+			AND pb_idCardNo=#{idCardNo}  
+		  </if> 
+	      <if test="realName !=null and realName!='' ">
+			AND pb_realName=#{realName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pb_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND pb_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pb_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="MerchantBankCards" resultMap="merchantBankCardsResultMap">
+	  SELECT * FROM pay_merchant_bank_cards 
+		<where>
+		  <if test="bankCardId !=null and bankCardId >= 0 ">
+			 pb_bankCardId=#{bankCardId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND pb_mchId=#{mchId} 
+		  </if> 
+	      <if test="useType !=null and useType!='' ">
+			AND pb_useType=#{useType}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pb_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pb_bankName=#{bankName}  
+		  </if> 
+	      <if test="bankAccType !=null and bankAccType!='' ">
+			AND pb_bankAccType=#{bankAccType}  
+		  </if> 
+	      <if test="bankCardType !=null and bankCardType!='' ">
+			AND pb_bankCardType=#{bankCardType}  
+		  </if> 
+	      <if test="bankReservedPhone !=null and bankReservedPhone!='' ">
+			AND pb_bankReservedPhone=#{bankReservedPhone}  
+		  </if> 
+	      <if test="bankCardNo !=null and bankCardNo!='' ">
+			AND pb_bankCardNo=#{bankCardNo}  
+		  </if> 
+	      <if test="bankProvince !=null and bankProvince!='' ">
+			AND pb_bankProvince=#{bankProvince}  
+		  </if> 
+	      <if test="bankCity !=null and bankCity!='' ">
+			AND pb_bankCity=#{bankCity}  
+		  </if> 
+		  <if test="bankLineNo !=null and bankLineNo >= 0 ">
+			AND pb_bankLineNo=#{bankLineNo} 
+		  </if> 
+	      <if test="subBankName !=null and subBankName!='' ">
+			AND pb_subBankName=#{subBankName}  
+		  </if> 
+	      <if test="idCardNo !=null and idCardNo!='' ">
+			AND pb_idCardNo=#{idCardNo}  
+		  </if> 
+	      <if test="realName !=null and realName!='' ">
+			AND pb_realName=#{realName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pb_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND pb_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pb_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pb_useType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankAccType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankCardType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankReservedPhone LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankCardNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankProvince LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_bankCity LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_subBankName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_idCardNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_realName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pb_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantStatisticsDaysMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantStatisticsDays" id="merchantStatisticsDaysResultMap">
+		<id column="msd_sdId" jdbcType="BIGINT" property="sdId" />
+		<result column="msd_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="msd_sdDay" jdbcType="TIMESTAMP" property="sdDay" />
+		<result column="msd_payCountTotal" jdbcType="INTEGER" property="payCountTotal" />
+		<result column="msd_payAmountTotal" jdbcType="BIGINT" property="payAmountTotal" />
+		<result column="msd_payCountSucc" jdbcType="INTEGER" property="payCountSucc" />
+		<result column="msd_payAmountSucc" jdbcType="BIGINT" property="payAmountSucc" />
+		<result column="msd_realAmount" jdbcType="BIGINT" property="realAmount" />
+		<result column="msd_totleFee" jdbcType="BIGINT" property="totleFee" />
+		<result column="msd_refundCount" jdbcType="INTEGER" property="refundCount" />
+		<result column="msd_refundAmount" jdbcType="BIGINT" property="refundAmount" />
+		<result column="msd_state" jdbcType="VARCHAR" property="state" />
+		<result column="msd_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="msd_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="MerchantStatisticsDays" useGeneratedKeys="true" keyProperty="sdId">
+	  INSERT INTO pay_merchant_statistics_days
+	  (msd_mchId,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
+	  VALUES 
+	  (#{mchId},#{sdDay},#{payCountTotal},#{payAmountTotal},#{payCountSucc},#{payAmountSucc},#{realAmount},#{totleFee},#{refundCount},#{refundAmount},#{state},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="MerchantStatisticsDays">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_merchant_statistics_days
+		(msd_mchId,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="merchantStatisticsDays" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{mchId} as msd_mchId,
+					 #{sdDay} as msd_sdDay,
+					 #{payCountTotal} as msd_payCountTotal,
+					 #{payAmountTotal} as msd_payAmountTotal,
+					 #{payCountSucc} as msd_payCountSucc,
+					 #{payAmountSucc} as msd_payAmountSucc,
+					 #{realAmount} as msd_realAmount,
+					 #{totleFee} as msd_totleFee,
+					 #{refundCount} as msd_refundCount,
+					 #{refundAmount} as msd_refundAmount,
+					 #{state} as msd_state,
+					 #{createTime} as msd_createTime,
+					 #{updateTime} as msd_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="MerchantStatisticsDays">
+		UPDATE pay_merchant_statistics_days
+		<set>
+		  <if test="sdId !=null and sdId >= 0 "> 
+			 msd_sdId = #{sdId},
+	      </if>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 msd_mchId = #{mchId},
+	      </if>
+		  <if test="sdDay !=null and sdDay!='' ">
+			 msd_sdDay=#{sdDay},  
+		  </if> 
+		  <if test="payCountTotal !=null and payCountTotal!='' ">
+			 msd_payCountTotal=#{payCountTotal},  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 "> 
+			 msd_payAmountTotal = #{payAmountTotal},
+	      </if>
+		  <if test="payCountSucc !=null and payCountSucc!='' ">
+			 msd_payCountSucc=#{payCountSucc},  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 "> 
+			 msd_payAmountSucc = #{payAmountSucc},
+	      </if>
+		  <if test="realAmount !=null and realAmount >= 0 "> 
+			 msd_realAmount = #{realAmount},
+	      </if>
+		  <if test="totleFee !=null and totleFee >= 0 "> 
+			 msd_totleFee = #{totleFee},
+	      </if>
+		  <if test="refundCount !=null and refundCount!='' ">
+			 msd_refundCount=#{refundCount},  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 "> 
+			 msd_refundAmount = #{refundAmount},
+	      </if>
+		  <if test="state !=null and state!='' ">
+			 msd_state=#{state},  
+		  </if> 
+		  <if test="createTime !=null and createTime!='' ">
+			 msd_createTime=#{createTime},  
+		  </if> 
+		  <if test="updateTime !=null and updateTime!='' ">
+			 msd_updateTime=#{updateTime}  
+		  </if> 
+		</set>
+		WHERE msd_sdId = #{sdId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_merchant_statistics_days WHERE msd_sdId = #{sdId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_merchant_statistics_days WHERE msd_sdId IN
+		<foreach collection="array" item="sdId" open="(" separator="," close=")">
+			 #{sdId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="MerchantStatisticsDays"> 
+		DELETE FROM pay_merchant_statistics_days WHERE msd_sdId = #{sdId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_merchant_statistics_days where msd_sdId = #{sdId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantStatisticsDaysResultMap">
+		select * from pay_merchant_statistics_days
+		where msd_sdId = #{sdId}
+	</select>
+	
+	<select id="selectAll" resultMap="merchantStatisticsDaysResultMap">
+		select * from pay_merchant_statistics_days
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantStatisticsDaysResultMap">
+		select * from pay_merchant_statistics_days
+		where msd_sdId in
+		<foreach collection="array" item="sdId" open="(" separator="," close=")">
+			 #{sdId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="MerchantStatisticsDays" resultMap="merchantStatisticsDaysResultMap">
+	  SELECT * FROM pay_merchant_statistics_days 
+		<where>
+		  <if test="sdId !=null and sdId >= 0 ">
+			 msd_sdId=#{sdId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND msd_mchId=#{mchId} 
+		  </if> 
+	      <if test="sdDay !=null and sdDay!='' ">
+			AND msd_sdDay=#{sdDay}  
+		  </if> 
+	      <if test="payCountTotal !=null and payCountTotal!='' ">
+			AND msd_payCountTotal=#{payCountTotal}  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 ">
+			AND msd_payAmountTotal=#{payAmountTotal} 
+		  </if> 
+	      <if test="payCountSucc !=null and payCountSucc!='' ">
+			AND msd_payCountSucc=#{payCountSucc}  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 ">
+			AND msd_payAmountSucc=#{payAmountSucc} 
+		  </if> 
+		  <if test="realAmount !=null and realAmount >= 0 ">
+			AND msd_realAmount=#{realAmount} 
+		  </if> 
+		  <if test="totleFee !=null and totleFee >= 0 ">
+			AND msd_totleFee=#{totleFee} 
+		  </if> 
+	      <if test="refundCount !=null and refundCount!='' ">
+			AND msd_refundCount=#{refundCount}  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 ">
+			AND msd_refundAmount=#{refundAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND msd_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND msd_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND msd_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="MerchantStatisticsDays" resultMap="merchantStatisticsDaysResultMap">
+	  SELECT * FROM pay_merchant_statistics_days 
+		<where>
+		  <if test="sdId !=null and sdId >= 0 ">
+			 msd_sdId=#{sdId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND msd_mchId=#{mchId} 
+		  </if> 
+	      <if test="sdDay !=null and sdDay!='' ">
+			AND msd_sdDay=#{sdDay}  
+		  </if> 
+	      <if test="payCountTotal !=null and payCountTotal!='' ">
+			AND msd_payCountTotal=#{payCountTotal}  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 ">
+			AND msd_payAmountTotal=#{payAmountTotal} 
+		  </if> 
+	      <if test="payCountSucc !=null and payCountSucc!='' ">
+			AND msd_payCountSucc=#{payCountSucc}  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 ">
+			AND msd_payAmountSucc=#{payAmountSucc} 
+		  </if> 
+		  <if test="realAmount !=null and realAmount >= 0 ">
+			AND msd_realAmount=#{realAmount} 
+		  </if> 
+		  <if test="totleFee !=null and totleFee >= 0 ">
+			AND msd_totleFee=#{totleFee} 
+		  </if> 
+	      <if test="refundCount !=null and refundCount!='' ">
+			AND msd_refundCount=#{refundCount}  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 ">
+			AND msd_refundAmount=#{refundAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND msd_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND msd_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND msd_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		msd_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.BankCardInfoMapper">
+	<resultMap type="cn.com.payment.admin.model.BankCardInfo" id="bankCardInfoResultMap">
+		<id column="pbci_cardId" jdbcType="BIGINT" property="cardId" />
+		<result column="pbci_cardName" jdbcType="VARCHAR" property="cardName" />
+		<result column="pbci_cardHead" jdbcType="VARCHAR" property="cardHead" />
+		<result column="pbci_cardType" jdbcType="VARCHAR" property="cardType" />
+		<result column="pbci_bankCode" jdbcType="VARCHAR" property="bankCode" />
+		<result column="pbci_bankName" jdbcType="VARCHAR" property="bankName" />
+		<result column="pbci_bankNameOrgin" jdbcType="VARCHAR" property="bankNameOrgin" />
+		<result column="pbci_state" jdbcType="VARCHAR" property="state" />
+		<result column="pbci_cardLength" jdbcType="DOUBLE" property="cardLength" />
+		<result column="pbci_binLength" jdbcType="DOUBLE" property="binLength" />
+		<result column="pbci_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pbci_writeTime" jdbcType="TIMESTAMP" property="writeTime" />
+		<result column="pbci_logo" jdbcType="VARCHAR" property="logo" />
+		<result column="pbci_backColor" jdbcType="VARCHAR" property="backColor" />
+		<result column="pbci_limitation" jdbcType="VARCHAR" property="limitation" />
+	</resultMap>
+	
+	<insert id="save" parameterType="BankCardInfo" useGeneratedKeys="true" keyProperty="cardId">
+	  INSERT INTO pay_bank_card_info
+	  (pbci_cardName,pbci_cardHead,pbci_cardType,pbci_bankCode,pbci_bankName,pbci_bankNameOrgin,pbci_state,pbci_cardLength,pbci_binLength,pbci_updateTime,pbci_writeTime,pbci_logo,pbci_backColor,pbci_limitation)
+	  VALUES 
+	  (#{cardName},#{cardHead},#{cardType},#{bankCode},#{bankName},#{bankNameOrgin},#{state},#{cardLength},#{binLength},#{updateTime},#{writeTime},#{logo},#{backColor},#{limitation})
+	</insert>
+
+	<insert id="insertBatch" parameterType="BankCardInfo">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_bank_card_info
+		(pbci_cardName,pbci_cardHead,pbci_cardType,pbci_bankCode,pbci_bankName,pbci_bankNameOrgin,pbci_state,pbci_cardLength,pbci_binLength,pbci_updateTime,pbci_writeTime,pbci_logo,pbci_backColor,pbci_limitation)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="bankCardInfo" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{cardName} as pbci_cardName,
+					 #{cardHead} as pbci_cardHead,
+					 #{cardType} as pbci_cardType,
+					 #{bankCode} as pbci_bankCode,
+					 #{bankName} as pbci_bankName,
+					 #{bankNameOrgin} as pbci_bankNameOrgin,
+					 #{state} as pbci_state,
+					 #{cardLength} as pbci_cardLength,
+					 #{binLength} as pbci_binLength,
+					 #{updateTime} as pbci_updateTime,
+					 #{writeTime} as pbci_writeTime,
+					 #{logo} as pbci_logo,
+					 #{backColor} as pbci_backColor,
+					 #{limitation} as pbci_limitation
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="BankCardInfo">
+		UPDATE pay_bank_card_info
+		<set>
+		  <if test="cardId !=null and cardId >= 0 "> 
+			 pbci_cardId = #{cardId},
+	      </if>
+		  <if test="cardName !=null and cardName!='' ">
+			 pbci_cardName=#{cardName},  
+		  </if> 
+		  <if test="cardHead !=null and cardHead!='' ">
+			 pbci_cardHead=#{cardHead},  
+		  </if> 
+		  <if test="cardType !=null and cardType!='' ">
+			 pbci_cardType=#{cardType},  
+		  </if> 
+		  <if test="bankCode !=null and bankCode!='' ">
+			 pbci_bankCode=#{bankCode},  
+		  </if> 
+		  <if test="bankName !=null and bankName!='' ">
+			 pbci_bankName=#{bankName},  
+		  </if> 
+		  <if test="bankNameOrgin !=null and bankNameOrgin!='' ">
+			 pbci_bankNameOrgin=#{bankNameOrgin},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 pbci_state=#{state},  
+		  </if> 
+		  <if test="cardLength !=null and cardLength!='' ">
+			 pbci_cardLength=#{cardLength},  
+		  </if> 
+		  <if test="binLength !=null and binLength!='' ">
+			 pbci_binLength=#{binLength},  
+		  </if> 
+		  <if test="updateTime !=null and updateTime!='' ">
+			 pbci_updateTime=#{updateTime},  
+		  </if> 
+		  <if test="writeTime !=null and writeTime!='' ">
+			 pbci_writeTime=#{writeTime},  
+		  </if> 
+		  <if test="logo !=null and logo!='' ">
+			 pbci_logo=#{logo},  
+		  </if> 
+		  <if test="backColor !=null and backColor!='' ">
+			 pbci_backColor=#{backColor},  
+		  </if> 
+		  <if test="limitation !=null and limitation!='' ">
+			 pbci_limitation=#{limitation}  
+		  </if> 
+		</set>
+		WHERE pbci_cardId = #{cardId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_bank_card_info WHERE pbci_cardId = #{cardId}
+	</delete>
+
+
+	<delete id="deleteByIds" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_bank_card_info WHERE pbci_cardId IN
+		<foreach collection="array" item="cardId" open="(" separator="," close=")">
+			 #{cardId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="BankCardInfo"> 
+		DELETE FROM pay_bank_card_info WHERE pbci_cardId = #{cardId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_bank_card_info where pbci_cardId = #{cardId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="bankCardInfoResultMap">
+		select * from pay_bank_card_info
+		where pbci_cardId = #{cardId}
+	</select>
+	
+	<select id="selectAll" resultMap="bankCardInfoResultMap">
+		select * from pay_bank_card_info
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="bankCardInfoResultMap">
+		select * from pay_bank_card_info
+		where pbci_cardId in
+		<foreach collection="array" item="cardId" open="(" separator="," close=")">
+			 #{cardId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="BankCardInfo" resultMap="bankCardInfoResultMap">
+	  SELECT * FROM pay_bank_card_info 
+		<where>
+		  <if test="cardId !=null and cardId >= 0 ">
+			 pbci_cardId=#{cardId}  
+		  </if> 
+	      <if test="cardName !=null and cardName!='' ">
+			AND pbci_cardName=#{cardName}  
+		  </if> 
+	      <if test="cardHead !=null and cardHead!='' ">
+			AND pbci_cardHead=#{cardHead}  
+		  </if> 
+	      <if test="cardType !=null and cardType!='' ">
+			AND pbci_cardType=#{cardType}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pbci_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pbci_bankName=#{bankName}  
+		  </if> 
+	      <if test="bankNameOrgin !=null and bankNameOrgin!='' ">
+			AND pbci_bankNameOrgin=#{bankNameOrgin}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pbci_state=#{state}  
+		  </if> 
+	      <if test="cardLength !=null and cardLength!='' ">
+			AND pbci_cardLength=#{cardLength}  
+		  </if> 
+	      <if test="binLength !=null and binLength!='' ">
+			AND pbci_binLength=#{binLength}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pbci_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="writeTime !=null and writeTime!='' ">
+			AND pbci_writeTime=#{writeTime}  
+		  </if> 
+	      <if test="logo !=null and logo!='' ">
+			AND pbci_logo=#{logo}  
+		  </if> 
+	      <if test="backColor !=null and backColor!='' ">
+			AND pbci_backColor=#{backColor}  
+		  </if> 
+	      <if test="limitation !=null and limitation!='' ">
+			AND pbci_limitation=#{limitation}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="BankCardInfo" resultMap="bankCardInfoResultMap">
+	  SELECT * FROM pay_bank_card_info 
+		<where>
+		  <if test="cardId !=null and cardId >= 0 ">
+			 pbci_cardId=#{cardId}  
+		  </if> 
+	      <if test="cardName !=null and cardName!='' ">
+			AND pbci_cardName=#{cardName}  
+		  </if> 
+	      <if test="cardHead !=null and cardHead!='' ">
+			AND pbci_cardHead=#{cardHead}  
+		  </if> 
+	      <if test="cardType !=null and cardType!='' ">
+			AND pbci_cardType=#{cardType}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pbci_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pbci_bankName=#{bankName}  
+		  </if> 
+	      <if test="bankNameOrgin !=null and bankNameOrgin!='' ">
+			AND pbci_bankNameOrgin=#{bankNameOrgin}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pbci_state=#{state}  
+		  </if> 
+	      <if test="cardLength !=null and cardLength!='' ">
+			AND pbci_cardLength=#{cardLength}  
+		  </if> 
+	      <if test="binLength !=null and binLength!='' ">
+			AND pbci_binLength=#{binLength}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pbci_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="writeTime !=null and writeTime!='' ">
+			AND pbci_writeTime=#{writeTime}  
+		  </if> 
+	      <if test="logo !=null and logo!='' ">
+			AND pbci_logo=#{logo}  
+		  </if> 
+	      <if test="backColor !=null and backColor!='' ">
+			AND pbci_backColor=#{backColor}  
+		  </if> 
+	      <if test="limitation !=null and limitation!='' ">
+			AND pbci_limitation=#{limitation}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pbci_cardName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_cardHead LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_cardType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_bankCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_bankName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_bankNameOrgin LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_logo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_backColor LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbci_limitation LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

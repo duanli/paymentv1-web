@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.ProviderAgentMapper">
+	<resultMap type="cn.com.payment.admin.model.ProviderAgent" id="providerAgentResultMap">
+		<id column="ppa_providerAgentId" jdbcType="BIGINT" property="providerAgentId" />
+		<result column="ppa_providerAgentCode" jdbcType="VARCHAR" property="providerAgentCode" />
+		<result column="ppa_providerAgentName" jdbcType="VARCHAR" property="providerAgentName" />
+		<result column="ppa_state" jdbcType="VARCHAR" property="state" />
+		<result column="ppa_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="ppa_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="ProviderAgent" useGeneratedKeys="true" keyProperty="providerAgentId">
+	  INSERT INTO pay_provider_agent
+	  (ppa_providerAgentCode,ppa_providerAgentName,ppa_state,ppa_createTime,ppa_updateTime)
+	  VALUES 
+	  (#{providerAgentCode},#{providerAgentName},#{state},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="ProviderAgent">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_provider_agent
+		(ppa_providerAgentCode,ppa_providerAgentName,ppa_state,ppa_createTime,ppa_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="providerAgent" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{providerAgentCode} as ppa_providerAgentCode,
+					 #{providerAgentName} as ppa_providerAgentName,
+					 #{state} as ppa_state,
+					 #{createTime} as ppa_createTime,
+					 #{updateTime} as ppa_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="ProviderAgent">
+		UPDATE pay_provider_agent
+		<set>
+		  <if test="providerAgentId !=null and providerAgentId >= 0 "> 
+			 ppa_providerAgentId = #{providerAgentId},
+	      </if>
+		  <if test="providerAgentCode !=null and providerAgentCode!='' ">
+			 ppa_providerAgentCode=#{providerAgentCode},  
+		  </if> 
+		  <if test="providerAgentName !=null and providerAgentName!='' ">
+			 ppa_providerAgentName=#{providerAgentName},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 ppa_state=#{state},  
+		  </if> 
+			 ppa_updateTime=NOW() 
+		</set>
+		WHERE ppa_providerAgentId = #{providerAgentId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_provider_agent WHERE ppa_providerAgentId = #{providerAgentId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_provider_agent WHERE ppa_providerAgentId IN
+		<foreach collection="array" item="providerAgentId" open="(" separator="," close=")">
+			 #{providerAgentId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="ProviderAgent"> 
+		DELETE FROM pay_provider_agent WHERE ppa_providerAgentId = #{providerAgentId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_provider_agent where ppa_providerAgentId = #{providerAgentId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="providerAgentResultMap">
+		select * from pay_provider_agent
+		where ppa_providerAgentId = #{providerAgentId}
+	</select>
+	
+	<select id="selectAll" resultMap="providerAgentResultMap">
+		select * from pay_provider_agent
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="providerAgentResultMap">
+		select * from pay_provider_agent
+		where ppa_providerAgentId in
+		<foreach collection="array" item="providerAgentId" open="(" separator="," close=")">
+			 #{providerAgentId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="ProviderAgent" resultMap="providerAgentResultMap">
+	  SELECT * FROM pay_provider_agent 
+		<where>
+		  <if test="providerAgentId !=null and providerAgentId >= 0 ">
+			 ppa_providerAgentId=#{providerAgentId}  
+		  </if> 
+	      <if test="providerAgentCode !=null and providerAgentCode!='' ">
+			AND ppa_providerAgentCode=#{providerAgentCode}  
+		  </if> 
+	      <if test="providerAgentName !=null and providerAgentName!='' ">
+			AND ppa_providerAgentName=#{providerAgentName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ppa_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ppa_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ppa_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="ProviderAgent" resultMap="providerAgentResultMap">
+	  SELECT * FROM pay_provider_agent 
+		<where>
+		  <if test="providerAgentId !=null and providerAgentId >= 0 ">
+			 ppa_providerAgentId=#{providerAgentId}  
+		  </if> 
+	      <if test="providerAgentCode !=null and providerAgentCode!='' ">
+			AND ppa_providerAgentCode=#{providerAgentCode}  
+		  </if> 
+	      <if test="providerAgentName !=null and providerAgentName!='' ">
+			AND ppa_providerAgentName=#{providerAgentName}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND ppa_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND ppa_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND ppa_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		ppa_providerAgentCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ppa_providerAgentName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		ppa_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

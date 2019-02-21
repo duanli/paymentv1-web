@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantInfoMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantInfo" id="merchantInfoResultMap">
+		<id column="mer_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="mer_orgParentId" jdbcType="BIGINT" property="orgParentId" />
+		<result column="mer_chainParentId" jdbcType="BIGINT" property="chainParentId" />
+		<result column="mer_accNo" jdbcType="VARCHAR" property="accNo" />
+		<result column="mer_mchName" jdbcType="VARCHAR" property="mchName" />
+		<result column="mer_mchDesc" jdbcType="VARCHAR" property="mchDesc" />
+		<result column="mer_mchType" jdbcType="VARCHAR" property="mchType" />
+		<result column="mer_contacts" jdbcType="VARCHAR" property="contacts" />
+		<result column="mer_contactsCell" jdbcType="VARCHAR" property="contactsCell" />
+		<result column="mer_email" jdbcType="VARCHAR" property="email" />
+		<result column="mer_mchNo" jdbcType="VARCHAR" property="mchNo" />
+		<result column="mer_mchKey" jdbcType="VARCHAR" property="mchKey" />
+		<result column="mer_mchRSAKey" jdbcType="VARCHAR" property="mchRSAKey" />
+		<result column="mer_mchAPPId" jdbcType="VARCHAR" property="mchAPPId" />
+		<result column="mer_mchPayPassWord" jdbcType="VARCHAR" property="mchPayPassWord" />
+		<result column="mer_googleAuthUrl" jdbcType="VARCHAR" property="googleAuthUrl" />
+		<result column="mer_googleAuthKey" jdbcType="VARCHAR" property="googleAuthKey" />
+		<result column="mer_googleAuthFlag" jdbcType="VARCHAR" property="googleAuthFlag" />
+		<result column="mer_balanceUnaccounted" jdbcType="BIGINT" property="balanceUnaccounted" />
+		<result column="mer_balanceFreeze" jdbcType="BIGINT" property="balanceFreeze" />
+		<result column="mer_balanceValid" jdbcType="BIGINT" property="balanceValid" />
+		<result column="mer_balance" jdbcType="BIGINT" property="balance" />
+		<result column="mer_isDel" jdbcType="VARCHAR" property="isDel" />
+		<result column="mer_state" jdbcType="VARCHAR" property="state" />
+		<result column="mer_authState" jdbcType="VARCHAR" property="authState" />
+		<result column="mer_validIP" jdbcType="VARCHAR" property="validIP" />
+		<result column="mer_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="mer_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="MerchantInfo" useGeneratedKeys="true" keyProperty="mchId">
+	  INSERT INTO pay_merchant_info
+	  (mer_orgParentId,mer_chainParentId,mer_accNo,mer_mchName,mer_mchDesc,mer_mchType,mer_contacts,mer_contactsCell,mer_email,mer_mchNo,mer_mchKey,mer_mchRSAKey,mer_mchAPPId,mer_mchPayPassWord,mer_googleAuthUrl,mer_googleAuthKey,mer_googleAuthFlag,mer_balanceUnaccounted,mer_balanceFreeze,mer_balanceValid,mer_balance,mer_isDel,mer_state,mer_authState,mer_validIP,mer_createTime,mer_updateTime)
+	  VALUES 
+	  (#{orgParentId},#{chainParentId},UUID(),#{mchName},#{mchDesc},#{mchType},#{contacts},#{contactsCell},#{email},#{mchNo},#{mchKey},#{mchRSAKey},#{mchAPPId},#{mchPayPassWord},#{googleAuthUrl},#{googleAuthKey},#{googleAuthFlag},#{balanceUnaccounted},#{balanceFreeze},#{balanceValid},#{balance},#{isDel},#{state},#{authState},#{validIP},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="MerchantInfo">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_merchant_info
+		(mer_orgParentId,mer_chainParentId,mer_accNo,mer_mchName,mer_mchDesc,mer_mchType,mer_contacts,mer_contactsCell,mer_email,mer_mchNo,mer_mchKey,mer_mchRSAKey,mer_mchAPPId,mer_mchPayPassWord,mer_googleAuthUrl,mer_googleAuthKey,mer_googleAuthFlag,mer_balanceUnaccounted,mer_balanceFreeze,mer_balanceValid,mer_balance,mer_isDel,mer_state,mer_authState,mer_validIP,mer_createTime,mer_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="merchantInfo" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{orgParentId} as mer_orgParentId,
+					 #{chainParentId} as mer_chainParentId,
+					 #{accNo} as mer_accNo,
+					 #{mchName} as mer_mchName,
+					 #{mchDesc} as mer_mchDesc,
+					 #{mchType} as mer_mchType,
+					 #{contacts} as mer_contacts,
+					 #{contactsCell} as mer_contactsCell,
+					 #{email} as mer_email,
+					 #{mchNo} as mer_mchNo,
+					 #{mchKey} as mer_mchKey,
+					 #{mchRSAKey} as mer_mchRSAKey,
+					 #{mchAPPId} as mer_mchAPPId,
+					 #{mchPayPassWord} as mer_mchPayPassWord,
+					 #{googleAuthUrl} as mer_googleAuthUrl,
+					 #{googleAuthKey} as mer_googleAuthKey,
+					 #{googleAuthFlag} as mer_googleAuthFlag,
+					 #{balanceUnaccounted} as mer_balanceUnaccounted,
+					 #{balanceFreeze} as mer_balanceFreeze,
+					 #{balanceValid} as mer_balanceValid,
+					 #{balance} as mer_balance,
+					 #{isDel} as mer_isDel,
+					 #{state} as mer_state,
+					 #{authState} as mer_authState,
+					 #{validIP} as mer_validIP,
+					 #{createTime} as mer_createTime,
+					 #{updateTime} as mer_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="MerchantInfo">
+		UPDATE pay_merchant_info
+		<set>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 mer_mchId = #{mchId},
+	      </if>
+		  <if test="orgParentId !=null and orgParentId >= 0 "> 
+			 mer_orgParentId = #{orgParentId},
+	      </if>
+		  <if test="chainParentId !=null and chainParentId >= 0 "> 
+			 mer_chainParentId = #{chainParentId},
+	      </if>
+		  <if test="accNo !=null and accNo!='' ">
+			 mer_accNo=#{accNo},  
+		  </if> 
+		  <if test="mchName !=null and mchName!='' ">
+			 mer_mchName=#{mchName},  
+		  </if> 
+		  <if test="mchDesc !=null and mchDesc!='' ">
+			 mer_mchDesc=#{mchDesc},  
+		  </if> 
+		  <if test="mchType !=null and mchType!='' ">
+			 mer_mchType=#{mchType},  
+		  </if> 
+		  <if test="contacts !=null and contacts!='' ">
+			 mer_contacts=#{contacts},  
+		  </if> 
+		  <if test="contactsCell !=null and contactsCell!='' ">
+			 mer_contactsCell=#{contactsCell},  
+		  </if> 
+		  <if test="email !=null and email!='' ">
+			 mer_email=#{email},  
+		  </if> 
+		  <if test="mchNo !=null and mchNo!='' ">
+			 mer_mchNo=#{mchNo},  
+		  </if> 
+		  <if test="mchKey !=null and mchKey!='' ">
+			 mer_mchKey=#{mchKey},  
+		  </if> 
+		  <if test="mchRSAKey !=null and mchRSAKey!='' ">
+			 mer_mchRSAKey=#{mchRSAKey},  
+		  </if> 
+		  <if test="mchAPPId !=null and mchAPPId!='' ">
+			 mer_mchAPPId=#{mchAPPId},  
+		  </if> 
+		  <if test="mchPayPassWord !=null and mchPayPassWord!='' ">
+			 mer_mchPayPassWord=#{mchPayPassWord},  
+		  </if> 
+		  <if test="googleAuthUrl !=null and googleAuthUrl!='' ">
+			 mer_googleAuthUrl=#{googleAuthUrl},  
+		  </if> 
+		  <if test="googleAuthKey !=null and googleAuthKey!='' ">
+			 mer_googleAuthKey=#{googleAuthKey},  
+		  </if> 
+		  <if test="googleAuthFlag !=null and googleAuthFlag!='' ">
+			 mer_googleAuthFlag=#{googleAuthFlag},  
+		  </if> 
+		  <if test="balanceUnaccounted !=null and balanceUnaccounted >= 0 "> 
+			 mer_balanceUnaccounted = #{balanceUnaccounted},
+	      </if>
+		  <if test="balanceFreeze !=null and balanceFreeze >= 0 "> 
+			 mer_balanceFreeze = #{balanceFreeze},
+	      </if>
+		  <if test="balanceValid !=null and balanceValid >= 0 "> 
+			 mer_balanceValid = #{balanceValid},
+	      </if>
+		  <if test="balance !=null and balance >= 0 "> 
+			 mer_balance = #{balance},
+	      </if>
+		  <if test="isDel !=null and isDel!='' ">
+			 mer_isDel=#{isDel},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 mer_state=#{state},  
+		  </if> 
+		  <if test="authState !=null and authState!='' ">
+			 mer_authState=#{authState},  
+		  </if> 
+		  <if test="validIP !=null and validIP!='' ">
+			 mer_validIP=#{validIP},  
+		  </if> 
+			 mer_updateTime=NOW() 
+		</set>
+		WHERE mer_mchId = #{mchId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_merchant_info WHERE mer_mchId = #{mchId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_merchant_info WHERE mer_mchId IN
+		<foreach collection="array" item="mchId" open="(" separator="," close=")">
+			 #{mchId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="MerchantInfo"> 
+		DELETE FROM pay_merchant_info WHERE mer_mchId = #{mchId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_merchant_info where mer_mchId = #{mchId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantInfoResultMap">
+		select * from pay_merchant_info
+		where mer_mchId = #{mchId}
+	</select>
+	
+	<select id="selectAll" resultMap="merchantInfoResultMap">
+		select * from pay_merchant_info
+	</select>
+	
+	<select id="selectOneByMchNo" parameterType="java.lang.String" resultMap="merchantInfoResultMap">
+		select * from pay_merchant_info
+		where mer_mchNo=#{mchNo}
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantInfoResultMap">
+		select * from pay_merchant_info
+		where mer_mchId in
+		<foreach collection="array" item="mchId" open="(" separator="," close=")">
+			 #{mchId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="MerchantInfo" resultMap="merchantInfoResultMap">
+	  SELECT * FROM pay_merchant_info 
+		<where>
+		  <if test="mchId !=null and mchId >= 0 ">
+			 mer_mchId=#{mchId}  
+		  </if> 
+		  <if test="orgParentId !=null and orgParentId >= 0 ">
+			AND mer_orgParentId=#{orgParentId} 
+		  </if> 
+		  <if test="chainParentId !=null and chainParentId >= 0 ">
+			AND mer_chainParentId=#{chainParentId} 
+		  </if> 
+	      <if test="accNo !=null and accNo!='' ">
+			AND mer_accNo=#{accNo}  
+		  </if> 
+	      <if test="mchName !=null and mchName!='' ">
+			AND mer_mchName=#{mchName}  
+		  </if> 
+	      <if test="mchDesc !=null and mchDesc!='' ">
+			AND mer_mchDesc=#{mchDesc}  
+		  </if> 
+	      <if test="mchType !=null and mchType!='' ">
+			AND mer_mchType=#{mchType}  
+		  </if> 
+	      <if test="contacts !=null and contacts!='' ">
+			AND mer_contacts=#{contacts}  
+		  </if> 
+	      <if test="contactsCell !=null and contactsCell!='' ">
+			AND mer_contactsCell=#{contactsCell}  
+		  </if> 
+	      <if test="email !=null and email!='' ">
+			AND mer_email=#{email}  
+		  </if> 
+	      <if test="mchNo !=null and mchNo!='' ">
+			AND mer_mchNo=#{mchNo}  
+		  </if> 
+	      <if test="mchKey !=null and mchKey!='' ">
+			AND mer_mchKey=#{mchKey}  
+		  </if> 
+	      <if test="mchRSAKey !=null and mchRSAKey!='' ">
+			AND mer_mchRSAKey=#{mchRSAKey}  
+		  </if> 
+	      <if test="mchAPPId !=null and mchAPPId!='' ">
+			AND mer_mchAPPId=#{mchAPPId}  
+		  </if> 
+	      <if test="mchPayPassWord !=null and mchPayPassWord!='' ">
+			AND mer_mchPayPassWord=#{mchPayPassWord}  
+		  </if> 
+	      <if test="googleAuthUrl !=null and googleAuthUrl!='' ">
+			AND mer_googleAuthUrl=#{googleAuthUrl}  
+		  </if> 
+	      <if test="googleAuthKey !=null and googleAuthKey!='' ">
+			AND mer_googleAuthKey=#{googleAuthKey}  
+		  </if> 
+	      <if test="googleAuthFlag !=null and googleAuthFlag!='' ">
+			AND mer_googleAuthFlag=#{googleAuthFlag}  
+		  </if> 
+		  <if test="balanceUnaccounted !=null and balanceUnaccounted >= 0 ">
+			AND mer_balanceUnaccounted=#{balanceUnaccounted} 
+		  </if> 
+		  <if test="balanceFreeze !=null and balanceFreeze >= 0 ">
+			AND mer_balanceFreeze=#{balanceFreeze} 
+		  </if> 
+		  <if test="balanceValid !=null and balanceValid >= 0 ">
+			AND mer_balanceValid=#{balanceValid} 
+		  </if> 
+		  <if test="balance !=null and balance >= 0 ">
+			AND mer_balance=#{balance} 
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND mer_isDel=#{isDel}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND mer_state=#{state}  
+		  </if> 
+	      <if test="authState !=null and authState!='' ">
+			AND mer_authState=#{authState}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND mer_validIP=#{validIP}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND mer_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND mer_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="MerchantInfo" resultMap="merchantInfoResultMap">
+	  SELECT * FROM pay_merchant_info 
+		<where>
+		  <if test="mchId !=null and mchId >= 0 ">
+			 mer_mchId=#{mchId}  
+		  </if> 
+		  <if test="orgParentId !=null and orgParentId >= 0 ">
+			AND mer_orgParentId=#{orgParentId} 
+		  </if> 
+		  <if test="chainParentId !=null and chainParentId >= 0 ">
+			AND mer_chainParentId=#{chainParentId} 
+		  </if> 
+	      <if test="accNo !=null and accNo!='' ">
+			AND mer_accNo=#{accNo}  
+		  </if> 
+	      <if test="mchName !=null and mchName!='' ">
+			AND mer_mchName=#{mchName}  
+		  </if> 
+	      <if test="mchDesc !=null and mchDesc!='' ">
+			AND mer_mchDesc=#{mchDesc}  
+		  </if> 
+	      <if test="mchType !=null and mchType!='' ">
+			AND mer_mchType=#{mchType}  
+		  </if> 
+	      <if test="contacts !=null and contacts!='' ">
+			AND mer_contacts=#{contacts}  
+		  </if> 
+	      <if test="contactsCell !=null and contactsCell!='' ">
+			AND mer_contactsCell=#{contactsCell}  
+		  </if> 
+	      <if test="email !=null and email!='' ">
+			AND mer_email=#{email}  
+		  </if> 
+	      <if test="mchNo !=null and mchNo!='' ">
+			AND mer_mchNo=#{mchNo}  
+		  </if> 
+	      <if test="mchKey !=null and mchKey!='' ">
+			AND mer_mchKey=#{mchKey}  
+		  </if> 
+	      <if test="mchRSAKey !=null and mchRSAKey!='' ">
+			AND mer_mchRSAKey=#{mchRSAKey}  
+		  </if> 
+	      <if test="mchAPPId !=null and mchAPPId!='' ">
+			AND mer_mchAPPId=#{mchAPPId}  
+		  </if> 
+	      <if test="mchPayPassWord !=null and mchPayPassWord!='' ">
+			AND mer_mchPayPassWord=#{mchPayPassWord}  
+		  </if> 
+	      <if test="googleAuthUrl !=null and googleAuthUrl!='' ">
+			AND mer_googleAuthUrl=#{googleAuthUrl}  
+		  </if> 
+	      <if test="googleAuthKey !=null and googleAuthKey!='' ">
+			AND mer_googleAuthKey=#{googleAuthKey}  
+		  </if> 
+	      <if test="googleAuthFlag !=null and googleAuthFlag!='' ">
+			AND mer_googleAuthFlag=#{googleAuthFlag}  
+		  </if> 
+		  <if test="balanceUnaccounted !=null and balanceUnaccounted >= 0 ">
+			AND mer_balanceUnaccounted=#{balanceUnaccounted} 
+		  </if> 
+		  <if test="balanceFreeze !=null and balanceFreeze >= 0 ">
+			AND mer_balanceFreeze=#{balanceFreeze} 
+		  </if> 
+		  <if test="balanceValid !=null and balanceValid >= 0 ">
+			AND mer_balanceValid=#{balanceValid} 
+		  </if> 
+		  <if test="balance !=null and balance >= 0 ">
+			AND mer_balance=#{balance} 
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND mer_isDel=#{isDel}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND mer_state=#{state}  
+		  </if> 
+	      <if test="authState !=null and authState!='' ">
+			AND mer_authState=#{authState}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND mer_validIP=#{validIP}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND mer_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND mer_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		mer_accNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchDesc LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_contacts LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_contactsCell LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_email LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchKey LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchRSAKey LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchAPPId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_mchPayPassWord LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_googleAuthUrl LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_googleAuthKey LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_googleAuthFlag LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_authState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mer_validIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

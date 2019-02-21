@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.RalProviderTransModeMapper">
+	<resultMap type="cn.com.payment.admin.model.RalProviderTransMode" id="ralProviderTransModeResultMap">
+		<id column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="prptm_productName" jdbcType="VARCHAR" property="productName" />
+		<result column="prptm_providerId" jdbcType="BIGINT" property="providerId" />
+		<result column="prptm_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="prptm_transRecordPrefix" jdbcType="VARCHAR" property="transRecordPrefix" />
+		<result column="prptm_serviceName" jdbcType="VARCHAR" property="serviceName" />
+		<result column="prptm_methodName" jdbcType="VARCHAR" property="methodName" />
+		<result column="prptm_paramClass" jdbcType="VARCHAR" property="paramClass" />
+		<result column="prptm_desc" jdbcType="VARCHAR" property="desc" />
+		<result column="prptm_submitParamJson" jdbcType="VARCHAR" property="submitParamJson" />
+		<result column="prptm_feeRate" jdbcType="INTEGER" property="feeRate" />
+		<result column="prptm_state" jdbcType="VARCHAR" property="state" />
+		<result column="prptm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="prptm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="prptm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
+		<result column="prptm_minAmt" jdbcType="BIGINT" property="minAmt" />
+		<result column="prptm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
+		<result column="pratm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+	</resultMap>
+	
+	<resultMap id="ralProviderTransModeResultMap1" type="cn.com.payment.admin.model.RalProviderTransMode" extends="ralProviderTransModeResultMap">
+		<collection column="ppa_providerId" property="provider" select="cn.com.payment.admin.mapper.ProviderMapper.selectOne"/>
+	</resultMap>
+	
+	<resultMap id="ralProviderTransModeResultMap2" type="cn.com.payment.admin.model.RalProviderTransMode" extends="ralProviderTransModeResultMap">
+		<result column="ptm_transModeName" jdbcType="VARCHAR" property="transModeName" />
+		<result column="pp_providerAlias" jdbcType="VARCHAR" property="providerAlias" />
+	</resultMap>
+	
+	<insert id="save" parameterType="RalProviderTransMode" useGeneratedKeys="true" keyProperty="productId">
+	  INSERT INTO pay_ral_provider_trans_mode
+	  (prptm_productName,prptm_providerId,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,pratm_restrictState)
+	  VALUES 
+	  (#{productName},#{providerId},#{transModeId},#{transRecordPrefix},#{serviceName},#{methodName},#{paramClass},#{desc},#{submitParamJson},#{feeRate},#{state},NOW(),NOW(),#{totleAmtLimit},#{minAmt},#{maxAmt},#{restrictState})
+	</insert>
+
+	<insert id="insertBatch" parameterType="RalProviderTransMode">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_ral_provider_trans_mode
+		(prptm_providerId,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,pratm_restrictState)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="ralProviderTransMode" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{providerId} as prptm_providerId,
+					 #{transModeId} as prptm_transModeId,
+					 #{transRecordPrefix} as prptm_transRecordPrefix,
+					 #{serviceName} as prptm_serviceName,
+					 #{methodName} as prptm_methodName,
+					 #{paramClass} as prptm_paramClass,
+					 #{desc} as prptm_desc,
+					 #{submitParamJson} as prptm_submitParamJson,
+					 #{feeRate} as prptm_feeRate,
+					 #{state} as prptm_state,
+					 #{createTime} as prptm_createTime,
+					 #{updateTime} as prptm_updateTime,
+					 #{totleAmtLimit} as prptm_totleAmtLimit,
+					 #{minAmt} as prptm_minAmt,
+					 #{maxAmt} as prptm_maxAmt,
+					 #{restrictState} as pratm_restrictState
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="RalProviderTransMode">
+		UPDATE pay_ral_provider_trans_mode
+		<set>
+		  <if test="productId !=null and productId >= 0 "> 
+			 prptm_productId = #{productId},
+	      </if>
+	      <if test="productName !=null and productName!='' ">
+			 prptm_productName=#{productName},  
+		  </if> 
+		  <if test="providerId !=null and providerId >= 0 "> 
+			 prptm_providerId = #{providerId},
+	      </if>
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 prptm_transModeId = #{transModeId},
+	      </if>
+		  <if test="transRecordPrefix !=null and transRecordPrefix!='' ">
+			 prptm_transRecordPrefix=#{transRecordPrefix},  
+		  </if> 
+		  <if test="serviceName !=null and serviceName!='' ">
+			 prptm_serviceName=#{serviceName},  
+		  </if> 
+		  <if test="methodName !=null and methodName!='' ">
+			 prptm_methodName=#{methodName},  
+		  </if> 
+		  <if test="paramClass !=null and paramClass!='' ">
+			 prptm_paramClass=#{paramClass},  
+		  </if> 
+		  <if test="desc !=null and desc!='' ">
+			 prptm_desc=#{desc},  
+		  </if> 
+		  <if test="submitParamJson !=null and submitParamJson!='' ">
+			 prptm_submitParamJson=#{submitParamJson},  
+		  </if> 
+		  <if test="feeRate !=null and feeRate!='' ">
+			 prptm_feeRate=#{feeRate},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 prptm_state=#{state},  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 "> 
+			 prptm_totleAmtLimit = #{totleAmtLimit},
+	      </if>
+		  <if test="minAmt !=null and minAmt >= 0 "> 
+			 prptm_minAmt = #{minAmt},
+	      </if>
+		  <if test="maxAmt !=null and maxAmt >= 0 "> 
+			 prptm_maxAmt = #{maxAmt},
+	      </if>
+		  <if test="restrictState !=null and restrictState!='' ">
+			 pratm_restrictState=#{restrictState}, 
+		  </if> 
+		     prptm_updateTime=NOW() 
+		</set>
+		WHERE prptm_productId = #{productId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_ral_provider_trans_mode WHERE prptm_productId = #{productId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_ral_provider_trans_mode WHERE prptm_productId IN
+		<foreach collection="array" item="productId" open="(" separator="," close=")">
+			 #{productId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="RalProviderTransMode"> 
+		DELETE FROM pay_ral_provider_trans_mode WHERE prptm_productId = #{productId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_ral_provider_trans_mode where prptm_productId = #{productId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralProviderTransModeResultMap1">
+		select * from pay_ral_provider_trans_mode
+		where prptm_productId = #{productId}
+	</select>
+	
+	<select id="selectByProviderId" parameterType="java.lang.Long" resultMap="ralProviderTransModeResultMap">
+		select * from pay_ral_provider_trans_mode
+		where prptm_providerId=#{providerId} and prptm_state = '1'
+	</select>
+	
+	<select id="selectAll" resultMap="ralProviderTransModeResultMap">
+		select * from pay_ral_provider_trans_mode
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="ralProviderTransModeResultMap">
+		select * from pay_ral_provider_trans_mode
+		where prptm_productId in
+		<foreach collection="array" item="productId" open="(" separator="," close=")">
+			 #{productId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="RalProviderTransMode" resultMap="ralProviderTransModeResultMap2">
+	  SELECT 
+	   ptm.*,
+	   tm.ptm_transModeName,
+	   p.pp_providerAlias
+	  FROM 
+	  	pay_ral_provider_trans_mode ptm
+	  LEFT JOIN 
+	  	pay_trans_mode tm ON prptm_transModeId = ptm_transModeId
+	  LEFT JOIN 
+	  	pay_provider p ON prptm_providerId = pp_providerId
+		<where>
+		  <if test="productId !=null and productId >= 0 ">
+			 prptm_productId=#{productId}  
+		  </if> 
+		  <if test="providerId !=null and providerId >= 0 ">
+			AND prptm_providerId=#{providerId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND prptm_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="transRecordPrefix !=null and transRecordPrefix!='' ">
+			AND prptm_transRecordPrefix=#{transRecordPrefix}  
+		  </if> 
+	      <if test="serviceName !=null and serviceName!='' ">
+			AND prptm_serviceName=#{serviceName}  
+		  </if> 
+	      <if test="methodName !=null and methodName!='' ">
+			AND prptm_methodName=#{methodName}  
+		  </if> 
+	      <if test="paramClass !=null and paramClass!='' ">
+			AND prptm_paramClass=#{paramClass}  
+		  </if> 
+	      <if test="desc !=null and desc!='' ">
+			AND prptm_desc=#{desc}  
+		  </if> 
+	      <if test="submitParamJson !=null and submitParamJson!='' ">
+			AND prptm_submitParamJson=#{submitParamJson}  
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND prptm_feeRate=#{feeRate}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND prptm_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND prptm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND prptm_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND prptm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND prptm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND prptm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND pratm_restrictState=#{restrictState}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="RalProviderTransMode" resultMap="ralProviderTransModeResultMap">
+	  SELECT * FROM pay_ral_provider_trans_mode 
+		<where>
+		  <if test="productId !=null and productId >= 0 ">
+			 prptm_productId=#{productId}  
+		  </if> 
+		  <if test="providerId !=null and providerId >= 0 ">
+			AND prptm_providerId=#{providerId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND prptm_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="transRecordPrefix !=null and transRecordPrefix!='' ">
+			AND prptm_transRecordPrefix=#{transRecordPrefix}  
+		  </if> 
+	      <if test="serviceName !=null and serviceName!='' ">
+			AND prptm_serviceName=#{serviceName}  
+		  </if> 
+	      <if test="methodName !=null and methodName!='' ">
+			AND prptm_methodName=#{methodName}  
+		  </if> 
+	      <if test="paramClass !=null and paramClass!='' ">
+			AND prptm_paramClass=#{paramClass}  
+		  </if> 
+	      <if test="desc !=null and desc!='' ">
+			AND prptm_desc=#{desc}  
+		  </if> 
+	      <if test="submitParamJson !=null and submitParamJson!='' ">
+			AND prptm_submitParamJson=#{submitParamJson}  
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND prptm_feeRate=#{feeRate}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND prptm_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND prptm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND prptm_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND prptm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND prptm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND prptm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND pratm_restrictState=#{restrictState}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		prptm_transRecordPrefix LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_serviceName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_methodName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_paramClass LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_desc LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_submitParamJson LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pratm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

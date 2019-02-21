@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.ProviderMapper">
+	<resultMap type="cn.com.payment.admin.model.Provider" id="providerResultMap">
+		<id column="pp_providerId" jdbcType="BIGINT" property="providerId" />
+		<result column="pp_providerAgentId" jdbcType="BIGINT" property="providerAgentId" />
+		<result column="pp_providerNo" jdbcType="VARCHAR" property="providerNo" />
+		<result column="pp_providerAlias" jdbcType="VARCHAR" property="providerAlias" />
+		<result column="pp_providerName" jdbcType="VARCHAR" property="providerName" />
+		<result column="pp_createTime" jdbcType="VARCHAR" property="createTime" />
+		<result column="pp_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pp_serverUrl" jdbcType="VARCHAR" property="serverUrl" />
+		<result column="pp_serverNo" jdbcType="VARCHAR" property="serverNo" />
+	</resultMap>
+	
+	<resultMap id="providerResultMap2" type="cn.com.payment.admin.model.Provider" extends="providerResultMap">
+		<collection column="pp_providerId" property="providerAccounts" select="cn.com.payment.admin.mapper.ProviderAccountMapper.selectByProviderId"/>
+	</resultMap>
+	
+	<resultMap id="providerResultMap3" type="cn.com.payment.admin.model.Provider" extends="providerResultMap">
+		<collection column="pp_providerId" property="ralProviderTransModes" select="cn.com.payment.admin.mapper.RalProviderTransModeMapper.selectByProviderId"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="Provider" useGeneratedKeys="true" keyProperty="providerId">
+	  INSERT INTO pay_provider
+	  (pp_providerAgentId,pp_providerNo,pp_providerAlias,pp_providerName,pp_createTime,pp_updateTime,pp_serverUrl,pp_serverNo)
+	  VALUES 
+	  (#{providerAgentId},#{providerNo},#{providerAlias},#{providerName},NOW(),NOW(),#{serverUrl},#{serverNo})
+	</insert>
+
+	<insert id="insertBatch" parameterType="Provider">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_provider
+		(pp_providerAgentId,pp_providerNo,pp_providerAlias,pp_providerName,pp_createTime,pp_updateTime,pp_serverUrl,pp_serverNo)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="provider" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{providerAgentId} as pp_providerAgentId,
+					 #{providerNo} as pp_providerNo,
+					 #{providerAlias} as pp_providerAlias,
+					 #{providerName} as pp_providerName,
+					 #{createTime} as pp_createTime,
+					 #{updateTime} as pp_updateTime,
+					 #{serverUrl} as pp_serverUrl,
+					 #{serverNo} as pp_serverNo
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="Provider">
+		UPDATE pay_provider
+		<set>
+		  <if test="providerId !=null and providerId >= 0 "> 
+			 pp_providerId = #{providerId},
+	      </if>
+		  <if test="providerAgentId !=null and providerAgentId >= 0 "> 
+			 pp_providerAgentId = #{providerAgentId},
+	      </if>
+		  <if test="providerNo !=null and providerNo!='' ">
+			 pp_providerNo=#{providerNo},  
+		  </if> 
+		  <if test="providerAlias !=null and providerAlias!='' ">
+			 pp_providerAlias=#{providerAlias},  
+		  </if> 
+		  <if test="providerName !=null and providerName!='' ">
+			 pp_providerName=#{providerName},  
+		  </if> 
+		  <if test="serverUrl !=null and serverUrl!='' ">
+			 pp_serverUrl=#{serverUrl},  
+		  </if> 
+		  <if test="serverNo !=null and serverNo!='' ">
+			 pp_serverNo=#{serverNo},
+		  </if> 
+		  	 pp_updateTime=NOW()
+		</set>
+		WHERE pp_providerId = #{providerId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_provider WHERE pp_providerId = #{providerId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_provider WHERE pp_providerId IN
+		<foreach collection="array" item="providerId" open="(" separator="," close=")">
+			 #{providerId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="Provider"> 
+		DELETE FROM pay_provider WHERE pp_providerId = #{providerId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_provider where pp_providerId = #{providerId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="providerResultMap">
+		select * from pay_provider
+		where pp_providerId = #{providerId}
+	</select>
+	
+	<select id="selectAll" resultMap="providerResultMap">
+		select * from pay_provider
+	</select>
+	
+	<select id="selectProviderAccTree" parameterType="Provider" resultMap="providerResultMap2">
+		select * from pay_provider
+		where 1=1
+	</select>
+	
+	<select id="selectProviderTransModeTree" parameterType="Provider" resultMap="providerResultMap3">
+		select * from pay_provider
+		where 1=1
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="providerResultMap">
+		select * from pay_provider
+		where pp_providerId in
+		<foreach collection="array" item="providerId" open="(" separator="," close=")">
+			 #{providerId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="Provider" resultMap="providerResultMap">
+	  SELECT * FROM pay_provider 
+		<where>
+		  <if test="providerId !=null and providerId >= 0 ">
+			 pp_providerId=#{providerId}  
+		  </if> 
+		  <if test="providerAgentId !=null and providerAgentId >= 0 ">
+			AND pp_providerAgentId=#{providerAgentId} 
+		  </if> 
+	      <if test="providerNo !=null and providerNo!='' ">
+			AND pp_providerNo=#{providerNo}  
+		  </if> 
+	      <if test="providerAlias !=null and providerAlias!='' ">
+			AND pp_providerAlias=#{providerAlias}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND pp_providerName=#{providerName}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND pp_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pp_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="serverUrl !=null and serverUrl!='' ">
+			AND pp_serverUrl=#{serverUrl}  
+		  </if> 
+	      <if test="serverNo !=null and serverNo!='' ">
+			AND pp_serverNo=#{serverNo}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="Provider" resultMap="providerResultMap">
+	  SELECT * FROM pay_provider 
+		<where>
+		  <if test="providerId !=null and providerId >= 0 ">
+			 pp_providerId=#{providerId}  
+		  </if> 
+		  <if test="providerAgentId !=null and providerAgentId >= 0 ">
+			AND pp_providerAgentId=#{providerAgentId} 
+		  </if> 
+	      <if test="providerNo !=null and providerNo!='' ">
+			AND pp_providerNo=#{providerNo}  
+		  </if> 
+	      <if test="providerAlias !=null and providerAlias!='' ">
+			AND pp_providerAlias=#{providerAlias}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND pp_providerName=#{providerName}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND pp_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pp_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="serverUrl !=null and serverUrl!='' ">
+			AND pp_serverUrl=#{serverUrl}  
+		  </if> 
+	      <if test="serverNo !=null and serverNo!='' ">
+			AND pp_serverNo=#{serverNo}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pp_providerNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pp_providerAlias LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pp_providerName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pp_createTime LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pp_serverUrl LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pp_serverNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

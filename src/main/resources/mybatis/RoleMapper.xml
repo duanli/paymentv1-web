@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.RoleMapper">
+	<resultMap type="Role" id="roleResultMap">
+  	   <id column="sr_id" property="id" />
+  	   <result column="sr_name" property="name" />
+  	   <result column="sr_enName" property="enName" />
+  	   <result column="sr_remark" property="remark" />
+  	   <result column="sr_isDel" property="isDel" />
+  	   <result column="sr_updateDate" property="updateDate" />
+  	   <result column="sr_createDate" property="createDate" />
+  	   <result column="sr_reserved1" property="reserved1" />
+  	   <result column="sr_reserved2" property="reserved2" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="Role" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO sys_role(sr_name,sr_enName,sr_remark,sr_isDel,sr_updateDate,sr_createDate,sr_reserved1,sr_reserved2)
+	  VALUES (#{name},#{enName},#{remark},0,NOW(),NOW(),#{reserved1},#{reserved2})
+	</insert>
+
+	<delete id="delByIds">
+	  DELETE FROM sys_role WHERE sr_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="Role">
+		UPDATE sys_role SET
+		sr_id=#{id},sr_name=#{name},sr_enName=#{enName},sr_remark=#{remark},sr_isDel=#{isDel},sr_updateDate=NOW(),sr_reserved1=#{reserved1},sr_reserved2=#{reserved2}
+		WHERE sr_id=#{id}
+	</update>
+	
+	<select id="selectById" parameterType="long" resultMap="roleResultMap">
+	    SELECT * FROM sys_role WHERE sr_id=#{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="roleResultMap">
+		SELECT * FROM sys_role WHERE sr_id=#{id}
+	</select>
+	
+	<select id="selectByProperty" parameterType="Role" resultMap="roleResultMap">
+	  SELECT * FROM sys_role WHERE 1=1
+	    <if test="id !=null and id!=''">
+	      AND sr_id = #{id}
+	    </if>
+	    <if test="name !=null and name!=''">
+	      AND sr_name = #{name}
+	    </if>
+	    <if test="enName !=null and enName!=''">
+	      AND sr_enName = #{enName}
+	    </if>
+	</select>
+	
+	<select id="selectByPage" parameterType="Role" resultMap="roleResultMap">
+	    SELECT * FROM sys_role 
+	</select>
+	
+	<select id="selectAdminRolesByFK" parameterType="long" resultMap="roleResultMap">
+		SELECT r.sr_id,r.sr_name,sr_enName FROM sys_role r
+		INNER JOIN sys_admin_role a ON r.sr_id = a.sar_roleId
+		WHERE a.sar_adminId = #{_parameter}
+	</select>
+</mapper>

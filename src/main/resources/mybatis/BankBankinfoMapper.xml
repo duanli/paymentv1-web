@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.BankBankinfoMapper">
+	<resultMap type="cn.com.payment.admin.model.BankBankinfo" id="bankBankinfoResultMap">
+		<id column="pbb_id" jdbcType="BIGINT" property="id" />
+		<result column="pbb_code" jdbcType="VARCHAR" property="code" />
+		<result column="pbb_name" jdbcType="VARCHAR" property="name" />
+	</resultMap>
+	
+	<insert id="save" parameterType="BankBankinfo" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO pay_bank_bankinfo
+	  (pbb_code,pbb_name)
+	  VALUES 
+	  (#{code},#{name})
+	</insert>
+
+	<insert id="insertBatch" parameterType="BankBankinfo">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_bank_bankinfo
+		(pbb_code,pbb_name)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="bankBankinfo" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{code} as pbb_code,
+					 #{name} as pbb_name
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="BankBankinfo">
+		UPDATE pay_bank_bankinfo
+		<set>
+		  <if test="id !=null and id >= 0 "> 
+			 pbb_id = #{id},
+	      </if>
+		  <if test="code !=null and code!='' ">
+			 pbb_code=#{code},  
+		  </if> 
+		  <if test="name !=null and name!='' ">
+			 pbb_name=#{name}  
+		  </if> 
+		</set>
+		WHERE pbb_id = #{id}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_bank_bankinfo WHERE pbb_id = #{id}
+	</delete>
+
+
+	<delete id="deleteByIds" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_bank_bankinfo WHERE pbb_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="BankBankinfo"> 
+		DELETE FROM pay_bank_bankinfo WHERE pbb_id = #{id}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_bank_bankinfo where pbb_id = #{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="bankBankinfoResultMap">
+		select * from pay_bank_bankinfo
+		where pbb_id = #{id}
+	</select>
+	
+	<select id="selectAll" resultMap="bankBankinfoResultMap">
+		select * from pay_bank_bankinfo
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="bankBankinfoResultMap">
+		select * from pay_bank_bankinfo
+		where pbb_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="BankBankinfo" resultMap="bankBankinfoResultMap">
+	  SELECT * FROM pay_bank_bankinfo 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 pbb_id=#{id}  
+		  </if> 
+	      <if test="code !=null and code!='' ">
+			AND pbb_code=#{code}  
+		  </if> 
+	      <if test="name !=null and name!='' ">
+			AND pbb_name=#{name}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="BankBankinfo" resultMap="bankBankinfoResultMap">
+	  SELECT * FROM pay_bank_bankinfo 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 pbb_id=#{id}  
+		  </if> 
+	      <if test="code !=null and code!='' ">
+			AND pbb_code=#{code}  
+		  </if> 
+	      <if test="name !=null and name!='' ">
+			AND pbb_name=#{name}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pbb_code LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbb_name LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

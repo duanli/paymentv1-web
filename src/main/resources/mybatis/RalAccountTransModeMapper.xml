@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.RalAccountTransModeMapper">
+	<resultMap type="cn.com.payment.admin.model.RalAccountTransMode" id="ralAccountTransModeResultMap">
+		<id column="pratm_ralAccProductId" jdbcType="BIGINT" property="ralAccProductId" />
+		<result column="pratm_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="pratm_providerAccId" jdbcType="BIGINT" property="providerAccId" />
+		<result column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="pratm_feeRate" jdbcType="INTEGER" property="feeRate" />
+		<result column="pratm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
+		<result column="pratm_minAmt" jdbcType="BIGINT" property="minAmt" />
+		<result column="pratm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
+		<result column="pratm_percentage" jdbcType="INTEGER" property="percentage" />
+		<result column="pratm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="pratm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="pratm_state" jdbcType="VARCHAR" property="state" />
+		<result column="pratm_isDel" jdbcType="VARCHAR" property="isDel" />
+		<result column="pratm_validIP" jdbcType="VARCHAR" property="validIP" />
+		<result column="pratm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+		<result column="pratm_settleType" jdbcType="VARCHAR" property="settleType" />
+		<result column="pratm_balance" jdbcType="BIGINT" property="balance" />
+		<result column="pratm_balanceUnaccounted" jdbcType="BIGINT" property="balanceUnaccounted" />
+		<result column="pratm_balanceFreeze" jdbcType="BIGINT" property="balanceFreeze" />
+		<result column="pratm_balanceValid" jdbcType="BIGINT" property="balanceValid" />
+	</resultMap>
+	
+<!-- 	<resultMap type="cn.com.payment.admin.model.RalProviderTransMode" id="ralProviderTransModeResultMap">
+		<id column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="prptm_providerId" jdbcType="BIGINT" property="providerId" />
+		<result column="prptm_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="prptm_transRecordPrefix" jdbcType="VARCHAR" property="transRecordPrefix" />
+		<result column="prptm_serviceName" jdbcType="VARCHAR" property="serviceName" />
+		<result column="prptm_methodName" jdbcType="VARCHAR" property="methodName" />
+		<result column="prptm_paramClass" jdbcType="VARCHAR" property="paramClass" />
+		<result column="prptm_desc" jdbcType="VARCHAR" property="desc" />
+		<result column="prptm_submitParamJson" jdbcType="VARCHAR" property="submitParamJson" />
+		<result column="prptm_feeRate" jdbcType="INTEGER" property="feeRate" />
+		<result column="prptm_state" jdbcType="VARCHAR" property="state" />
+		<result column="prptm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="prptm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="prptm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
+		<result column="prptm_minAmt" jdbcType="BIGINT" property="minAmt" />
+		<result column="prptm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
+		<result column="pratm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+	</resultMap> -->
+	
+	<resultMap id="ralAccountTransModeResultMap1" type="cn.com.payment.admin.model.RalAccountTransMode" extends="ralAccountTransModeResultMap">
+		<collection column="pratm_providerAccId" property="providerAccount" select="cn.com.payment.admin.mapper.ProviderAccountMapper.selectOne"/>
+		<collection column="pratm_mchId" property="merchantInfo" select="cn.com.payment.admin.mapper.MerchantInfoMapper.selectOne"/>
+		<collection column="prptm_productId" property="ralProviderTransMode" select="cn.com.payment.admin.mapper.RalProviderTransModeMapper.selectOne"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="RalAccountTransMode" useGeneratedKeys="true" keyProperty="ralAccProductId">
+	  INSERT INTO pay_ral_account_trans_mode
+	  (pratm_mchId,pratm_providerAccId,prptm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
+	  VALUES 
+	  (#{mchId},#{providerAccId},#{productId},#{feeRate},#{totleAmtLimit},#{minAmt},#{maxAmt},#{percentage},NOW(),NOW(),#{state},#{isDel},#{validIP},#{restrictState},#{settleType},#{balance},#{balanceUnaccounted},#{balanceFreeze},#{balanceValid})
+	</insert>
+
+	<insert id="insertBatch" parameterType="RalAccountTransMode">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_ral_account_trans_mode
+		(pratm_mchId,pratm_providerAccId,prptm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="ralAccountTransMode" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{mchId} as pratm_mchId,
+					 #{providerAccId} as pratm_providerAccId,
+					 #{productId} as prptm_productId,
+					 #{feeRate} as pratm_feeRate,
+					 #{totleAmtLimit} as pratm_totleAmtLimit,
+					 #{minAmt} as pratm_minAmt,
+					 #{maxAmt} as pratm_maxAmt,
+					 #{percentage} as pratm_percentage,
+					 #{createTime} as pratm_createTime,
+					 #{updateTime} as pratm_updateTime,
+					 #{state} as pratm_state,
+					 #{isDel} as pratm_isDel,
+					 #{validIP} as pratm_validIP,
+					 #{restrictState} as pratm_restrictState,
+					 #{settleType} as pratm_settleType,
+					 #{balance} as pratm_balance,
+					 #{balanceUnaccounted} as pratm_balanceUnaccounted,
+					 #{balanceFreeze} as pratm_balanceFreeze,
+					 #{balanceValid} as pratm_balanceValid
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	<update id="update" parameterType="RalAccountTransMode">
+		UPDATE pay_ral_account_trans_mode
+		<set>
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 "> 
+			 pratm_ralAccProductId = #{ralAccProductId},
+	      </if>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 pratm_mchId = #{mchId},
+	      </if>
+		  <if test="providerAccId !=null and providerAccId >= 0 "> 
+			 pratm_providerAccId = #{providerAccId},
+	      </if>
+		  <if test="productId !=null and productId >= 0 "> 
+			 prptm_productId = #{productId},
+	      </if>
+		  <if test="feeRate !=null and feeRate!='' ">
+			 pratm_feeRate=#{feeRate},  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 "> 
+			 pratm_totleAmtLimit = #{totleAmtLimit},
+	      </if>
+		  <if test="minAmt !=null and minAmt >= 0 "> 
+			 pratm_minAmt = #{minAmt},
+	      </if>
+		  <if test="maxAmt !=null and maxAmt >= 0 "> 
+			 pratm_maxAmt = #{maxAmt},
+	      </if>
+		  <if test="percentage !=null and percentage!='' ">
+			 pratm_percentage=#{percentage},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 pratm_state=#{state},  
+		  </if> 
+		  <if test="isDel !=null and isDel!='' ">
+			 pratm_isDel=#{isDel},  
+		  </if> 
+		  <if test="validIP !=null and validIP!='' ">
+			 pratm_validIP=#{validIP},  
+		  </if> 
+		  <if test="restrictState !=null and restrictState!='' ">
+			 pratm_restrictState=#{restrictState},  
+		  </if> 
+		  <if test="settleType !=null and settleType!='' ">
+			 pratm_settleType=#{settleType},  
+		  </if> 
+		  <if test="balanceValid !=null and balanceValid >= 0 "> 
+			 pratm_balanceValid = #{balanceValid},
+	      </if>
+	       pratm_updateTime=#{updateTime}
+		</set>
+		WHERE pratm_ralAccProductId = #{ralAccProductId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_ral_account_trans_mode WHERE pratm_ralAccProductId = #{ralAccProductId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_ral_account_trans_mode WHERE pratm_ralAccProductId IN
+		<foreach collection="array" item="ralAccProductId" open="(" separator="," close=")">
+			 #{ralAccProductId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="RalAccountTransMode"> 
+		DELETE FROM pay_ral_account_trans_mode WHERE pratm_ralAccProductId = #{ralAccProductId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_ral_account_trans_mode where pratm_ralAccProductId = #{ralAccProductId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralAccountTransModeResultMap">
+		select * from pay_ral_account_trans_mode
+		where pratm_ralAccProductId = #{ralAccProductId}
+	</select>
+	
+	<select id="selectByMchId" parameterType="java.lang.Long" resultMap="ralAccountTransModeResultMap">
+		select * from pay_ral_account_trans_mode
+		where pratm_mchId=#{mchId} 
+		and pratm_state = '1'
+	</select>
+	
+	<select id="selectAll" resultMap="ralAccountTransModeResultMap">
+		select * from pay_ral_account_trans_mode
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="ralAccountTransModeResultMap">
+		select * from pay_ral_account_trans_mode
+		where pratm_ralAccProductId in
+		<foreach collection="array" item="ralAccProductId" open="(" separator="," close=")">
+			 #{ralAccProductId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="RalAccountTransMode" resultMap="ralAccountTransModeResultMap1">
+	  SELECT 
+		  ratm.*
+	  FROM 
+	  	  pay_ral_account_trans_mode ratm
+	  LEFT JOIN 
+	  	  pay_ral_provider_trans_mode rptm ON ratm.prptm_productId = rptm.prptm_productId
+		<where>
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
+			 pratm_ralAccProductId=#{ralAccProductId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND pratm_mchId=#{mchId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND pratm_providerAccId=#{providerAccId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND prptm_productId=#{productId} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pratm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND pratm_isDel=#{isDel}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND pratm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND pratm_settleType=#{settleType}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId!='' ">
+			AND prptm_transModeId=#{transModeId}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="RalAccountTransMode" resultMap="ralAccountTransModeResultMap">
+	  SELECT * FROM pay_ral_account_trans_mode 
+		<where>
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
+			 pratm_ralAccProductId=#{ralAccProductId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND pratm_mchId=#{mchId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND pratm_providerAccId=#{providerAccId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND prptm_productId=#{productId} 
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND pratm_feeRate=#{feeRate}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND pratm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND pratm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND pratm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="percentage !=null and percentage!='' ">
+			AND pratm_percentage=#{percentage}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND pratm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND pratm_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND pratm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND pratm_isDel=#{isDel}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND pratm_validIP=#{validIP}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND pratm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND pratm_settleType=#{settleType}  
+		  </if> 
+		  <if test="balance !=null and balance >= 0 ">
+			AND pratm_balance=#{balance} 
+		  </if> 
+		  <if test="balanceUnaccounted !=null and balanceUnaccounted >= 0 ">
+			AND pratm_balanceUnaccounted=#{balanceUnaccounted} 
+		  </if> 
+		  <if test="balanceFreeze !=null and balanceFreeze >= 0 ">
+			AND pratm_balanceFreeze=#{balanceFreeze} 
+		  </if> 
+		  <if test="balanceValid !=null and balanceValid >= 0 ">
+			AND pratm_balanceValid=#{balanceValid} 
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pratm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pratm_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pratm_validIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pratm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pratm_settleType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

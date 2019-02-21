@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.LogMapper">
+	<resultMap type="cn.com.payment.admin.model.Log" id="logResultMap">
+		<id column="sl_logId" jdbcType="BIGINT" property="logId" />
+		<result column="sl_type" jdbcType="VARCHAR" property="type" />
+		<result column="sl_title" jdbcType="VARCHAR" property="title" />
+		<result column="sl_userId" jdbcType="VARCHAR" property="userId" />
+		<result column="sl_startDate" jdbcType="TIMESTAMP" property="startDate" />
+		<result column="sl_timeout" jdbcType="VARCHAR" property="timeout" />
+		<result column="sl_remoteAddr" jdbcType="VARCHAR" property="remoteAddr" />
+		<result column="sl_userAgent" jdbcType="VARCHAR" property="userAgent" />
+		<result column="sl_requestUri" jdbcType="VARCHAR" property="requestUri" />
+		<result column="sl_method" jdbcType="VARCHAR" property="method" />
+		<result column="sl_params" jdbcType="VARCHAR" property="params" />
+		<result column="sl_remark" jdbcType="VARCHAR" property="remark" />
+	</resultMap>
+	<resultMap id="logResultMap1" type="cn.com.payment.admin.model.Log" extends="logResultMap">
+		<collection column="sl_userId" property="user" select="cn.com.payment.admin.mapper.AdminMapper.selectById"/>
+	</resultMap>
+	<insert id="insert" parameterType="Log" useGeneratedKeys="true" keyProperty="logId">
+	  INSERT INTO sys_log
+	  (sl_type,sl_title,sl_userId,sl_startDate,sl_timeout,sl_remoteAddr,sl_userAgent,sl_requestUri,sl_method,sl_params,sl_remark)
+	  VALUES 
+	  (#{type},#{title},#{userId},#{startDate},#{timeout},#{remoteAddr},#{userAgent},#{requestUri},#{method},#{params},#{remark})
+	</insert>
+
+	<insert id="insertBatch" parameterType="Log">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		sys_log
+		(sl_type,sl_title,sl_userId,sl_startDate,sl_timeout,sl_remoteAddr,sl_userAgent,sl_requestUri,sl_method,sl_params,sl_remark)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="log" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{log.type} as sl_type,
+					 #{log.title} as sl_title,
+					 #{log.userId} as sl_userId,
+					 #{log.startDate} as sl_startDate,
+					 #{log.timeout} as sl_timeout,
+					 #{log.remoteAddr} as sl_remoteAddr,
+					 #{log.userAgent} as sl_userAgent,
+					 #{log.requestUri} as sl_requestUri,
+					 #{log.method} as sl_method,
+					 #{log.params} as sl_params,
+					 #{log.remark} as sl_remark
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="Log">
+		UPDATE sys_log
+		<set>
+		  <if test="logId !=null and logId >= 0 "> 
+			 sl_logId = #{logId},
+	      </if>
+		  <if test="type !=null and type!='' ">
+			 sl_type=#{type},  
+		  </if> 
+		  <if test="title !=null and title!='' ">
+			 sl_title=#{title},  
+		  </if> 
+		  <if test="userId !=null and userId!='' ">
+			 sl_userId=#{userId},  
+		  </if> 
+		  <if test="startDate !=null and startDate!='' ">
+			 sl_startDate=#{startDate},  
+		  </if> 
+		  <if test="timeout !=null and timeout!='' ">
+			 sl_timeout=#{timeout},  
+		  </if> 
+		  <if test="remoteAddr !=null and remoteAddr!='' ">
+			 sl_remoteAddr=#{remoteAddr},  
+		  </if> 
+		  <if test="userAgent !=null and userAgent!='' ">
+			 sl_userAgent=#{userAgent},  
+		  </if> 
+		  <if test="requestUri !=null and requestUri!='' ">
+			 sl_requestUri=#{requestUri},  
+		  </if> 
+		  <if test="method !=null and method!='' ">
+			 sl_method=#{method},  
+		  </if> 
+		  <if test="params !=null and params!='' ">
+			 sl_params=#{params},  
+		  </if> 
+		  <if test="remark !=null and remark!='' ">
+			 sl_remark=#{remark}  
+		  </if> 
+		</set>
+		WHERE sl_logId = #{logId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM sys_log WHERE sl_logId = #{logId}
+	</delete>
+
+
+	<delete id="delByIds" parameterType="java.util.ArrayList">
+	  DELETE FROM sys_log WHERE sl_logId IN
+		<foreach collection="array" item="logId" open="(" separator="," close=")">
+			 #{logId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="Log"> 
+		DELETE FROM sys_log WHERE sl_logId = #{logId}
+	</delete>
+		
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from sys_log where sl_logId = #{logId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="logResultMap">
+		select * from sys_log
+		where sl_logId = #{logId}
+	</select>
+	
+	<select id="selectAll" resultMap="logResultMap">
+		select * from sys_log
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="logResultMap">
+		select * from sys_log
+		where sl_logId in
+		<foreach collection="array" item="logId" open="(" separator="," close=")">
+			 #{logId}
+		</foreach>
+	</select>
+		 
+	<select id="selectByProperty" parameterType="Log" resultMap="logResultMap1">
+	  SELECT * FROM sys_log l
+	    <if test="userName !=null and userName != '' ">
+			LEFT JOIN sys_admin a ON a.sa_id=l.sl_userId
+		</if> 
+		<where>
+		  <if test="logId !=null and logId >= 0 ">
+			 sl_logId=#{logId}  
+		  </if> 
+	      <if test="type !=null and type!='' ">
+			AND sl_type LIKE CONCAT(CONCAT('%', #{type}),'%') 
+		  </if> 
+	      <if test="title !=null and title!='' ">
+			AND sl_title LIKE CONCAT(CONCAT('%', #{title}),'%')  
+		  </if> 
+	      <if test="userId !=null and userId!='' ">
+			AND sl_userId=#{userId}  
+		  </if> 
+	      <if test="startDate !=null and startDate!='' ">
+			AND sl_startDate=#{startDate}  
+		  </if> 
+	      <if test="timeout !=null and timeout!='' ">
+			AND sl_timeout=#{timeout}  
+		  </if> 
+	      <if test="remoteAddr !=null and remoteAddr!='' ">
+			AND sl_remoteAddr LIKE CONCAT(CONCAT('%', #{remoteAddr}),'%') 
+		  </if> 
+	      <if test="userAgent !=null and userAgent!='' ">
+			AND sl_userAgent=#{userAgent}  
+		  </if> 
+	      <if test="requestUri !=null and requestUri!='' ">
+			AND sl_requestUri=#{requestUri}  
+		  </if> 
+	      <if test="method !=null and method!='' ">
+			AND sl_method=#{method}  
+		  </if> 
+	      <if test="params !=null and params!='' ">
+			AND sl_params=#{params}  
+		  </if> 
+	      <if test="remark !=null and remark!='' ">
+			AND sl_remark=#{remark}  
+		  </if> 
+	      <if test="userName !=null and userName != '' ">
+			AND a.sa_userName  LIKE CONCAT(CONCAT('%', #{userName}),'%') 
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="Log" resultMap="logResultMap">
+	  SELECT * FROM sys_log
+		<where>
+		  <if test="logId !=null and logId >= 0 ">
+			 sl_logId=#{logId}  
+		  </if> 
+	      <if test="type !=null and type!='' ">
+			AND sl_type=#{type}  
+		  </if> 
+	      <if test="title !=null and title!='' ">
+			AND sl_title LIKE CONCAT(CONCAT('%', #{title}),'%') 
+		  </if> 
+	      <if test="userId !=null and userId!='' ">
+			AND sl_userId=#{userId}  
+		  </if> 
+	      <if test="startDate !=null and startDate!='' ">
+			AND sl_startDate=#{startDate}  
+		  </if> 
+	      <if test="timeout !=null and timeout!='' ">
+			AND sl_timeout=#{timeout}  
+		  </if> 
+	      <if test="remoteAddr !=null and remoteAddr!='' ">
+			AND sl_remoteAddr LIKE CONCAT(CONCAT('%', #{remoteAddr}),'%') 
+		  </if> 
+	      <if test="userAgent !=null and userAgent!='' ">
+			AND sl_userAgent=#{userAgent}  
+		  </if> 
+	      <if test="requestUri !=null and requestUri!='' ">
+			AND sl_requestUri=#{requestUri}  
+		  </if> 
+	      <if test="method !=null and method!='' ">
+			AND sl_method=#{method}  
+		  </if> 
+	      <if test="params !=null and params!='' ">
+			AND sl_params=#{params}  
+		  </if> 
+	      <if test="remark !=null and remark!='' ">
+			AND sl_remark=#{remark}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		sl_type LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_title LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_userId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_timeout LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_remoteAddr LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_userAgent LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_requestUri LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_method LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_params LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		sl_remark LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

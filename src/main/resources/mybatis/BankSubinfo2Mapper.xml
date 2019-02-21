@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.BankSubinfo2Mapper">
+	<resultMap type="cn.com.payment.admin.model.BankSubinfo2" id="bankSubinfo2ResultMap">
+		<id column="pbs_id" jdbcType="BIGINT" property="id" />
+		<result column="pbs_subBankName" jdbcType="VARCHAR" property="subBankName" />
+		<result column="pbs_lineNo" jdbcType="VARCHAR" property="lineNo" />
+		<result column="pbs_bankCode" jdbcType="VARCHAR" property="bankCode" />
+		<result column="pbs_areaCode" jdbcType="VARCHAR" property="areaCode" />
+		<result column="pbs_bankName" jdbcType="VARCHAR" property="bankName" />
+		<result column="pbs_district" jdbcType="VARCHAR" property="district" />
+		<result column="pbs_levelName" jdbcType="VARCHAR" property="levelName" />
+		<result column="pbs_cityName" jdbcType="VARCHAR" property="cityName" />
+		<result column="pbs_provinceName" jdbcType="VARCHAR" property="provinceName" />
+		<result column="pbs_provinceNameAlias" jdbcType="VARCHAR" property="provinceNameAlias" />
+		<result column="pbs_areaId" jdbcType="VARCHAR" property="areaId" />
+		<result column="pbs_contry" jdbcType="VARCHAR" property="contry" />
+		<result column="pbs_bankNo" jdbcType="VARCHAR" property="bankNo" />
+		<result column="pbs_bankGroup" jdbcType="VARCHAR" property="bankGroup" />
+	</resultMap>
+	
+	<insert id="save" parameterType="BankSubinfo2" useGeneratedKeys="true" keyProperty="id">
+	  INSERT INTO pay_bank_subinfo2
+	  (pbs_subBankName,pbs_lineNo,pbs_bankCode,pbs_areaCode,pbs_bankName,pbs_district,pbs_levelName,pbs_cityName,pbs_provinceName,pbs_provinceNameAlias,pbs_areaId,pbs_contry,pbs_bankNo,pbs_bankGroup)
+	  VALUES 
+	  (#{subBankName},#{lineNo},#{bankCode},#{areaCode},#{bankName},#{district},#{levelName},#{cityName},#{provinceName},#{provinceNameAlias},#{areaId},#{contry},#{bankNo},#{bankGroup})
+	</insert>
+
+	<insert id="insertBatch" parameterType="BankSubinfo2">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_bank_subinfo2
+		(pbs_subBankName,pbs_lineNo,pbs_bankCode,pbs_areaCode,pbs_bankName,pbs_district,pbs_levelName,pbs_cityName,pbs_provinceName,pbs_provinceNameAlias,pbs_areaId,pbs_contry,pbs_bankNo,pbs_bankGroup)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="bankSubinfo2" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{subBankName} as pbs_subBankName,
+					 #{lineNo} as pbs_lineNo,
+					 #{bankCode} as pbs_bankCode,
+					 #{areaCode} as pbs_areaCode,
+					 #{bankName} as pbs_bankName,
+					 #{district} as pbs_district,
+					 #{levelName} as pbs_levelName,
+					 #{cityName} as pbs_cityName,
+					 #{provinceName} as pbs_provinceName,
+					 #{provinceNameAlias} as pbs_provinceNameAlias,
+					 #{areaId} as pbs_areaId,
+					 #{contry} as pbs_contry,
+					 #{bankNo} as pbs_bankNo,
+					 #{bankGroup} as pbs_bankGroup
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="BankSubinfo2">
+		UPDATE pay_bank_subinfo2
+		<set>
+		  <if test="id !=null and id >= 0 "> 
+			 pbs_id = #{id},
+	      </if>
+		  <if test="subBankName !=null and subBankName!='' ">
+			 pbs_subBankName=#{subBankName},  
+		  </if> 
+		  <if test="lineNo !=null and lineNo!='' ">
+			 pbs_lineNo=#{lineNo},  
+		  </if> 
+		  <if test="bankCode !=null and bankCode!='' ">
+			 pbs_bankCode=#{bankCode},  
+		  </if> 
+		  <if test="areaCode !=null and areaCode!='' ">
+			 pbs_areaCode=#{areaCode},  
+		  </if> 
+		  <if test="bankName !=null and bankName!='' ">
+			 pbs_bankName=#{bankName},  
+		  </if> 
+		  <if test="district !=null and district!='' ">
+			 pbs_district=#{district},  
+		  </if> 
+		  <if test="levelName !=null and levelName!='' ">
+			 pbs_levelName=#{levelName},  
+		  </if> 
+		  <if test="cityName !=null and cityName!='' ">
+			 pbs_cityName=#{cityName},  
+		  </if> 
+		  <if test="provinceName !=null and provinceName!='' ">
+			 pbs_provinceName=#{provinceName},  
+		  </if> 
+		  <if test="provinceNameAlias !=null and provinceNameAlias!='' ">
+			 pbs_provinceNameAlias=#{provinceNameAlias},  
+		  </if> 
+		  <if test="areaId !=null and areaId!='' ">
+			 pbs_areaId=#{areaId},  
+		  </if> 
+		  <if test="contry !=null and contry!='' ">
+			 pbs_contry=#{contry},  
+		  </if> 
+		  <if test="bankNo !=null and bankNo!='' ">
+			 pbs_bankNo=#{bankNo},  
+		  </if> 
+		  <if test="bankGroup !=null and bankGroup!='' ">
+			 pbs_bankGroup=#{bankGroup}  
+		  </if> 
+		</set>
+		WHERE pbs_id = #{id}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_bank_subinfo2 WHERE pbs_id = #{id}
+	</delete>
+
+
+	<delete id="deleteByIds" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_bank_subinfo2 WHERE pbs_id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="BankSubinfo2"> 
+		DELETE FROM pay_bank_subinfo2 WHERE pbs_id = #{id}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_bank_subinfo2 where pbs_id = #{id}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="bankSubinfo2ResultMap">
+		select * from pay_bank_subinfo2
+		where pbs_id = #{id}
+	</select>
+	
+	<select id="selectAll" resultMap="bankSubinfo2ResultMap">
+		select * from pay_bank_subinfo2
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="bankSubinfo2ResultMap">
+		select * from pay_bank_subinfo2
+		where pbs_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="BankSubinfo2" resultMap="bankSubinfo2ResultMap">
+	  SELECT * FROM pay_bank_subinfo2 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 pbs_id=#{id}  
+		  </if> 
+	      <if test="subBankName !=null and subBankName!='' ">
+			AND pbs_subBankName=#{subBankName}  
+		  </if> 
+	      <if test="lineNo !=null and lineNo!='' ">
+			AND pbs_lineNo=#{lineNo}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pbs_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="areaCode !=null and areaCode!='' ">
+			AND pbs_areaCode=#{areaCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pbs_bankName=#{bankName}  
+		  </if> 
+	      <if test="district !=null and district!='' ">
+			AND pbs_district=#{district}  
+		  </if> 
+	      <if test="levelName !=null and levelName!='' ">
+			AND pbs_levelName=#{levelName}  
+		  </if> 
+	      <if test="cityName !=null and cityName!='' ">
+			AND pbs_cityName=#{cityName}  
+		  </if> 
+	      <if test="provinceName !=null and provinceName!='' ">
+			AND pbs_provinceName=#{provinceName}  
+		  </if> 
+	      <if test="provinceNameAlias !=null and provinceNameAlias!='' ">
+			AND pbs_provinceNameAlias=#{provinceNameAlias}  
+		  </if> 
+	      <if test="areaId !=null and areaId!='' ">
+			AND pbs_areaId=#{areaId}  
+		  </if> 
+	      <if test="contry !=null and contry!='' ">
+			AND pbs_contry=#{contry}  
+		  </if> 
+	      <if test="bankNo !=null and bankNo!='' ">
+			AND pbs_bankNo=#{bankNo}  
+		  </if> 
+	      <if test="bankGroup !=null and bankGroup!='' ">
+			AND pbs_bankGroup=#{bankGroup}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="BankSubinfo2" resultMap="bankSubinfo2ResultMap">
+	  SELECT * FROM pay_bank_subinfo2 
+		<where>
+		  <if test="id !=null and id >= 0 ">
+			 pbs_id=#{id}  
+		  </if> 
+	      <if test="subBankName !=null and subBankName!='' ">
+			AND pbs_subBankName=#{subBankName}  
+		  </if> 
+	      <if test="lineNo !=null and lineNo!='' ">
+			AND pbs_lineNo=#{lineNo}  
+		  </if> 
+	      <if test="bankCode !=null and bankCode!='' ">
+			AND pbs_bankCode=#{bankCode}  
+		  </if> 
+	      <if test="areaCode !=null and areaCode!='' ">
+			AND pbs_areaCode=#{areaCode}  
+		  </if> 
+	      <if test="bankName !=null and bankName!='' ">
+			AND pbs_bankName=#{bankName}  
+		  </if> 
+	      <if test="district !=null and district!='' ">
+			AND pbs_district=#{district}  
+		  </if> 
+	      <if test="levelName !=null and levelName!='' ">
+			AND pbs_levelName=#{levelName}  
+		  </if> 
+	      <if test="cityName !=null and cityName!='' ">
+			AND pbs_cityName=#{cityName}  
+		  </if> 
+	      <if test="provinceName !=null and provinceName!='' ">
+			AND pbs_provinceName=#{provinceName}  
+		  </if> 
+	      <if test="provinceNameAlias !=null and provinceNameAlias!='' ">
+			AND pbs_provinceNameAlias=#{provinceNameAlias}  
+		  </if> 
+	      <if test="areaId !=null and areaId!='' ">
+			AND pbs_areaId=#{areaId}  
+		  </if> 
+	      <if test="contry !=null and contry!='' ">
+			AND pbs_contry=#{contry}  
+		  </if> 
+	      <if test="bankNo !=null and bankNo!='' ">
+			AND pbs_bankNo=#{bankNo}  
+		  </if> 
+	      <if test="bankGroup !=null and bankGroup!='' ">
+			AND pbs_bankGroup=#{bankGroup}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		pbs_subBankName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_lineNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_bankCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_areaCode LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_bankName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_district LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_levelName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_cityName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_provinceName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_provinceNameAlias LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_areaId LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_contry LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_bankNo LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		pbs_bankGroup LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+@CHARSET "UTF-8";
+/* html,body{width:100%;height: 100%;background-color:#DCDCDC;;background-repeat: no-repeat;background-size: 100% 100%} */
+
+.title{width: 100%;height: 68px;color: white;}
+.opacity{width: 100%;height: 68px;background-color: black;opacity: 0;filter:alpha(opacity=20);border-bottom: 1px solid white;position: absolute;top: 0px;left：0px;}
+.box{width: 100%;height: 68px;position: absolute;top: 15px;left：0px;}
+.welcome{height: 40px;line-height: 40px;float: left;margin-left: 30px;}
+.button{float: right;margin-right: 30px;}
+.buttonnav{float: right;margin-right: 160px;}
+.button ul li{height: 40px;line-height: 40px;cursor: pointer;font-size:18px;font-weight：bolder}
+.button ul li img{float: left;margin: 11px 5px;font-size:18px;font-weight：bolder}
+.buttonnav ul li{height: 40px;line-height: 45px;cursor: pointer;font-size:25px;font-weight：bolder;color:white;}
+.buttonnav ul li img{float: left;margin: 11px 5px;font-size:25px;font-weight：bolder}
+.buttonnav ul li:HOVER{ color: orange;}
+
+.name_box{width: 100%;height: 40px;font-weight: bold;color:white;display: inline-block;}
+.name{font-size: 30px;font-family: "造字工房悦黑";margin-top: 16px;margin-left: 150px;}
+.us_name{font-family: "造字工房悦黑";font-size: 16px;margin-left: 150px;}
+
+.menus{width: 100%;height: 35px;}
+.menus ul li{width: 86px;height: 35px;float: left;background-color: #00CED1;background-repeat: no-repeat;margin-right: 5px;color:white;text-align: center;line-height: 35px;overflow: hidden;cursor: pointer;}
+.menus ul li:FIRST-CHILD {margin-left: 960px;}
+
+.menuChild{ width:100px;position: absolute;top: 0;left: 0;background-color: #00CED1;border-radius:5px;-webkit-border-radius:5px;display: none;color:white}
+.menuChild ul{ margin: 5px 0;}
+.menuChild ul li{ padding: 5px 5px;cursor: pointer;font-size:18px;font-weight：900;}
+.menuChild ul li:HOVER{ color: red;}
+
+#bottom{width: 100%;height: 100%;}
+.bottom_box{height: 100%;}
+
+#left{width: 0px;height: 100%;float:left; position: relative;background-image: url('../images/gradient.png');background-repeat: repeat-y;overflow: hidden;}
+#left ul li{width: 0px;height: 80px;border-bottom: 1px solid #949494;color: #ffffff;overflow: hidden;cursor: pointer;}
+.icon{width: 100%;height: 50px;margin-left: 25px;display: inline-block;}
+.icon img{width: 50px;height: 50px;margin: 5px;}
+.menu_name{width: 100%;height: 25px;line-height: 25px;text-align: center;}
+
+#right{height: 100%;position: relative;box-shadow: 0px 0px 20px black;}
+
+#center{width: 100%;height:100%;background-color: #ffffff;}
+
+.menus ul li.curr{background-color:#FFCC80;color:FFCC80;}
+.buttonnav ul li.curr{color:orange;}

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantBalanceAdjustmentMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantBalanceAdjustment" id="merchantBalanceAdjustmentResultMap">
+		<id column="mba_adjustId" jdbcType="BIGINT" property="adjustId" />
+		<result column="mba_ralAccProductId" jdbcType="BIGINT" property="ralAccProductId" />
+		<result column="mba_operatorId" jdbcType="BIGINT" property="operatorId" />
+		<result column="mba_adjustType" jdbcType="VARCHAR" property="adjustType" />
+		<result column="mba_beforBalance" jdbcType="BIGINT" property="beforBalance" />
+		<result column="mba_afterBalance" jdbcType="BIGINT" property="afterBalance" />
+		<result column="mba_adjustAmount" jdbcType="BIGINT" property="adjustAmount" />
+		<result column="mba_state" jdbcType="VARCHAR" property="state" />
+		<result column="mba_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="mba_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="MerchantBalanceAdjustment" useGeneratedKeys="true" keyProperty="adjustId">
+	  INSERT INTO pay_merchant_balance_adjustment
+	  (mba_ralAccProductId,mba_operatorId,mba_adjustType,mba_beforBalance,mba_afterBalance,mba_adjustAmount,mba_state,mba_createTime,mba_updateTime)
+	  VALUES 
+	  (#{ralAccProductId},#{operatorId},#{adjustType},#{beforBalance},#{afterBalance},#{adjustAmount},#{state},NOW(),NOW())
+	</insert>
+
+	<insert id="insertBatch" parameterType="MerchantBalanceAdjustment">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_merchant_balance_adjustment
+		(mba_ralAccProductId,mba_operatorId,mba_adjustType,mba_beforBalance,mba_afterBalance,mba_adjustAmount,mba_state,mba_createTime,mba_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="merchantBalanceAdjustment" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{ralAccProductId} as mba_ralAccProductId,
+					 #{operatorId} as mba_operatorId,
+					 #{adjustType} as mba_adjustType,
+					 #{beforBalance} as mba_beforBalance,
+					 #{afterBalance} as mba_afterBalance,
+					 #{adjustAmount} as mba_adjustAmount,
+					 #{state} as mba_state,
+					 #{createTime} as mba_createTime,
+					 #{updateTime} as mba_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="MerchantBalanceAdjustment">
+		UPDATE pay_merchant_balance_adjustment
+		<set>
+		  <if test="adjustId !=null and adjustId >= 0 "> 
+			 mba_adjustId = #{adjustId},
+	      </if>
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 "> 
+			 mba_ralAccProductId = #{ralAccProductId},
+	      </if>
+		  <if test="operatorId !=null and operatorId >= 0 "> 
+			 mba_operatorId = #{operatorId},
+	      </if>
+		  <if test="adjustType !=null and adjustType!='' ">
+			 mba_adjustType=#{adjustType},  
+		  </if> 
+		  <if test="beforBalance !=null and beforBalance >= 0 "> 
+			 mba_beforBalance = #{beforBalance},
+	      </if>
+		  <if test="afterBalance !=null and afterBalance >= 0 "> 
+			 mba_afterBalance = #{afterBalance},
+	      </if>
+		  <if test="adjustAmount !=null and adjustAmount >= 0 "> 
+			 mba_adjustAmount = #{adjustAmount},
+	      </if>
+		  <if test="state !=null and state!='' ">
+			 mba_state=#{state},  
+		  </if> 
+			 mba_updateTime=#{updateTime}  
+		</set>
+		WHERE mba_adjustId = #{adjustId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_merchant_balance_adjustment WHERE mba_adjustId = #{adjustId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_merchant_balance_adjustment WHERE mba_adjustId IN
+		<foreach collection="array" item="adjustId" open="(" separator="," close=")">
+			 #{adjustId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="MerchantBalanceAdjustment"> 
+		DELETE FROM pay_merchant_balance_adjustment WHERE mba_adjustId = #{adjustId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_merchant_balance_adjustment where mba_adjustId = #{adjustId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantBalanceAdjustmentResultMap">
+		select * from pay_merchant_balance_adjustment
+		where mba_adjustId = #{adjustId}
+	</select>
+	
+	<select id="selectAll" resultMap="merchantBalanceAdjustmentResultMap">
+		select * from pay_merchant_balance_adjustment
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantBalanceAdjustmentResultMap">
+		select * from pay_merchant_balance_adjustment
+		where mba_adjustId in
+		<foreach collection="array" item="adjustId" open="(" separator="," close=")">
+			 #{adjustId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="MerchantBalanceAdjustment" resultMap="merchantBalanceAdjustmentResultMap">
+	  SELECT * FROM pay_merchant_balance_adjustment 
+		<where>
+		  <if test="adjustId !=null and adjustId >= 0 ">
+			 mba_adjustId=#{adjustId}  
+		  </if> 
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
+			AND mba_ralAccProductId=#{ralAccProductId} 
+		  </if> 
+		  <if test="operatorId !=null and operatorId >= 0 ">
+			AND mba_operatorId=#{operatorId} 
+		  </if> 
+	      <if test="adjustType !=null and adjustType!='' ">
+			AND mba_adjustType=#{adjustType}  
+		  </if> 
+		  <if test="beforBalance !=null and beforBalance >= 0 ">
+			AND mba_beforBalance=#{beforBalance} 
+		  </if> 
+		  <if test="afterBalance !=null and afterBalance >= 0 ">
+			AND mba_afterBalance=#{afterBalance} 
+		  </if> 
+		  <if test="adjustAmount !=null and adjustAmount >= 0 ">
+			AND mba_adjustAmount=#{adjustAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND mba_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND mba_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND mba_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="MerchantBalanceAdjustment" resultMap="merchantBalanceAdjustmentResultMap">
+	  SELECT * FROM pay_merchant_balance_adjustment 
+		<where>
+		  <if test="adjustId !=null and adjustId >= 0 ">
+			 mba_adjustId=#{adjustId}  
+		  </if> 
+		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
+			AND mba_ralAccProductId=#{ralAccProductId} 
+		  </if> 
+		  <if test="operatorId !=null and operatorId >= 0 ">
+			AND mba_operatorId=#{operatorId} 
+		  </if> 
+	      <if test="adjustType !=null and adjustType!='' ">
+			AND mba_adjustType=#{adjustType}  
+		  </if> 
+		  <if test="beforBalance !=null and beforBalance >= 0 ">
+			AND mba_beforBalance=#{beforBalance} 
+		  </if> 
+		  <if test="afterBalance !=null and afterBalance >= 0 ">
+			AND mba_afterBalance=#{afterBalance} 
+		  </if> 
+		  <if test="adjustAmount !=null and adjustAmount >= 0 ">
+			AND mba_adjustAmount=#{adjustAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND mba_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND mba_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND mba_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		mba_adjustType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		mba_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>
