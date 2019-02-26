@@ -5,7 +5,7 @@
 		<id column="pratm_ralAccProductId" jdbcType="BIGINT" property="ralAccProductId" />
 		<result column="pratm_mchId" jdbcType="BIGINT" property="mchId" />
 		<result column="pratm_providerAccId" jdbcType="BIGINT" property="providerAccId" />
-		<result column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="pratm_productId" jdbcType="BIGINT" property="productId" />
 		<result column="pratm_feeRate" jdbcType="INTEGER" property="feeRate" />
 		<result column="pratm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
 		<result column="pratm_minAmt" jdbcType="BIGINT" property="minAmt" />
@@ -25,7 +25,7 @@
 	</resultMap>
 	
 <!-- 	<resultMap type="cn.com.payment.admin.model.RalProviderTransMode" id="ralProviderTransModeResultMap">
-		<id column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<id column="pratm_productId" jdbcType="BIGINT" property="productId" />
 		<result column="prptm_providerId" jdbcType="BIGINT" property="providerId" />
 		<result column="prptm_transModeId" jdbcType="BIGINT" property="transModeId" />
 		<result column="prptm_transRecordPrefix" jdbcType="VARCHAR" property="transRecordPrefix" />
@@ -47,12 +47,12 @@
 	<resultMap id="ralAccountTransModeResultMap1" type="cn.com.payment.admin.model.RalAccountTransMode" extends="ralAccountTransModeResultMap">
 		<collection column="pratm_providerAccId" property="providerAccount" select="cn.com.payment.admin.mapper.ProviderAccountMapper.selectOne"/>
 		<collection column="pratm_mchId" property="merchantInfo" select="cn.com.payment.admin.mapper.MerchantInfoMapper.selectOne"/>
-		<collection column="prptm_productId" property="ralProviderTransMode" select="cn.com.payment.admin.mapper.RalProviderTransModeMapper.selectOne"/>
+		<collection column="pratm_productId" property="ralProviderTransMode" select="cn.com.payment.admin.mapper.RalProviderTransModeMapper.selectOne"/>
 	</resultMap>
 	
 	<insert id="save" parameterType="RalAccountTransMode" useGeneratedKeys="true" keyProperty="ralAccProductId">
 	  INSERT INTO pay_ral_account_trans_mode
-	  (pratm_mchId,pratm_providerAccId,prptm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
+	  (pratm_mchId,pratm_providerAccId,pratm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
 	  VALUES 
 	  (#{mchId},#{providerAccId},#{productId},#{feeRate},#{totleAmtLimit},#{minAmt},#{maxAmt},#{percentage},NOW(),NOW(),#{state},#{isDel},#{validIP},#{restrictState},#{settleType},#{balance},#{balanceUnaccounted},#{balanceFreeze},#{balanceValid})
 	</insert>
@@ -64,7 +64,7 @@
 		</selectKey>
 		INSERT INTO
 		pay_ral_account_trans_mode
-		(pratm_mchId,pratm_providerAccId,prptm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
+		(pratm_mchId,pratm_providerAccId,pratm_productId,pratm_feeRate,pratm_totleAmtLimit,pratm_minAmt,pratm_maxAmt,pratm_percentage,pratm_createTime,pratm_updateTime,pratm_state,pratm_isDel,pratm_validIP,pratm_restrictState,pratm_settleType,pratm_balance,pratm_balanceUnaccounted,pratm_balanceFreeze,pratm_balanceValid)
 		SELECT *
 		FROM (
 		<foreach collection="list" item="ralAccountTransMode" index="index"
@@ -72,7 +72,7 @@
 			SELECT
 					 #{mchId} as pratm_mchId,
 					 #{providerAccId} as pratm_providerAccId,
-					 #{productId} as prptm_productId,
+					 #{productId} as pratm_productId,
 					 #{feeRate} as pratm_feeRate,
 					 #{totleAmtLimit} as pratm_totleAmtLimit,
 					 #{minAmt} as pratm_minAmt,
@@ -107,7 +107,7 @@
 			 pratm_providerAccId = #{providerAccId},
 	      </if>
 		  <if test="productId !=null and productId >= 0 "> 
-			 prptm_productId = #{productId},
+			 pratm_productId = #{productId},
 	      </if>
 		  <if test="feeRate !=null and feeRate!='' ">
 			 pratm_feeRate=#{feeRate},  
@@ -172,7 +172,7 @@
 		where pratm_ralAccProductId = #{ralAccProductId}
 	</select>
 	
-	<select id="selectByMchId" parameterType="java.lang.Long" resultMap="ralAccountTransModeResultMap">
+	<select id="selectByMchId" parameterType="java.lang.Long" resultMap="ralAccountTransModeResultMap1">
 		select * from pay_ral_account_trans_mode
 		where pratm_mchId=#{mchId} 
 		and pratm_state = '1'
@@ -196,7 +196,7 @@
 	  FROM 
 	  	  pay_ral_account_trans_mode ratm
 	  LEFT JOIN 
-	  	  pay_ral_provider_trans_mode rptm ON ratm.prptm_productId = rptm.prptm_productId
+	  	  pay_ral_provider_trans_mode rptm ON ratm.pratm_productId = rptm.prptm_productId
 		<where>
 		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
 			 pratm_ralAccProductId=#{ralAccProductId}  
@@ -208,7 +208,7 @@
 			AND pratm_providerAccId=#{providerAccId} 
 		  </if> 
 		  <if test="productId !=null and productId >= 0 ">
-			AND prptm_productId=#{productId} 
+			AND pratm_productId=#{productId} 
 		  </if> 
 	      <if test="state !=null and state!='' ">
 			AND pratm_state=#{state}  
@@ -240,7 +240,7 @@
 			AND pratm_providerAccId=#{providerAccId} 
 		  </if> 
 		  <if test="productId !=null and productId >= 0 ">
-			AND prptm_productId=#{productId} 
+			AND pratm_productId=#{productId} 
 		  </if> 
 	      <if test="feeRate !=null and feeRate!='' ">
 			AND pratm_feeRate=#{feeRate}  

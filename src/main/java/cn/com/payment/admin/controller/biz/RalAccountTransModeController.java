@@ -116,6 +116,11 @@ public class RalAccountTransModeController {
 				ralAccountTransMode.setMinAmt(Long.valueOf(AmtUtils.yuanToFen(sminAmt)));
 			if (CommonUtils.isNotEmpty(smaxAmt))
 				ralAccountTransMode.setMaxAmt(Long.valueOf(AmtUtils.yuanToFen(smaxAmt)));
+			//初始化余额值为0
+			ralAccountTransMode.setBalance(0L);
+			ralAccountTransMode.setBalanceFreeze(0L);
+			ralAccountTransMode.setBalanceUnaccounted(0L);
+			ralAccountTransMode.setBalanceValid(0L);
 			this.ralAccountTransModeService.create(ralAccountTransMode);
 			return new ResponseEntity<String>(Constants.PASS_OK, HttpStatus.OK);
 		} catch (BaseException e) {

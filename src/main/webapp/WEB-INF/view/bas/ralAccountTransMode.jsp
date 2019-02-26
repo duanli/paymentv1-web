@@ -107,9 +107,9 @@
 									 <td><input id="ralAccProductId" name="ralAccProductId" type="hidden"/></td>
 								    </tr>
 									<tr>
-                					 <td>商户<b>*</b></td>
+                					 <td>选择商户<b>*</b></td>
                 					 <td>
-                					 <input id="mchId" name="mchId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantInfoList',editable:false,required:false,missingMessage:'不能为空!'"></input>
+                					 <input id="mchId" name="mchId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false,required:false,missingMessage:'不能为空!'"></input>
                 					 </td>
                 					 <td>支付账户<b>*</b></td>
                 					 <td>
@@ -199,7 +199,7 @@
 				     				}
 				            	 }	 
 				             },
-				             {title:'支付通道', field:'providerAccId',width:50,align:'center',
+				             {title:'支付通道', field:'providerName',width:50,align:'center',
 				            	 formatter: function(value,row,index){
 				            		 if (row.providerAccount&&row.providerAccount.provider&&row.providerAccount.provider.providerAlias){
 				     					return "<font color='blue'>"+row.providerAccount.provider.providerAlias+"</font>";
@@ -208,7 +208,7 @@
 				     				}
 				            	 }	 
 				             },
-				             {title:'通道账户', field:'providerAccId',width:50,align:'center',
+				             {title:'通道账户', field:'providerAccName',width:50,align:'center',
 				            	 formatter: function(value,row,index){
 				            		 if (row.providerAccount&&row.providerAccount.accName){
 				     					return "<font color='blue'>"+row.providerAccount.accName+"</font>";
