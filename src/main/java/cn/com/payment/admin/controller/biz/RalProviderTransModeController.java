@@ -17,6 +17,7 @@ import cn.com.payment.admin.dto.PageEasyUi;
 import cn.com.payment.admin.exceptions.BaseException;
 import cn.com.payment.admin.model.RalProviderTransMode;
 import cn.com.payment.admin.service.RalProviderTransModeService;
+import cn.com.payment.admin.utils.AmtUtils;
 import cn.com.payment.admin.utils.CommonUtils;
 import cn.com.payment.admin.utils.PageUtils;
 
@@ -61,11 +62,17 @@ public class RalProviderTransModeController {
 	 */
 	@RequestMapping("addRalProviderTransMode")
 	@RequiresPermissions("ralProviderTransMode:add")
-	public @ResponseBody ResponseEntity<String> addRalProviderTransMode(RalProviderTransMode ralProviderTransMode){
+	public @ResponseBody ResponseEntity<String> addRalProviderTransMode(RalProviderTransMode ralProviderTransMode,String sminAmt, String smaxAmt, String stotleAmt){
 		if(CommonUtils.isEmpty(ralProviderTransMode))
 			return new ResponseEntity<String>(Constants.EX_PARAM,HttpStatus.BAD_REQUEST);
 		
 		try {
+			if (CommonUtils.isNotEmpty(stotleAmt))
+				ralProviderTransMode.setTotleAmtLimit(Long.valueOf(AmtUtils.yuanToFen(stotleAmt)));
+			if (CommonUtils.isNotEmpty(sminAmt))
+				ralProviderTransMode.setMinAmt(Long.valueOf(AmtUtils.yuanToFen(sminAmt)));
+			if (CommonUtils.isNotEmpty(smaxAmt))
+				ralProviderTransMode.setMaxAmt(Long.valueOf(AmtUtils.yuanToFen(smaxAmt)));
 			this.ralProviderTransModeService.create(ralProviderTransMode);
 			return new ResponseEntity<String>(Constants.PASS_OK,HttpStatus.OK);
 		} catch (BaseException e) {
@@ -83,7 +90,7 @@ public class RalProviderTransModeController {
 	 */
 	@RequestMapping("updateRalProviderTransMode")
 	@RequiresPermissions("ralProviderTransMode:update")
-	public @ResponseBody ResponseEntity<String> updateRalProviderTransMode(RalProviderTransMode ralProviderTransMode){
+	public @ResponseBody ResponseEntity<String> updateRalProviderTransMode(RalProviderTransMode ralProviderTransMode,String sminAmt, String smaxAmt, String stotleAmt){
 		if(CommonUtils.isEmpty(ralProviderTransMode) || CommonUtils.isEmpty(ralProviderTransMode.getProductId()))
 			return new ResponseEntity<String>(Constants.EX_PARAM,HttpStatus.BAD_REQUEST);
 		
@@ -102,11 +109,12 @@ public class RalProviderTransModeController {
 				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getSubmitParamJson()))data.setSubmitParamJson(ralProviderTransMode.getSubmitParamJson());
 				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getFeeRate()))data.setFeeRate(ralProviderTransMode.getFeeRate());
 				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getState()))data.setState(ralProviderTransMode.getState());
-				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getCreateTime()))data.setCreateTime(ralProviderTransMode.getCreateTime());
-				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getUpdateTime()))data.setUpdateTime(ralProviderTransMode.getUpdateTime());
-				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getTotleAmtLimit()))data.setTotleAmtLimit(ralProviderTransMode.getTotleAmtLimit());
-				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getMinAmt()))data.setMinAmt(ralProviderTransMode.getMinAmt());
-				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getMaxAmt()))data.setMaxAmt(ralProviderTransMode.getMaxAmt());
+				  if (CommonUtils.isNotEmpty(stotleAmt))
+						data.setTotleAmtLimit(Long.valueOf(AmtUtils.yuanToFen(stotleAmt)));
+					if (CommonUtils.isNotEmpty(sminAmt))
+						data.setMinAmt(Long.valueOf(AmtUtils.yuanToFen(sminAmt)));
+					if (CommonUtils.isNotEmpty(smaxAmt))
+						data.setMaxAmt(Long.valueOf(AmtUtils.yuanToFen(smaxAmt)));
 				  if(CommonUtils.isNotEmpty(ralProviderTransMode.getRestrictState()))data.setRestrictState(ralProviderTransMode.getRestrictState());
 			
 				this.ralProviderTransModeService.modify(data);

@@ -82,18 +82,14 @@
                     <h4>0.00</h4>
                     <p>支付宝h5</p>
                 </div>
-                <c:forEach begin="0" end="${info.size-1}" var="i">
+                <c:if test="${transModeList!=null}">
+                <c:forEach items="${transModeList}" var="item">
 	                <div class="tab bian">
-	                    <h4>0.00</h4>
-	                    <p>支付宝h5</p>
+	                    <h4>${item.balanceValid}</h4>
+	                    <p>${item.ralProviderTransMode.productName}</p>
 	                </div>
-					<tr>
-						<td class="bind_user_name">${info.bankList[i].bind_user_name}</td>
-						<td class="user_mobile">${info.bankList[i].user_mobile}</td>
-						<td class="bind_cert_number">${info.bankList[i].bind_cert_number}</td>
-						<td>${info.bankList[i].card_number}</td>
-					</tr>
 				</c:forEach>
+				</c:if>
             </div>
         </div>
     </div>

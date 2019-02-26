@@ -31,14 +31,14 @@
 		<div class="rightinfo">
 			<div style="margin:1px 5px 5px 1px;float: left;">
 			 	<ul >
-			 	 <li>角色：
+			 	 <%-- <li>角色：
 			 	 	<select id="role_s" style="width: 100px;height: 26px;">
 			 	 		<option value="">请选择</option>
 			 	 		<c:forEach items="${roleList }" var="role">
 			 	 			<option value="${role.id }">${role.name }</option>
 			 	 		</c:forEach>
 			 	 	</select>
-			 	 </li>
+			 	 </li> --%>
 			 	 <li>手机号：<input name="cellPhone" type="text" maxlength="30" id="cellPhone_s" class="easyui-textbox" style="width:100px;" value=""/></li>
 			 	 <li>用户姓名：<input name="name" type="text" maxlength="30" id="name_s" class="easyui-textbox" style="width:100px;" value=""/></li>
 			 	 <li>
@@ -106,7 +106,7 @@
 								<td>用户名<b>*</b></td><td><input id="userName" name="userName" class="easyui-validatebox" type="text"  data-options="required:true,missingMessage:'用户名不能为空!'"></input></td>
 								<td>姓名</td><td><input id="name" name="name" type="text"></input></td>
 								<%-- <td>机构<b>*</b></td><td><input id="orgId" name="orgId" type="text" class="easyui-combobox" data-options="valueField:'orgId',textField:'orgName',url:'${ctx}/organization/getOrganizationList',editable:false,required:false,missingMessage:'不能为空!',onSelect:OnSelectDepAdd"></input></td> --%>
-							    <td>所属商户<b>*</b></td><td><input id="merId" name="merId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantInfoList',editable:false,required:false,missingMessage:'不能为空!'"></input></td>
+							    <td>所属商户<b>*</b></td><td><input id="merId" name="merId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false,required:false,missingMessage:'不能为空!'"></input></td>
 							</tr>
 							
 							<tr>

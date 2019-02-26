@@ -178,7 +178,7 @@ public class MerchantInfoServiceImpl extends BaseServiceImpl<MerchantInfo, Long>
 		model.addAttribute("todayIncome", merchantInfo.getBalance());
 		// 设置交易方式交易数据
 		List<RalAccountTransMode> list = ralAccountTransModeMapper.selectByMchId(merchantInfo.getMchId());
-		model.addAttribute("transModeList", list);
+		model.addAttribute("transModeList", null);
 		return null;
 	}
 
