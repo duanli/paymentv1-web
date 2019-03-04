@@ -3,6 +3,7 @@
 <mapper namespace="cn.com.payment.admin.mapper.MerchantBalanceAdjustmentMapper">
 	<resultMap type="cn.com.payment.admin.model.MerchantBalanceAdjustment" id="merchantBalanceAdjustmentResultMap">
 		<id column="mba_adjustId" jdbcType="BIGINT" property="adjustId" />
+		<result column="mba_mchId" jdbcType="BIGINT" property="mchId" />
 		<result column="mba_ralAccProductId" jdbcType="BIGINT" property="ralAccProductId" />
 		<result column="mba_operatorId" jdbcType="BIGINT" property="operatorId" />
 		<result column="mba_adjustType" jdbcType="VARCHAR" property="adjustType" />
@@ -10,15 +11,16 @@
 		<result column="mba_afterBalance" jdbcType="BIGINT" property="afterBalance" />
 		<result column="mba_adjustAmount" jdbcType="BIGINT" property="adjustAmount" />
 		<result column="mba_state" jdbcType="VARCHAR" property="state" />
+		<result column="mba_remark" jdbcType="VARCHAR" property="remark" />
 		<result column="mba_createTime" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="mba_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
 	</resultMap>
 	
 	<insert id="save" parameterType="MerchantBalanceAdjustment" useGeneratedKeys="true" keyProperty="adjustId">
 	  INSERT INTO pay_merchant_balance_adjustment
-	  (mba_ralAccProductId,mba_operatorId,mba_adjustType,mba_beforBalance,mba_afterBalance,mba_adjustAmount,mba_state,mba_createTime,mba_updateTime)
+	  (mba_mchId,mba_remark,mba_ralAccProductId,mba_operatorId,mba_adjustType,mba_beforBalance,mba_afterBalance,mba_adjustAmount,mba_state,mba_createTime,mba_updateTime)
 	  VALUES 
-	  (#{ralAccProductId},#{operatorId},#{adjustType},#{beforBalance},#{afterBalance},#{adjustAmount},#{state},NOW(),NOW())
+	  (#{mchId},#{remark},#{ralAccProductId},#{operatorId},#{adjustType},#{beforBalance},#{afterBalance},#{adjustAmount},#{state},NOW(),NOW())
 	</insert>
 
 	<insert id="insertBatch" parameterType="MerchantBalanceAdjustment">
@@ -55,6 +57,9 @@
 		  <if test="adjustId !=null and adjustId >= 0 "> 
 			 mba_adjustId = #{adjustId},
 	      </if>
+	      <if test="mchId !=null and mchId >= 0 "> 
+			 mba_mchId = #{mchId},
+	      </if>
 		  <if test="ralAccProductId !=null and ralAccProductId >= 0 "> 
 			 mba_ralAccProductId = #{ralAccProductId},
 	      </if>
@@ -76,7 +81,10 @@
 		  <if test="state !=null and state!='' ">
 			 mba_state=#{state},  
 		  </if> 
-			 mba_updateTime=#{updateTime}  
+		  <if test="remark !=null and remark!='' ">
+			 mba_remark=#{remark},  
+		  </if> 
+			 mba_updateTime=NOW()
 		</set>
 		WHERE mba_adjustId = #{adjustId}
 	</update>
@@ -124,6 +132,9 @@
 		  <if test="adjustId !=null and adjustId >= 0 ">
 			 mba_adjustId=#{adjustId}  
 		  </if> 
+		  <if test="mchId !=null and mchId >= 0 "> 
+			AND mba_mchId = #{mchId}
+	      </if>
 		  <if test="ralAccProductId !=null and ralAccProductId >= 0 ">
 			AND mba_ralAccProductId=#{ralAccProductId} 
 		  </if> 

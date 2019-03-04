@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.RalMerchantTransModeMapper">
+	<resultMap type="cn.com.payment.admin.model.RalMerchantTransMode" id="ralMerchantTransModeResultMap">
+		<id column="rmtm_ralMerTransModeId" jdbcType="BIGINT" property="ralMerTransModeId" />
+		<result column="rmtm_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="rmtm_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="rmtm_feeRate" jdbcType="INTEGER" property="feeRate" />
+		<result column="rmtm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
+		<result column="rmtm_minAmt" jdbcType="BIGINT" property="minAmt" />
+		<result column="rmtm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
+		<result column="rmtm_beginTime" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="rmtm_endTime" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="rmtm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="rmtm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="rmtm_state" jdbcType="VARCHAR" property="state" />
+		<result column="rmtm_isDel" jdbcType="VARCHAR" property="isDel" />
+		<result column="rmtm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+		<result column="rmtm_validIP" jdbcType="VARCHAR" property="validIP" />
+		<result column="rmtm_settleType" jdbcType="VARCHAR" property="settleType" />
+		<result column="rmtm_cashOutBalance" jdbcType="BIGINT" property="cashOutBalance" />
+	</resultMap>
+	
+	<resultMap id="ralMerchantTransModeResultMap1" type="cn.com.payment.admin.model.RalMerchantTransMode" extends="ralMerchantTransModeResultMap">
+		<collection column="rmtm_mchId" property="merchantInfo" select="cn.com.payment.admin.mapper.MerchantInfoMapper.selectOne"/>
+		<collection column="rmtm_transModeId" property="transMode" select="cn.com.payment.admin.mapper.TransModeMapper.selectOne"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="RalMerchantTransMode" useGeneratedKeys="true" keyProperty="ralMerTransModeId">
+	  INSERT INTO pay_ral_merchant_trans_mode
+	  (rmtm_cashOutBalance,rmtm_mchId,rmtm_transModeId,rmtm_feeRate,rmtm_totleAmtLimit,rmtm_minAmt,rmtm_maxAmt,rmtm_beginTime,rmtm_endTime,rmtm_createTime,rmtm_updateTime,rmtm_state,rmtm_isDel,rmtm_restrictState,rmtm_validIP,rmtm_settleType)
+	  VALUES 
+	  (#{cashOutBalance},#{mchId},#{transModeId},#{feeRate},#{totleAmtLimit},#{minAmt},#{maxAmt},#{beginTime},#{endTime},NOW(),NOW(),#{state},#{isDel},#{restrictState},#{validIP},#{settleType})
+	</insert>
+
+	<insert id="insertBatch" parameterType="RalMerchantTransMode">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_ral_merchant_trans_mode
+		(rmtm_mchId,rmtm_transModeId,rmtm_feeRate,rmtm_totleAmtLimit,rmtm_minAmt,rmtm_maxAmt,rmtm_beginTime,rmtm_endTime,rmtm_createTime,rmtm_updateTime,rmtm_state,rmtm_isDel,rmtm_restrictState,rmtm_validIP,rmtm_settleType)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="ralMerchantTransMode" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{mchId} as rmtm_mchId,
+					 #{transModeId} as rmtm_transModeId,
+					 #{feeRate} as rmtm_feeRate,
+					 #{totleAmtLimit} as rmtm_totleAmtLimit,
+					 #{minAmt} as rmtm_minAmt,
+					 #{maxAmt} as rmtm_maxAmt,
+					 #{beginTime} as rmtm_beginTime,
+					 #{endTime} as rmtm_endTime,
+					 #{createTime} as rmtm_createTime,
+					 #{updateTime} as rmtm_updateTime,
+					 #{state} as rmtm_state,
+					 #{isDel} as rmtm_isDel,
+					 #{restrictState} as rmtm_restrictState,
+					 #{validIP} as rmtm_validIP,
+					 #{settleType} as rmtm_settleType
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="RalMerchantTransMode">
+		UPDATE pay_ral_merchant_trans_mode
+		<set>
+		  <if test="ralMerTransModeId !=null and ralMerTransModeId >= 0 "> 
+			 rmtm_ralMerTransModeId = #{ralMerTransModeId},
+	      </if>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 rmtm_mchId = #{mchId},
+	      </if>
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 rmtm_transModeId = #{transModeId},
+	      </if>
+		  <if test="feeRate !=null and feeRate!='' ">
+			 rmtm_feeRate=#{feeRate},  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 "> 
+			 rmtm_totleAmtLimit = #{totleAmtLimit},
+	      </if>
+		  <if test="minAmt !=null and minAmt >= 0 "> 
+			 rmtm_minAmt = #{minAmt},
+	      </if>
+		  <if test="maxAmt !=null and maxAmt >= 0 "> 
+			 rmtm_maxAmt = #{maxAmt},
+	      </if>
+		  <if test="beginTime !=null and beginTime!='' ">
+			 rmtm_beginTime=#{beginTime},  
+		  </if> 
+		  <if test="endTime !=null and endTime!='' ">
+			 rmtm_endTime=#{endTime},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 rmtm_state=#{state},  
+		  </if> 
+		  <if test="isDel !=null and isDel!='' ">
+			 rmtm_isDel=#{isDel},  
+		  </if> 
+		  <if test="restrictState !=null and restrictState!='' ">
+			 rmtm_restrictState=#{restrictState},  
+		  </if> 
+		  <if test="validIP !=null and validIP!='' ">
+			 rmtm_validIP=#{validIP},  
+		  </if> 
+		  <if test="settleType !=null and settleType!='' ">
+			 rmtm_settleType=#{settleType},
+		  </if> 
+		  <if test="cashOutBalance !=null and cashOutBalance!='' ">
+			 rmtm_cashOutBalance=#{cashOutBalance},
+		  </if>
+			 rmtm_updateTime=NOW()
+		</set>
+		WHERE rmtm_ralMerTransModeId = #{ralMerTransModeId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_ral_merchant_trans_mode WHERE rmtm_ralMerTransModeId = #{ralMerTransModeId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_ral_merchant_trans_mode WHERE rmtm_ralMerTransModeId IN
+		<foreach collection="array" item="ralMerTransModeId" open="(" separator="," close=")">
+			 #{ralMerTransModeId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="RalMerchantTransMode"> 
+		DELETE FROM pay_ral_merchant_trans_mode WHERE rmtm_ralMerTransModeId = #{ralMerTransModeId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_ral_merchant_trans_mode where rmtm_ralMerTransModeId = #{ralMerTransModeId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralMerchantTransModeResultMap">
+		select * from pay_ral_merchant_trans_mode
+		where rmtm_ralMerTransModeId = #{ralMerTransModeId}
+	</select>
+	
+	<select id="selectAll" resultMap="ralMerchantTransModeResultMap">
+		select * from pay_ral_merchant_trans_mode
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="ralMerchantTransModeResultMap">
+		select * from pay_ral_merchant_trans_mode
+		where rmtm_ralMerTransModeId in
+		<foreach collection="array" item="ralMerTransModeId" open="(" separator="," close=")">
+			 #{ralMerTransModeId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="RalMerchantTransMode" resultMap="ralMerchantTransModeResultMap1">
+	  SELECT * FROM pay_ral_merchant_trans_mode
+		<where>
+		  <if test="ralMerTransModeId !=null and ralMerTransModeId >= 0 ">
+			 rmtm_ralMerTransModeId=#{ralMerTransModeId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND rmtm_mchId=#{mchId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND rmtm_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND rmtm_feeRate=#{feeRate}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND rmtm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND rmtm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND rmtm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND rmtm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND rmtm_endTime=#{endTime}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND rmtm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND rmtm_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND rmtm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND rmtm_isDel=#{isDel}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND rmtm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND rmtm_validIP=#{validIP}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND rmtm_settleType=#{settleType}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="RalMerchantTransMode" resultMap="ralMerchantTransModeResultMap">
+	  SELECT * FROM pay_ral_merchant_trans_mode 
+		<where>
+		  <if test="ralMerTransModeId !=null and ralMerTransModeId >= 0 ">
+			 rmtm_ralMerTransModeId=#{ralMerTransModeId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND rmtm_mchId=#{mchId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND rmtm_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND rmtm_feeRate=#{feeRate}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND rmtm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND rmtm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND rmtm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND rmtm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND rmtm_endTime=#{endTime}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND rmtm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND rmtm_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND rmtm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND rmtm_isDel=#{isDel}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND rmtm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND rmtm_validIP=#{validIP}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND rmtm_settleType=#{settleType}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		rmtm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rmtm_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rmtm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rmtm_validIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rmtm_settleType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.com.payment.admin.mapper.MerchantStatisticsDaysMapper">
-	<resultMap type="cn.com.payment.admin.model.MerchantStatisticsDays" id="merchantStatisticsDaysResultMap">
+<mapper namespace="cn.com.payment.admin.mapper.MerchantStatisticsDayMapper">
+	<resultMap type="cn.com.payment.admin.model.MerchantStatisticsDay" id="merchantStatisticsDayResultMap">
 		<id column="msd_sdId" jdbcType="BIGINT" property="sdId" />
 		<result column="msd_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="msd_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="msd_sdYear" jdbcType="VARCHAR" property="sdYear" />
+		<result column="msd_sdMouth" jdbcType="VARCHAR" property="sdMouth" />
 		<result column="msd_sdDay" jdbcType="TIMESTAMP" property="sdDay" />
 		<result column="msd_payCountTotal" jdbcType="INTEGER" property="payCountTotal" />
 		<result column="msd_payAmountTotal" jdbcType="BIGINT" property="payAmountTotal" />
@@ -18,27 +21,30 @@
 		<result column="msd_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
 	</resultMap>
 	
-	<insert id="save" parameterType="MerchantStatisticsDays" useGeneratedKeys="true" keyProperty="sdId">
-	  INSERT INTO pay_merchant_statistics_days
-	  (msd_mchId,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
+	<insert id="save" parameterType="MerchantStatisticsDay" useGeneratedKeys="true" keyProperty="sdId">
+	  INSERT INTO pay_merchant_statistics_day
+	  (msd_mchId,msd_transModeId,msd_sdYear,msd_sdMouth,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
 	  VALUES 
-	  (#{mchId},#{sdDay},#{payCountTotal},#{payAmountTotal},#{payCountSucc},#{payAmountSucc},#{realAmount},#{totleFee},#{refundCount},#{refundAmount},#{state},NOW(),NOW())
+	  (#{mchId},#{transModeId},#{sdYear},#{sdMouth},#{sdDay},#{payCountTotal},#{payAmountTotal},#{payCountSucc},#{payAmountSucc},#{realAmount},#{totleFee},#{refundCount},#{refundAmount},#{state},#{createTime},#{updateTime})
 	</insert>
 
-	<insert id="insertBatch" parameterType="MerchantStatisticsDays">
+	<insert id="insertBatch" parameterType="MerchantStatisticsDay">
 		<selectKey resultType="java.lang.Integer" keyProperty="id"
 			order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO
-		pay_merchant_statistics_days
-		(msd_mchId,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
+		pay_merchant_statistics_day
+		(msd_mchId,msd_transModeId,msd_sdYear,msd_sdMouth,msd_sdDay,msd_payCountTotal,msd_payAmountTotal,msd_payCountSucc,msd_payAmountSucc,msd_realAmount,msd_totleFee,msd_refundCount,msd_refundAmount,msd_state,msd_createTime,msd_updateTime)
 		SELECT *
 		FROM (
-		<foreach collection="list" item="merchantStatisticsDays" index="index"
+		<foreach collection="list" item="merchantStatisticsDay" index="index"
 			open="" close="" separator="union all">
 			SELECT
 					 #{mchId} as msd_mchId,
+					 #{transModeId} as msd_transModeId,
+					 #{sdYear} as msd_sdYear,
+					 #{sdMouth} as msd_sdMouth,
 					 #{sdDay} as msd_sdDay,
 					 #{payCountTotal} as msd_payCountTotal,
 					 #{payAmountTotal} as msd_payAmountTotal,
@@ -57,8 +63,8 @@
 	</insert>
 
 	
-	<update id="update" parameterType="MerchantStatisticsDays">
-		UPDATE pay_merchant_statistics_days
+	<update id="update" parameterType="MerchantStatisticsDay">
+		UPDATE pay_merchant_statistics_day
 		<set>
 		  <if test="sdId !=null and sdId >= 0 "> 
 			 msd_sdId = #{sdId},
@@ -66,6 +72,15 @@
 		  <if test="mchId !=null and mchId >= 0 "> 
 			 msd_mchId = #{mchId},
 	      </if>
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 msd_transModeId = #{transModeId},
+	      </if>
+		  <if test="sdYear !=null and sdYear!='' ">
+			 msd_sdYear=#{sdYear},  
+		  </if> 
+		  <if test="sdMouth !=null and sdMouth!='' ">
+			 msd_sdMouth=#{sdMouth},  
+		  </if> 
 		  <if test="sdDay !=null and sdDay!='' ">
 			 msd_sdDay=#{sdDay},  
 		  </if> 
@@ -107,50 +122,59 @@
 	</update>
 
 	<delete id="deleteByPK">
-		DELETE FROM pay_merchant_statistics_days WHERE msd_sdId = #{sdId}
+		DELETE FROM pay_merchant_statistics_day WHERE msd_sdId = #{sdId}
 	</delete>
 
 
 	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
-	  DELETE FROM pay_merchant_statistics_days WHERE msd_sdId IN
+	  DELETE FROM pay_merchant_statistics_day WHERE msd_sdId IN
 		<foreach collection="array" item="sdId" open="(" separator="," close=")">
 			 #{sdId}
 		</foreach>
 	</delete>
 	
-	<delete id="delete" parameterType="MerchantStatisticsDays"> 
-		DELETE FROM pay_merchant_statistics_days WHERE msd_sdId = #{sdId}
+	<delete id="delete" parameterType="MerchantStatisticsDay"> 
+		DELETE FROM pay_merchant_statistics_day WHERE msd_sdId = #{sdId}
 	</delete>
 	
 	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
-		select count(*) from pay_merchant_statistics_days where msd_sdId = #{sdId}
+		select count(*) from pay_merchant_statistics_day where msd_sdId = #{sdId}
 	</select>
 	
-	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantStatisticsDaysResultMap">
-		select * from pay_merchant_statistics_days
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="merchantStatisticsDayResultMap">
+		select * from pay_merchant_statistics_day
 		where msd_sdId = #{sdId}
 	</select>
 	
-	<select id="selectAll" resultMap="merchantStatisticsDaysResultMap">
-		select * from pay_merchant_statistics_days
+	<select id="selectAll" resultMap="merchantStatisticsDayResultMap">
+		select * from pay_merchant_statistics_day
 	</select>
 	
-	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantStatisticsDaysResultMap">
-		select * from pay_merchant_statistics_days
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="merchantStatisticsDayResultMap">
+		select * from pay_merchant_statistics_day
 		where msd_sdId in
 		<foreach collection="array" item="sdId" open="(" separator="," close=")">
 			 #{sdId}
 		</foreach>
 	</select>
 	
-	<select id="selectByProperty" parameterType="MerchantStatisticsDays" resultMap="merchantStatisticsDaysResultMap">
-	  SELECT * FROM pay_merchant_statistics_days 
+	<select id="selectByProperty" parameterType="MerchantStatisticsDay" resultMap="merchantStatisticsDayResultMap">
+	  SELECT * FROM pay_merchant_statistics_day 
 		<where>
 		  <if test="sdId !=null and sdId >= 0 ">
 			 msd_sdId=#{sdId}  
 		  </if> 
 		  <if test="mchId !=null and mchId >= 0 ">
 			AND msd_mchId=#{mchId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND msd_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="sdYear !=null and sdYear!='' ">
+			AND msd_sdYear=#{sdYear}  
+		  </if> 
+	      <if test="sdMouth !=null and sdMouth!='' ">
+			AND msd_sdMouth=#{sdMouth}  
 		  </if> 
 	      <if test="sdDay !=null and sdDay!='' ">
 			AND msd_sdDay=#{sdDay}  
@@ -190,14 +214,23 @@
 		  </if> 
 		</where>
 	</select>
-	<select id="selectByPropertyKeyWord" parameterType="MerchantStatisticsDays" resultMap="merchantStatisticsDaysResultMap">
-	  SELECT * FROM pay_merchant_statistics_days 
+	<select id="selectByPropertyKeyWord" parameterType="MerchantStatisticsDay" resultMap="merchantStatisticsDayResultMap">
+	  SELECT * FROM pay_merchant_statistics_day 
 		<where>
 		  <if test="sdId !=null and sdId >= 0 ">
 			 msd_sdId=#{sdId}  
 		  </if> 
 		  <if test="mchId !=null and mchId >= 0 ">
 			AND msd_mchId=#{mchId} 
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND msd_transModeId=#{transModeId} 
+		  </if> 
+	      <if test="sdYear !=null and sdYear!='' ">
+			AND msd_sdYear=#{sdYear}  
+		  </if> 
+	      <if test="sdMouth !=null and sdMouth!='' ">
+			AND msd_sdMouth=#{sdMouth}  
 		  </if> 
 	      <if test="sdDay !=null and sdDay!='' ">
 			AND msd_sdDay=#{sdDay}  
@@ -238,6 +271,10 @@
 		  <if test="keyWord !=null and keyWord!='' ">
 			AND 
 				(
+		 		msd_sdYear LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		msd_sdMouth LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
 		 		msd_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
 				 or
 			 	)

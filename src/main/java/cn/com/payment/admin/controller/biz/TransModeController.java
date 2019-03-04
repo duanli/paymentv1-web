@@ -112,26 +112,20 @@ public class TransModeController {
 	@RequestMapping("updateTransMode")
 	@RequiresPermissions("transMode:update")
 	public @ResponseBody ResponseEntity<String> updateTransMode(TransMode transMode) {
-		if (CommonUtils.isEmpty(transMode) || CommonUtils.isEmpty(transMode.getTransBrandId()))
+		if (CommonUtils.isEmpty(transMode) || CommonUtils.isEmpty(transMode.getTransModeId()))
 			return new ResponseEntity<String>(Constants.EX_PARAM, HttpStatus.BAD_REQUEST);
 
 		try {
-			TransMode data = this.transModeService.searchById(transMode.getTransBrandId());
+			TransMode data = this.transModeService.searchById(transMode.getTransModeId());
 			if (CommonUtils.isNotEmpty(data)) {
-				if (CommonUtils.isNotEmpty(transMode.getTransBrandId()))
-					data.setTransBrandId(transMode.getTransBrandId());
 				if (CommonUtils.isNotEmpty(transMode.getTransModeCode()))
 					data.setTransModeCode(transMode.getTransModeCode());
 				if (CommonUtils.isNotEmpty(transMode.getTransModeName()))
 					data.setTransModeName(transMode.getTransModeName());
-				if (CommonUtils.isNotEmpty(transMode.getTransBrandId()))
-					data.setTransBrandId(transMode.getTransBrandId());
+				if (CommonUtils.isNotEmpty(transMode.getState()))
+					data.setState(transMode.getState());
 				if (CommonUtils.isNotEmpty(transMode.getRemark()))
 					data.setRemark(transMode.getRemark());
-				if (CommonUtils.isNotEmpty(transMode.getCreateTime()))
-					data.setCreateTime(transMode.getCreateTime());
-				if (CommonUtils.isNotEmpty(transMode.getUpdateTime()))
-					data.setUpdateTime(transMode.getUpdateTime());
 
 				this.transModeService.modify(data);
 				return new ResponseEntity<String>(Constants.PASS_OK, HttpStatus.OK);

@@ -3,7 +3,6 @@
 <mapper namespace="cn.com.payment.admin.mapper.TransModeMapper">
 	<resultMap type="cn.com.payment.admin.model.TransMode" id="transModeResultMap">
 		<id column="ptm_transModeId" jdbcType="BIGINT" property="transModeId" />
-		<result column="ptm_transBrandId" jdbcType="BIGINT" property="transBrandId" />
 		<result column="ptm_transModeCode" jdbcType="VARCHAR" property="transModeCode" />
 		<result column="ptm_transModeName" jdbcType="VARCHAR" property="transModeName" />
 		<result column="ptm_state" jdbcType="VARCHAR" property="state" />
@@ -12,15 +11,11 @@
 		<result column="ptm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
 	</resultMap>
 	
-	<resultMap id="transModeResultMap1" type="cn.com.payment.admin.model.TransMode" extends="transModeResultMap">
-		<collection column="ptm_transBrandId" property="transBrand" select="cn.com.payment.admin.mapper.TransBrandMapper.selectOne"/>
-	</resultMap>
-	
 	<insert id="save" parameterType="TransMode" useGeneratedKeys="true" keyProperty="transModeId">
 	  INSERT INTO pay_trans_mode
-	  (ptm_transBrandId,ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
+	  (ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
 	  VALUES 
-	  (#{transBrandId},#{transModeCode},#{transModeName},#{state},#{remark},NOW(),NOW())
+	  (#{transModeCode},#{transModeName},#{state},#{remark},NOW(),NOW())
 	</insert>
 
 	<insert id="insertBatch" parameterType="TransMode">
@@ -30,13 +25,12 @@
 		</selectKey>
 		INSERT INTO
 		pay_trans_mode
-		(ptm_transBrandId,ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
+		(ptm_transModeCode,ptm_transModeName,ptm_state,ptm_remark,ptm_createTime,ptm_updateTime)
 		SELECT *
 		FROM (
 		<foreach collection="list" item="transMode" index="index"
 			open="" close="" separator="union all">
 			SELECT
-					 #{transBrandId} as ptm_transBrandId,
 					 #{transModeCode} as ptm_transModeCode,
 					 #{transModeName} as ptm_transModeName,
 					 #{state} as ptm_state,
@@ -54,9 +48,6 @@
 		<set>
 		  <if test="transModeId !=null and transModeId >= 0 "> 
 			 ptm_transModeId = #{transModeId},
-	      </if>
-		  <if test="transBrandId !=null and transBrandId >= 0 "> 
-			 ptm_transBrandId = #{transBrandId},
 	      </if>
 		  <if test="transModeCode !=null and transModeCode!='' ">
 			 ptm_transModeCode=#{transModeCode},  
@@ -95,7 +86,7 @@
 		select count(*) from pay_trans_mode where ptm_transModeId = #{transModeId}
 	</select>
 	
-	<select id="selectOne" parameterType="java.lang.Long" resultMap="transModeResultMap1">
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="transModeResultMap">
 		select * from pay_trans_mode
 		where ptm_transModeId = #{transModeId}
 	</select>
@@ -112,32 +103,23 @@
 		</foreach>
 	</select>
 	
-	<select id="selectByProperty" parameterType="TransMode" resultMap="transModeResultMap1">
+	<select id="selectByProperty" parameterType="TransMode" resultMap="transModeResultMap">
 	  SELECT * FROM pay_trans_mode 
 		<where>
 		  <if test="transModeId !=null and transModeId >= 0 ">
 			 ptm_transModeId=#{transModeId}  
 		  </if> 
-		  <if test="transBrandId !=null and transBrandId >= 0 ">
-			AND ptm_transBrandId=#{transBrandId} 
-		  </if> 
 	      <if test="transModeCode !=null and transModeCode!='' ">
-			AND ptm_transModeCode=#{transModeCode}  
+			AND ptm_transModeCode LIKE CONCAT(CONCAT('%', #{transModeCode}),'%')
 		  </if> 
 	      <if test="transModeName !=null and transModeName!='' ">
-			AND ptm_transModeName=#{transModeName}  
+			AND ptm_transModeName LIKE CONCAT(CONCAT('%', #{transModeName}),'%')
 		  </if> 
 	      <if test="state !=null and state!='' ">
 			AND ptm_state=#{state}  
 		  </if> 
 	      <if test="remark !=null and remark!='' ">
 			AND ptm_remark=#{remark}  
-		  </if> 
-	      <if test="createTime !=null and createTime!='' ">
-			AND ptm_createTime=#{createTime}  
-		  </if> 
-	      <if test="updateTime !=null and updateTime!='' ">
-			AND ptm_updateTime=#{updateTime}  
 		  </if> 
 		</where>
 	</select>
@@ -146,9 +128,6 @@
 		<where>
 		  <if test="transModeId !=null and transModeId >= 0 ">
 			 ptm_transModeId=#{transModeId}  
-		  </if> 
-		  <if test="transBrandId !=null and transBrandId >= 0 ">
-			AND ptm_transBrandId=#{transBrandId} 
 		  </if> 
 	      <if test="transModeCode !=null and transModeCode!='' ">
 			AND ptm_transModeCode=#{transModeCode}  

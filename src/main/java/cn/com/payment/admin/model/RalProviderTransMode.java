@@ -3,10 +3,12 @@ package cn.com.payment.admin.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * RalProviderTransMode
  *
- * Date:2019-1-30 14:24:59
+ * Date:2019-3-2 15:09:00
  * 
  * @author dl
  */
@@ -18,12 +20,22 @@ public class RalProviderTransMode implements Serializable {
 	 * 服务商交易方式Id
 	 */
 	private Long productId;
-
-	private String productName;
 	/**
-	 * 服务商主键ID
+	 * 父ID
 	 */
-	private Long providerId;
+	private Long parentId;
+	/**
+	 * 通道类型0-普通通道1-代理通道
+	 */
+	private String proType;
+	/**
+	 * 通道名称
+	 */
+	private String providerName;
+	/**
+	 * 产品名称
+	 */
+	private String productName;
 	/**
 	 * 交易方式Id
 	 */
@@ -84,22 +96,43 @@ public class RalProviderTransMode implements Serializable {
 	 * 限流状态0-停用；1-启用
 	 */
 	private String restrictState;
+	/**
+	 * 有效起始时间
+	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date beginTime;
+	/**
+	 * 有效截止时间
+	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date endTime;
+	/**
+	 * IP白名单
+	 */
+	private String validIP;
+	/**
+	 * 是否删除
+	 */
+	private String isDel;
+	private String settleType;
 
 	private TransMode transMode;
 
 	private String transModeName;
 
-	private String providerAlias;
-
 	public RalProviderTransMode() {
 	}
 
-	public RalProviderTransMode(Long productId, Long providerId, Long transModeId, String transRecordPrefix,
-			String serviceName, String methodName, String paramClass, String desc, String submitParamJson,
-			Integer feeRate, String state, Date createTime, Date updateTime, Long totleAmtLimit, Long minAmt,
-			Long maxAmt, String restrictState) {
+	public RalProviderTransMode(Long productId, Long parentId, String proType, String providerName, String productName,
+			Long transModeId, String transRecordPrefix, String serviceName, String methodName, String paramClass,
+			String desc, String submitParamJson, Integer feeRate, String state, Date createTime, Date updateTime,
+			Long totleAmtLimit, Long minAmt, Long maxAmt, String restrictState, Date beginTime, Date endTime,
+			String validIP, String isDel) {
 		this.productId = productId;
-		this.providerId = providerId;
+		this.parentId = parentId;
+		this.proType = proType;
+		this.providerName = providerName;
+		this.productName = productName;
 		this.transModeId = transModeId;
 		this.transRecordPrefix = transRecordPrefix;
 		this.serviceName = serviceName;
@@ -115,11 +148,18 @@ public class RalProviderTransMode implements Serializable {
 		this.minAmt = minAmt;
 		this.maxAmt = maxAmt;
 		this.restrictState = restrictState;
+		this.beginTime = beginTime;
+		this.endTime = endTime;
+		this.validIP = validIP;
+		this.isDel = isDel;
 	}
 
 	private RalProviderTransMode(RalProviderTransModeBuilder builder) {
 		this.productId = builder.productId;
-		this.providerId = builder.providerId;
+		this.parentId = builder.parentId;
+		this.proType = builder.proType;
+		this.providerName = builder.providerName;
+		this.productName = builder.productName;
 		this.transModeId = builder.transModeId;
 		this.transRecordPrefix = builder.transRecordPrefix;
 		this.serviceName = builder.serviceName;
@@ -135,30 +175,18 @@ public class RalProviderTransMode implements Serializable {
 		this.minAmt = builder.minAmt;
 		this.maxAmt = builder.maxAmt;
 		this.restrictState = builder.restrictState;
+		this.beginTime = builder.beginTime;
+		this.endTime = builder.endTime;
+		this.validIP = builder.validIP;
+		this.isDel = builder.isDel;
 	}
 
-	public String getTransModeName() {
-		return transModeName;
+	public String getSettleType() {
+		return settleType;
 	}
 
-	public void setTransModeName(String transModeName) {
-		this.transModeName = transModeName;
-	}
-
-	public String getProviderAlias() {
-		return providerAlias;
-	}
-
-	public void setProviderAlias(String providerAlias) {
-		this.providerAlias = providerAlias;
-	}
-
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setSettleType(String settleType) {
+		this.settleType = settleType;
 	}
 
 	public TransMode getTransMode() {
@@ -167,6 +195,14 @@ public class RalProviderTransMode implements Serializable {
 
 	public void setTransMode(TransMode transMode) {
 		this.transMode = transMode;
+	}
+
+	public String getTransModeName() {
+		return transModeName;
+	}
+
+	public void setTransModeName(String transModeName) {
+		this.transModeName = transModeName;
 	}
 
 	/**
@@ -188,21 +224,75 @@ public class RalProviderTransMode implements Serializable {
 	}
 
 	/**
-	 * 服务商主键ID
+	 * 父ID
 	 * 
-	 * @return providerId
+	 * @return parentId
 	 */
-	public Long getProviderId() {
-		return providerId;
+	public Long getParentId() {
+		return parentId;
 	}
 
 	/**
-	 * 服务商主键ID
+	 * 父ID
 	 * 
-	 * @param providerId
+	 * @param parentId
 	 */
-	public void setProviderId(Long providerId) {
-		this.providerId = providerId;
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	/**
+	 * 通道类型0-普通通道1-代理通道
+	 * 
+	 * @return proType
+	 */
+	public String getProType() {
+		return proType;
+	}
+
+	/**
+	 * 通道类型0-普通通道1-代理通道
+	 * 
+	 * @param proType
+	 */
+	public void setProType(String proType) {
+		this.proType = proType;
+	}
+
+	/**
+	 * 通道名称
+	 * 
+	 * @return providerName
+	 */
+	public String getProviderName() {
+		return providerName;
+	}
+
+	/**
+	 * 通道名称
+	 * 
+	 * @param providerName
+	 */
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
+	}
+
+	/**
+	 * 产品名称
+	 * 
+	 * @return productName
+	 */
+	public String getProductName() {
+		return productName;
+	}
+
+	/**
+	 * 产品名称
+	 * 
+	 * @param productName
+	 */
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
 	/**
@@ -475,9 +565,84 @@ public class RalProviderTransMode implements Serializable {
 		this.restrictState = restrictState;
 	}
 
+	/**
+	 * 有效起始时间
+	 * 
+	 * @return beginTime
+	 */
+	public Date getBeginTime() {
+		return beginTime;
+	}
+
+	/**
+	 * 有效起始时间
+	 * 
+	 * @param beginTime
+	 */
+	public void setBeginTime(Date beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	/**
+	 * 有效截止时间
+	 * 
+	 * @return endTime
+	 */
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * 有效截止时间
+	 * 
+	 * @param endTime
+	 */
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * IP白名单
+	 * 
+	 * @return validIP
+	 */
+	public String getValidIP() {
+		return validIP;
+	}
+
+	/**
+	 * IP白名单
+	 * 
+	 * @param validIP
+	 */
+	public void setValidIP(String validIP) {
+		this.validIP = validIP;
+	}
+
+	/**
+	 * 是否删除
+	 * 
+	 * @return isDel
+	 */
+	public String getIsDel() {
+		return isDel;
+	}
+
+	/**
+	 * 是否删除
+	 * 
+	 * @param isDel
+	 */
+	public void setIsDel(String isDel) {
+		this.isDel = isDel;
+	}
+
 	public static class RalProviderTransModeBuilder {
 		private Long productId; // 服务商交易方式Id
-		private Long providerId; // 服务商主键ID
+		private Long parentId; // 父ID
+		private String proType; // 通道类型0-普通通道1-代理通道
+		private String providerName; // 通道名称
+		private String productName; // 产品名称
 		private Long transModeId; // 交易方式Id
 		private String transRecordPrefix; // 交易流水号开头
 		private String serviceName; // 接口名
@@ -493,6 +658,10 @@ public class RalProviderTransMode implements Serializable {
 		private Long minAmt; // 单笔最低额度
 		private Long maxAmt; // 单笔最高额度
 		private String restrictState; // 限流状态0-停用；1-启用
+		private Date beginTime; // 有效起始时间
+		private Date endTime; // 有效截止时间
+		private String validIP; // IP白名单
+		private String isDel; // 是否删除
 
 		/**
 		 * 服务商交易方式Id
@@ -505,12 +674,42 @@ public class RalProviderTransMode implements Serializable {
 		}
 
 		/**
-		 * 服务商主键ID
+		 * 父ID
 		 * 
 		 * @return RalProviderTransModeBuilder
 		 */
-		public RalProviderTransModeBuilder addProviderId(Long providerId) {
-			this.providerId = providerId;
+		public RalProviderTransModeBuilder addParentId(Long parentId) {
+			this.parentId = parentId;
+			return this;
+		}
+
+		/**
+		 * 通道类型0-普通通道1-代理通道
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addProType(String proType) {
+			this.proType = proType;
+			return this;
+		}
+
+		/**
+		 * 通道名称
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addProviderName(String providerName) {
+			this.providerName = providerName;
+			return this;
+		}
+
+		/**
+		 * 产品名称
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addProductName(String productName) {
+			this.productName = productName;
 			return this;
 		}
 
@@ -661,6 +860,46 @@ public class RalProviderTransMode implements Serializable {
 		 */
 		public RalProviderTransModeBuilder addRestrictState(String restrictState) {
 			this.restrictState = restrictState;
+			return this;
+		}
+
+		/**
+		 * 有效起始时间
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addBeginTime(Date beginTime) {
+			this.beginTime = beginTime;
+			return this;
+		}
+
+		/**
+		 * 有效截止时间
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addEndTime(Date endTime) {
+			this.endTime = endTime;
+			return this;
+		}
+
+		/**
+		 * IP白名单
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addValidIP(String validIP) {
+			this.validIP = validIP;
+			return this;
+		}
+
+		/**
+		 * 是否删除
+		 * 
+		 * @return RalProviderTransModeBuilder
+		 */
+		public RalProviderTransModeBuilder addIsDel(String isDel) {
+			this.isDel = isDel;
 			return this;
 		}
 

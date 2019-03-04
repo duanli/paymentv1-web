@@ -108,8 +108,7 @@
 								    </tr>
 									<tr>
                 					 <td>选择商户<b>*</b></td>
-                					 <td>
-                					 <input id="mchId" name="mchId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false,required:false,missingMessage:'不能为空!'"></input>
+                					 <td><input id="mchId" name="mchId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false,required:false,missingMessage:'不能为空!'"></input>
                 					 </td>
                 					 <td>支付账户<b>*</b></td>
                 					 <td>

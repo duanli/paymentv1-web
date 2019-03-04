@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.RalProductMerchantMapper">
+	<resultMap type="cn.com.payment.admin.model.RalProductMerchant" id="ralProductMerchantResultMap">
+		<id column="rpm_ralMerProductId" jdbcType="BIGINT" property="ralMerProductId" />
+		<result column="rpm_mchId" jdbcType="BIGINT" property="mchId" />
+		<result column="rpm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="rpm_feeRate" jdbcType="INTEGER" property="feeRate" />
+		<result column="rpm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
+		<result column="rpm_minAmt" jdbcType="BIGINT" property="minAmt" />
+		<result column="rpm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
+		<result column="rpm_beginTime" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="rpm_endTime" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="rpm_percentage" jdbcType="INTEGER" property="percentage" />
+		<result column="rpm_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="rpm_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="rpm_state" jdbcType="VARCHAR" property="state" />
+		<result column="rpm_isDel" jdbcType="VARCHAR" property="isDel" />
+		<result column="rpm_validIP" jdbcType="VARCHAR" property="validIP" />
+		<result column="rpm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+		<result column="rpm_settleType" jdbcType="VARCHAR" property="settleType" />
+	</resultMap>
+	
+	<resultMap id="ralProductMerchantResultMap1" type="cn.com.payment.admin.model.RalProductMerchant" extends="ralProductMerchantResultMap">
+		<collection column="rpm_mchId" property="merchantInfo" select="cn.com.payment.admin.mapper.MerchantInfoMapper.selectOne"/>
+		<collection column="rpm_productId" property="ralProviderTransMode" select="cn.com.payment.admin.mapper.RalProviderTransModeMapper.selectOne"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="RalProductMerchant" useGeneratedKeys="true" keyProperty="ralMerProductId">
+	  INSERT INTO pay_ral_product_merchant
+	  (rpm_mchId,rpm_productId,rpm_feeRate,rpm_totleAmtLimit,rpm_minAmt,rpm_maxAmt,rpm_beginTime,rpm_endTime,rpm_percentage,rpm_createTime,rpm_updateTime,rpm_state,rpm_isDel,rpm_validIP,rpm_restrictState,rpm_settleType)
+	  VALUES 
+	  (#{mchId},#{productId},#{feeRate},#{totleAmtLimit},#{minAmt},#{maxAmt},#{beginTime},#{endTime},#{percentage},NOW(),NOW(),#{state},#{isDel},#{validIP},#{restrictState},#{settleType})
+	</insert>
+
+	<insert id="insertBatch" parameterType="RalProductMerchant">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_ral_product_merchant
+		(rpm_mchId,rpm_productId,rpm_feeRate,rpm_totleAmtLimit,rpm_minAmt,rpm_maxAmt,rpm_beginTime,rpm_endTime,rpm_percentage,rpm_createTime,rpm_updateTime,rpm_state,rpm_isDel,rpm_validIP,rpm_restrictState,rpm_settleType)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="ralProductMerchant" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{mchId} as rpm_mchId,
+					 #{productId} as rpm_productId,
+					 #{feeRate} as rpm_feeRate,
+					 #{totleAmtLimit} as rpm_totleAmtLimit,
+					 #{minAmt} as rpm_minAmt,
+					 #{maxAmt} as rpm_maxAmt,
+					 #{beginTime} as rpm_beginTime,
+					 #{endTime} as rpm_endTime,
+					 #{percentage} as rpm_percentage,
+					 #{createTime} as rpm_createTime,
+					 #{updateTime} as rpm_updateTime,
+					 #{state} as rpm_state,
+					 #{isDel} as rpm_isDel,
+					 #{validIP} as rpm_validIP,
+					 #{restrictState} as rpm_restrictState,
+					 #{settleType} as rpm_settleType
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="RalProductMerchant">
+		UPDATE pay_ral_product_merchant
+		<set>
+		  <if test="ralMerProductId !=null and ralMerProductId >= 0 "> 
+			 rpm_ralMerProductId = #{ralMerProductId},
+	      </if>
+		  <if test="mchId !=null and mchId >= 0 "> 
+			 rpm_mchId = #{mchId},
+	      </if>
+		  <if test="productId !=null and productId >= 0 "> 
+			 rpm_productId = #{productId},
+	      </if>
+		  <if test="feeRate !=null and feeRate!='' ">
+			 rpm_feeRate=#{feeRate},  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 "> 
+			 rpm_totleAmtLimit = #{totleAmtLimit},
+	      </if>
+		  <if test="minAmt !=null and minAmt >= 0 "> 
+			 rpm_minAmt = #{minAmt},
+	      </if>
+		  <if test="maxAmt !=null and maxAmt >= 0 "> 
+			 rpm_maxAmt = #{maxAmt},
+	      </if>
+		  <if test="beginTime !=null and beginTime!='' ">
+			 rpm_beginTime=#{beginTime},  
+		  </if> 
+		  <if test="endTime !=null and endTime!='' ">
+			 rpm_endTime=#{endTime},  
+		  </if> 
+		  <if test="percentage !=null and percentage!='' ">
+			 rpm_percentage=#{percentage},  
+		  </if> 
+		  <if test="createTime !=null and createTime!='' ">
+			 rpm_createTime=#{createTime},  
+		  </if> 
+		  <if test="updateTime !=null and updateTime!='' ">
+			 rpm_updateTime=#{updateTime},  
+		  </if> 
+		  <if test="state !=null and state!='' ">
+			 rpm_state=#{state},  
+		  </if> 
+		  <if test="isDel !=null and isDel!='' ">
+			 rpm_isDel=#{isDel},  
+		  </if> 
+		  <if test="validIP !=null and validIP!='' ">
+			 rpm_validIP=#{validIP},  
+		  </if> 
+		  <if test="restrictState !=null and restrictState!='' ">
+			 rpm_restrictState=#{restrictState},  
+		  </if> 
+		  <if test="settleType !=null and settleType!='' ">
+			 rpm_settleType=#{settleType}  
+		  </if> 
+		</set>
+		WHERE rpm_ralMerProductId = #{ralMerProductId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_ral_product_merchant WHERE rpm_ralMerProductId = #{ralMerProductId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_ral_product_merchant WHERE rpm_ralMerProductId IN
+		<foreach collection="array" item="ralMerProductId" open="(" separator="," close=")">
+			 #{ralMerProductId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="RalProductMerchant"> 
+		DELETE FROM pay_ral_product_merchant WHERE rpm_ralMerProductId = #{ralMerProductId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_ral_product_merchant where rpm_ralMerProductId = #{ralMerProductId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralProductMerchantResultMap">
+		select * from pay_ral_product_merchant
+		where rpm_ralMerProductId = #{ralMerProductId}
+	</select>
+	
+	<select id="selectAll" resultMap="ralProductMerchantResultMap">
+		select * from pay_ral_product_merchant
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="ralProductMerchantResultMap">
+		select * from pay_ral_product_merchant
+		where rpm_ralMerProductId in
+		<foreach collection="array" item="ralMerProductId" open="(" separator="," close=")">
+			 #{ralMerProductId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="RalProductMerchant" resultMap="ralProductMerchantResultMap1">
+	  SELECT pm.* FROM pay_ral_product_merchant pm
+	  LEFT JOIN pay_ral_provider_trans_mode ptm ON rpm_productId = prptm_productId
+		<where>
+		  <if test="ralMerProductId !=null and ralMerProductId >= 0 ">
+			 rpm_ralMerProductId=#{ralMerProductId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND rpm_mchId=#{mchId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND rpm_productId=#{productId} 
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND rpm_feeRate=#{feeRate}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND rpm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND rpm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND rpm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND rpm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND rpm_endTime=#{endTime}  
+		  </if> 
+	      <if test="percentage !=null and percentage!='' ">
+			AND rpm_percentage=#{percentage}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND rpm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND rpm_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND rpm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND rpm_isDel=#{isDel}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND rpm_validIP=#{validIP}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND rpm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND rpm_settleType=#{settleType}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND prptm_transModeId=#{transModeId} 
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="RalProductMerchant" resultMap="ralProductMerchantResultMap">
+	  SELECT * FROM pay_ral_product_merchant 
+		<where>
+		  <if test="ralMerProductId !=null and ralMerProductId >= 0 ">
+			 rpm_ralMerProductId=#{ralMerProductId}  
+		  </if> 
+		  <if test="mchId !=null and mchId >= 0 ">
+			AND rpm_mchId=#{mchId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND rpm_productId=#{productId} 
+		  </if> 
+	      <if test="feeRate !=null and feeRate!='' ">
+			AND rpm_feeRate=#{feeRate}  
+		  </if> 
+		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
+			AND rpm_totleAmtLimit=#{totleAmtLimit} 
+		  </if> 
+		  <if test="minAmt !=null and minAmt >= 0 ">
+			AND rpm_minAmt=#{minAmt} 
+		  </if> 
+		  <if test="maxAmt !=null and maxAmt >= 0 ">
+			AND rpm_maxAmt=#{maxAmt} 
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND rpm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND rpm_endTime=#{endTime}  
+		  </if> 
+	      <if test="percentage !=null and percentage!='' ">
+			AND rpm_percentage=#{percentage}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND rpm_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND rpm_updateTime=#{updateTime}  
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND rpm_state=#{state}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND rpm_isDel=#{isDel}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND rpm_validIP=#{validIP}  
+		  </if> 
+	      <if test="restrictState !=null and restrictState!='' ">
+			AND rpm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="settleType !=null and settleType!='' ">
+			AND rpm_settleType=#{settleType}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		rpm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rpm_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rpm_validIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rpm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		rpm_settleType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

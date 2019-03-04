@@ -78,12 +78,6 @@
 									 <td><input id="transModeId" name="transModeId" type="hidden"/></td>
 								    </tr>
 									<tr>
-                					 <td>支付品牌<b>*</b></td>
-                					 <td>
-                					 <input id="transBrandId" name="transBrandId" type="text"  class="easyui-combobox" data-options="valueField:'transBrandId',textField:'transBrandName',url:'${ctx}/transBrand/getTransBrandList',editable:false"></input>
-                					 </td>
-									</tr>
-									<tr>
                 					 <td>方式编号<b>*</b></td><td><input id="transModeCode" name="transModeCode" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'交易方式编号不能为空!'"></input></td>
 									</tr>
 									<tr>
@@ -129,15 +123,6 @@
 						frozenColumns : [[{field : 'ck',checkbox : true}]],
 						columns:[[
 				            /*  {title:'唯一ID', field:'transModeId',width:50,align:'center'}, */
-				             {title:'交易品牌', field:'transBrandId',width:50,align:'center',
-				            	 formatter: function(value,row,index){
-				            		 if (row.transBrand&&row.transBrand.transBrandName){
-				     					return "<font color='blue'>"+row.transBrand.transBrandName+"</font>";
-				     				} else {
-				     					return "暂无";
-				     				}
-				            	 }	 
-				             },
 				             {title:'方式编号', field:'transModeCode',width:50,align:'center'},
 				             {title:'方式名称', field:'transModeName',width:50,align:'center'},
 				             {title:'启用状态', field:'state',width:50,align:'center',
@@ -207,7 +192,6 @@
 	        	    		if(null!=data){
 			    				$('#transModeForm').form('clear');
 		    				  		$('#transModeId').val(data.transModeId);
-		    				  		$('#transBrandId').combobox('select',data.transBrandId);
 		    				  		$('#transModeCode').val(data.transModeCode);
 		    				  		$('#transModeName').val(data.transModeName);
 		    				  		$('#state').combobox('select',data.state);
@@ -261,22 +245,16 @@
 		     //查询方法
 		    function search(){
 		    	var transModeId = $("#transModeId_s").val();
-		    	var transBrandId = $("#transBrandId_s").val();
 		    	var transModeCode = $("#transModeCode_s").val();
 		    	var transModeName = $("#transModeName_s").val();
 		    	var state = $("#state_s").val();
 		    	var remark = $("#remark_s").val();
-		    	var createTime = $("#createTime_s").val();
-		    	var updateTime = $("#updateTime_s").val();
 		    $("#tt").datagrid('load',{
 		    	   transModeId:transModeId,
-		    	   transBrandId:transBrandId,
 		    	   transModeCode:transModeCode,
 		    	   transModeName:transModeName,
 		    	   state:state,
 		    	   remark:remark,
-		    	   createTime:createTime,
-		    	   updateTime:updateTime,
 		    	})
 		    }
 		    

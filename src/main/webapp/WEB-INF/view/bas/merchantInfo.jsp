@@ -24,7 +24,7 @@
 			<span>位置：</span>
 		    <ul class="placeul">
 			    <li><a href="#">首页</a></li>
-			    <li><a href="${ctx}/merchantInfo/toMerchantInfoPage">MerchantInfo</a></li>
+			    <li><a href="${ctx}/merchantInfo/toMerchantInfoPage">商户列表</a></li>
 		    </ul>
 		</div>
 		<!-- buttons -->

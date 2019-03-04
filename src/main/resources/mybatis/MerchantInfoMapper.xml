@@ -229,7 +229,7 @@
 			AND mer_accNo=#{accNo}  
 		  </if> 
 	      <if test="mchName !=null and mchName!='' ">
-			AND mer_mchName=#{mchName}  
+			AND mer_mchName LIKE CONCAT(CONCAT('%', #{mchName}),'%')
 		  </if> 
 	      <if test="mchDesc !=null and mchDesc!='' ">
 			AND mer_mchDesc=#{mchDesc}  
@@ -247,7 +247,7 @@
 			AND mer_email=#{email}  
 		  </if> 
 	      <if test="mchNo !=null and mchNo!='' ">
-			AND mer_mchNo=#{mchNo}  
+			AND mer_mchNo LIKE CONCAT(CONCAT('%', #{mchNo}),'%')
 		  </if> 
 	      <if test="mchKey !=null and mchKey!='' ">
 			AND mer_mchKey=#{mchKey}  

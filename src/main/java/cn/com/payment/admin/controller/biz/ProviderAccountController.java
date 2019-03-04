@@ -17,6 +17,7 @@ import cn.com.payment.admin.dto.PageEasyUi;
 import cn.com.payment.admin.exceptions.BaseException;
 import cn.com.payment.admin.model.ProviderAccount;
 import cn.com.payment.admin.service.ProviderAccountService;
+import cn.com.payment.admin.utils.AmtUtils;
 import cn.com.payment.admin.utils.CommonUtils;
 import cn.com.payment.admin.utils.PageUtils;
 
@@ -83,24 +84,48 @@ public class ProviderAccountController {
 	 */
 	@RequestMapping("updateProviderAccount")
 	@RequiresPermissions("providerAccount:update")
-	public @ResponseBody ResponseEntity<String> updateProviderAccount(ProviderAccount providerAccount){
+	public @ResponseBody ResponseEntity<String> updateProviderAccount(ProviderAccount providerAccount,
+			String sminAmt, String smaxAmt, String stotleAmt){
 		if(CommonUtils.isEmpty(providerAccount) || CommonUtils.isEmpty(providerAccount.getProviderAccId()))
 			return new ResponseEntity<String>(Constants.EX_PARAM,HttpStatus.BAD_REQUEST);
 		
 		try {
 			ProviderAccount data = this.providerAccountService.searchById(providerAccount.getProviderAccId());
 			if(CommonUtils.isNotEmpty(data)){
-				  if(CommonUtils.isNotEmpty(providerAccount.getProviderAccId()))data.setProviderAccId(providerAccount.getProviderAccId());
-				  if(CommonUtils.isNotEmpty(providerAccount.getProviderId()))data.setProviderId(providerAccount.getProviderId());
-				  if(CommonUtils.isNotEmpty(providerAccount.getAccName()))data.setAccName(providerAccount.getAccName());
-				  if(CommonUtils.isNotEmpty(providerAccount.getProviderMchNo()))data.setProviderMchNo(providerAccount.getProviderMchNo());
-				  if(CommonUtils.isNotEmpty(providerAccount.getProviderMchKey()))data.setProviderMchKey(providerAccount.getProviderMchKey());
-				  if(CommonUtils.isNotEmpty(providerAccount.getProviderAPPId()))data.setProviderAPPId(providerAccount.getProviderAPPId());
-				  if(CommonUtils.isNotEmpty(providerAccount.getState()))data.setState(providerAccount.getState());
-				  if(CommonUtils.isNotEmpty(providerAccount.getCreateTime()))data.setCreateTime(providerAccount.getCreateTime());
-				  if(CommonUtils.isNotEmpty(providerAccount.getUpdateTime()))data.setUpdateTime(providerAccount.getUpdateTime());
-				  if(CommonUtils.isNotEmpty(providerAccount.getFeeRate()))data.setFeeRate(providerAccount.getFeeRate());
-				  if(CommonUtils.isNotEmpty(providerAccount.getBalance()))data.setBalance(providerAccount.getBalance());
+				if (CommonUtils.isNotEmpty(providerAccount.getProviderAccId()))
+					data.setProviderAccId(providerAccount.getProviderAccId());
+				if (CommonUtils.isNotEmpty(providerAccount.getProductId()))
+					data.setProductId(providerAccount.getProductId());
+				if (CommonUtils.isNotEmpty(providerAccount.getAccName()))
+					data.setAccName(providerAccount.getAccName());
+				if (CommonUtils.isNotEmpty(providerAccount.getProviderMchNo()))
+					data.setProviderMchNo(providerAccount.getProviderMchNo());
+				if (CommonUtils.isNotEmpty(providerAccount.getProviderMchKey()))
+					data.setProviderMchKey(providerAccount.getProviderMchKey());
+				if (CommonUtils.isNotEmpty(providerAccount.getProviderAPPId()))
+					data.setProviderAPPId(providerAccount.getProviderAPPId());
+				if (CommonUtils.isNotEmpty(providerAccount.getProviderRSAKey()))
+					data.setProviderRSAKey(providerAccount.getProviderRSAKey());
+				if (CommonUtils.isNotEmpty(providerAccount.getState()))
+					data.setState(providerAccount.getState());
+				if (CommonUtils.isNotEmpty(providerAccount.getBeginTime()))
+					data.setBeginTime(providerAccount.getBeginTime());
+				if (CommonUtils.isNotEmpty(providerAccount.getEndTime()))
+					data.setEndTime(providerAccount.getEndTime());
+				if (CommonUtils.isNotEmpty(providerAccount.getRestrictState()))
+					data.setRestrictState(providerAccount.getRestrictState());
+				if (CommonUtils.isNotEmpty(providerAccount.getPercentage()))
+					data.setPercentage(providerAccount.getPercentage());
+				if (CommonUtils.isNotEmpty(providerAccount.getFeeRate()))
+					data.setFeeRate(providerAccount.getFeeRate());
+				if (CommonUtils.isNotEmpty(providerAccount.getIsDel()))
+					data.setIsDel(providerAccount.getIsDel());
+				if (CommonUtils.isNotEmpty(stotleAmt))
+					data.setTotleAmtLimit(Long.valueOf(AmtUtils.yuanToFen(stotleAmt)));
+				if (CommonUtils.isNotEmpty(sminAmt))
+					data.setMinAmt(Long.valueOf(AmtUtils.yuanToFen(sminAmt)));
+				if (CommonUtils.isNotEmpty(smaxAmt))
+					data.setMaxAmt(Long.valueOf(AmtUtils.yuanToFen(smaxAmt)));
 			
 				this.providerAccountService.modify(data);
 				return new ResponseEntity<String>(Constants.PASS_OK,HttpStatus.OK);

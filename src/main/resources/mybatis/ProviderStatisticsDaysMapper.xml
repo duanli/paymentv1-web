@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.payment.admin.mapper.ProviderStatisticsDaysMapper">
+	<resultMap type="cn.com.payment.admin.model.ProviderStatisticsDays" id="providerStatisticsDaysResultMap">
+		<id column="psd_sdId" jdbcType="BIGINT" property="sdId" />
+		<result column="psd_transModeId" jdbcType="BIGINT" property="transModeId" />
+		<result column="psd_productId" jdbcType="BIGINT" property="productId" />
+		<result column="psd_providerAccId" jdbcType="BIGINT" property="providerAccId" />
+		<result column="psd_sdYear" jdbcType="VARCHAR" property="sdYear" />
+		<result column="psd_sdMouth" jdbcType="VARCHAR" property="sdMouth" />
+		<result column="psd_sdDay" jdbcType="TIMESTAMP" property="sdDay" />
+		<result column="psd_payCountTotal" jdbcType="INTEGER" property="payCountTotal" />
+		<result column="psd_payAmountTotal" jdbcType="BIGINT" property="payAmountTotal" />
+		<result column="psd_payCountSucc" jdbcType="INTEGER" property="payCountSucc" />
+		<result column="psd_payAmountSucc" jdbcType="BIGINT" property="payAmountSucc" />
+		<result column="psd_realAmount" jdbcType="BIGINT" property="realAmount" />
+		<result column="psd_totleFee" jdbcType="BIGINT" property="totleFee" />
+		<result column="psd_refundCount" jdbcType="INTEGER" property="refundCount" />
+		<result column="psd_refundAmount" jdbcType="BIGINT" property="refundAmount" />
+		<result column="psd_state" jdbcType="VARCHAR" property="state" />
+		<result column="psd_createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="psd_updateTime" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<insert id="save" parameterType="ProviderStatisticsDays" useGeneratedKeys="true" keyProperty="sdId">
+	  INSERT INTO pay_provider_statistics_days
+	  (psd_transModeId,psd_productId,psd_providerAccId,psd_sdYear,psd_sdMouth,psd_sdDay,psd_payCountTotal,psd_payAmountTotal,psd_payCountSucc,psd_payAmountSucc,psd_realAmount,psd_totleFee,psd_refundCount,psd_refundAmount,psd_state,psd_createTime,psd_updateTime)
+	  VALUES 
+	  (#{transModeId},#{productId},#{providerAccId},#{sdYear},#{sdMouth},#{sdDay},#{payCountTotal},#{payAmountTotal},#{payCountSucc},#{payAmountSucc},#{realAmount},#{totleFee},#{refundCount},#{refundAmount},#{state},#{createTime},#{updateTime})
+	</insert>
+
+	<insert id="insertBatch" parameterType="ProviderStatisticsDays">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		pay_provider_statistics_days
+		(psd_transModeId,psd_productId,psd_providerAccId,psd_sdYear,psd_sdMouth,psd_sdDay,psd_payCountTotal,psd_payAmountTotal,psd_payCountSucc,psd_payAmountSucc,psd_realAmount,psd_totleFee,psd_refundCount,psd_refundAmount,psd_state,psd_createTime,psd_updateTime)
+		SELECT *
+		FROM (
+		<foreach collection="list" item="providerStatisticsDays" index="index"
+			open="" close="" separator="union all">
+			SELECT
+					 #{transModeId} as psd_transModeId,
+					 #{productId} as psd_productId,
+					 #{providerAccId} as psd_providerAccId,
+					 #{sdYear} as psd_sdYear,
+					 #{sdMouth} as psd_sdMouth,
+					 #{sdDay} as psd_sdDay,
+					 #{payCountTotal} as psd_payCountTotal,
+					 #{payAmountTotal} as psd_payAmountTotal,
+					 #{payCountSucc} as psd_payCountSucc,
+					 #{payAmountSucc} as psd_payAmountSucc,
+					 #{realAmount} as psd_realAmount,
+					 #{totleFee} as psd_totleFee,
+					 #{refundCount} as psd_refundCount,
+					 #{refundAmount} as psd_refundAmount,
+					 #{state} as psd_state,
+					 #{createTime} as psd_createTime,
+					 #{updateTime} as psd_updateTime
+			FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	
+	<update id="update" parameterType="ProviderStatisticsDays">
+		UPDATE pay_provider_statistics_days
+		<set>
+		  <if test="sdId !=null and sdId >= 0 "> 
+			 psd_sdId = #{sdId},
+	      </if>
+		  <if test="transModeId !=null and transModeId >= 0 "> 
+			 psd_transModeId = #{transModeId},
+	      </if>
+		  <if test="productId !=null and productId >= 0 "> 
+			 psd_productId = #{productId},
+	      </if>
+		  <if test="providerAccId !=null and providerAccId >= 0 "> 
+			 psd_providerAccId = #{providerAccId},
+	      </if>
+		  <if test="sdYear !=null and sdYear!='' ">
+			 psd_sdYear=#{sdYear},  
+		  </if> 
+		  <if test="sdMouth !=null and sdMouth!='' ">
+			 psd_sdMouth=#{sdMouth},  
+		  </if> 
+		  <if test="sdDay !=null and sdDay!='' ">
+			 psd_sdDay=#{sdDay},  
+		  </if> 
+		  <if test="payCountTotal !=null and payCountTotal!='' ">
+			 psd_payCountTotal=#{payCountTotal},  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 "> 
+			 psd_payAmountTotal = #{payAmountTotal},
+	      </if>
+		  <if test="payCountSucc !=null and payCountSucc!='' ">
+			 psd_payCountSucc=#{payCountSucc},  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 "> 
+			 psd_payAmountSucc = #{payAmountSucc},
+	      </if>
+		  <if test="realAmount !=null and realAmount >= 0 "> 
+			 psd_realAmount = #{realAmount},
+	      </if>
+		  <if test="totleFee !=null and totleFee >= 0 "> 
+			 psd_totleFee = #{totleFee},
+	      </if>
+		  <if test="refundCount !=null and refundCount!='' ">
+			 psd_refundCount=#{refundCount},  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 "> 
+			 psd_refundAmount = #{refundAmount},
+	      </if>
+		  <if test="state !=null and state!='' ">
+			 psd_state=#{state},  
+		  </if> 
+		  <if test="createTime !=null and createTime!='' ">
+			 psd_createTime=#{createTime},  
+		  </if> 
+		  <if test="updateTime !=null and updateTime!='' ">
+			 psd_updateTime=#{updateTime}  
+		  </if> 
+		</set>
+		WHERE psd_sdId = #{sdId}
+	</update>
+
+	<delete id="deleteByPK">
+		DELETE FROM pay_provider_statistics_days WHERE psd_sdId = #{sdId}
+	</delete>
+
+
+	<delete id="deleteByPKs" parameterType="java.util.ArrayList">
+	  DELETE FROM pay_provider_statistics_days WHERE psd_sdId IN
+		<foreach collection="array" item="sdId" open="(" separator="," close=")">
+			 #{sdId}
+		</foreach>
+	</delete>
+	
+	<delete id="delete" parameterType="ProviderStatisticsDays"> 
+		DELETE FROM pay_provider_statistics_days WHERE psd_sdId = #{sdId}
+	</delete>
+	
+	<select id="exists" parameterType="java.lang.Long" resultType="boolean">
+		select count(*) from pay_provider_statistics_days where psd_sdId = #{sdId}
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="providerStatisticsDaysResultMap">
+		select * from pay_provider_statistics_days
+		where psd_sdId = #{sdId}
+	</select>
+	
+	<select id="selectAll" resultMap="providerStatisticsDaysResultMap">
+		select * from pay_provider_statistics_days
+	</select>
+	
+	<select id="selectByPKs" parameterType="java.util.ArrayList" resultMap="providerStatisticsDaysResultMap">
+		select * from pay_provider_statistics_days
+		where psd_sdId in
+		<foreach collection="array" item="sdId" open="(" separator="," close=")">
+			 #{sdId}
+		</foreach>
+	</select>
+	
+	<select id="selectByProperty" parameterType="ProviderStatisticsDays" resultMap="providerStatisticsDaysResultMap">
+	  SELECT * FROM pay_provider_statistics_days 
+		<where>
+		  <if test="sdId !=null and sdId >= 0 ">
+			 psd_sdId=#{sdId}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND psd_transModeId=#{transModeId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND psd_productId=#{productId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND psd_providerAccId=#{providerAccId} 
+		  </if> 
+	      <if test="sdYear !=null and sdYear!='' ">
+			AND psd_sdYear=#{sdYear}  
+		  </if> 
+	      <if test="sdMouth !=null and sdMouth!='' ">
+			AND psd_sdMouth=#{sdMouth}  
+		  </if> 
+	      <if test="sdDay !=null and sdDay!='' ">
+			AND psd_sdDay=#{sdDay}  
+		  </if> 
+	      <if test="payCountTotal !=null and payCountTotal!='' ">
+			AND psd_payCountTotal=#{payCountTotal}  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 ">
+			AND psd_payAmountTotal=#{payAmountTotal} 
+		  </if> 
+	      <if test="payCountSucc !=null and payCountSucc!='' ">
+			AND psd_payCountSucc=#{payCountSucc}  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 ">
+			AND psd_payAmountSucc=#{payAmountSucc} 
+		  </if> 
+		  <if test="realAmount !=null and realAmount >= 0 ">
+			AND psd_realAmount=#{realAmount} 
+		  </if> 
+		  <if test="totleFee !=null and totleFee >= 0 ">
+			AND psd_totleFee=#{totleFee} 
+		  </if> 
+	      <if test="refundCount !=null and refundCount!='' ">
+			AND psd_refundCount=#{refundCount}  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 ">
+			AND psd_refundAmount=#{refundAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND psd_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND psd_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND psd_updateTime=#{updateTime}  
+		  </if> 
+		</where>
+	</select>
+	<select id="selectByPropertyKeyWord" parameterType="ProviderStatisticsDays" resultMap="providerStatisticsDaysResultMap">
+	  SELECT * FROM pay_provider_statistics_days 
+		<where>
+		  <if test="sdId !=null and sdId >= 0 ">
+			 psd_sdId=#{sdId}  
+		  </if> 
+		  <if test="transModeId !=null and transModeId >= 0 ">
+			AND psd_transModeId=#{transModeId} 
+		  </if> 
+		  <if test="productId !=null and productId >= 0 ">
+			AND psd_productId=#{productId} 
+		  </if> 
+		  <if test="providerAccId !=null and providerAccId >= 0 ">
+			AND psd_providerAccId=#{providerAccId} 
+		  </if> 
+	      <if test="sdYear !=null and sdYear!='' ">
+			AND psd_sdYear=#{sdYear}  
+		  </if> 
+	      <if test="sdMouth !=null and sdMouth!='' ">
+			AND psd_sdMouth=#{sdMouth}  
+		  </if> 
+	      <if test="sdDay !=null and sdDay!='' ">
+			AND psd_sdDay=#{sdDay}  
+		  </if> 
+	      <if test="payCountTotal !=null and payCountTotal!='' ">
+			AND psd_payCountTotal=#{payCountTotal}  
+		  </if> 
+		  <if test="payAmountTotal !=null and payAmountTotal >= 0 ">
+			AND psd_payAmountTotal=#{payAmountTotal} 
+		  </if> 
+	      <if test="payCountSucc !=null and payCountSucc!='' ">
+			AND psd_payCountSucc=#{payCountSucc}  
+		  </if> 
+		  <if test="payAmountSucc !=null and payAmountSucc >= 0 ">
+			AND psd_payAmountSucc=#{payAmountSucc} 
+		  </if> 
+		  <if test="realAmount !=null and realAmount >= 0 ">
+			AND psd_realAmount=#{realAmount} 
+		  </if> 
+		  <if test="totleFee !=null and totleFee >= 0 ">
+			AND psd_totleFee=#{totleFee} 
+		  </if> 
+	      <if test="refundCount !=null and refundCount!='' ">
+			AND psd_refundCount=#{refundCount}  
+		  </if> 
+		  <if test="refundAmount !=null and refundAmount >= 0 ">
+			AND psd_refundAmount=#{refundAmount} 
+		  </if> 
+	      <if test="state !=null and state!='' ">
+			AND psd_state=#{state}  
+		  </if> 
+	      <if test="createTime !=null and createTime!='' ">
+			AND psd_createTime=#{createTime}  
+		  </if> 
+	      <if test="updateTime !=null and updateTime!='' ">
+			AND psd_updateTime=#{updateTime}  
+		  </if> 
+		  <if test="keyWord !=null and keyWord!='' ">
+			AND 
+				(
+		 		psd_sdYear LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		psd_sdMouth LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		psd_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+			 	)
+		  </if> 
+		</where>
+	</select>
+</mapper>

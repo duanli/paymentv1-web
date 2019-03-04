@@ -19,10 +19,6 @@ public class TransMode implements Serializable {
 	 */
 	private Long transModeId;
 	/**
-	 * 交易品牌Id
-	 */
-	private Long transBrandId;
-	/**
 	 * 交易方式编号
 	 */
 	private String transModeCode;
@@ -47,15 +43,12 @@ public class TransMode implements Serializable {
 	 */
 	private Date updateTime;
 
-	private TransBrand transBrand;
-
 	public TransMode() {
 	}
 
-	public TransMode(Long transModeId, Long transBrandId, String transModeCode, String transModeName, String state,
-			String remark, Date createTime, Date updateTime) {
+	public TransMode(Long transModeId, String transModeCode, String transModeName, String state, String remark,
+			Date createTime, Date updateTime) {
 		this.transModeId = transModeId;
-		this.transBrandId = transBrandId;
 		this.transModeCode = transModeCode;
 		this.transModeName = transModeName;
 		this.state = state;
@@ -66,21 +59,12 @@ public class TransMode implements Serializable {
 
 	private TransMode(TransModeBuilder builder) {
 		this.transModeId = builder.transModeId;
-		this.transBrandId = builder.transBrandId;
 		this.transModeCode = builder.transModeCode;
 		this.transModeName = builder.transModeName;
 		this.state = builder.state;
 		this.remark = builder.remark;
 		this.createTime = builder.createTime;
 		this.updateTime = builder.updateTime;
-	}
-
-	public TransBrand getTransBrand() {
-		return transBrand;
-	}
-
-	public void setTransBrand(TransBrand transBrand) {
-		this.transBrand = transBrand;
 	}
 
 	/**
@@ -99,24 +83,6 @@ public class TransMode implements Serializable {
 	 */
 	public void setTransModeId(Long transModeId) {
 		this.transModeId = transModeId;
-	}
-
-	/**
-	 * 交易品牌Id
-	 * 
-	 * @return transBrandId
-	 */
-	public Long getTransBrandId() {
-		return transBrandId;
-	}
-
-	/**
-	 * 交易品牌Id
-	 * 
-	 * @param transBrandId
-	 */
-	public void setTransBrandId(Long transBrandId) {
-		this.transBrandId = transBrandId;
 	}
 
 	/**
@@ -229,7 +195,6 @@ public class TransMode implements Serializable {
 
 	public static class TransModeBuilder {
 		private Long transModeId; // 交易方式Id
-		private Long transBrandId; // 交易品牌Id
 		private String transModeCode; // 交易方式编号
 		private String transModeName; // 交易方式名称
 		private String state; // 状态
@@ -244,16 +209,6 @@ public class TransMode implements Serializable {
 		 */
 		public TransModeBuilder addTransModeId(Long transModeId) {
 			this.transModeId = transModeId;
-			return this;
-		}
-
-		/**
-		 * 交易品牌Id
-		 * 
-		 * @return TransModeBuilder
-		 */
-		public TransModeBuilder addTransBrandId(Long transBrandId) {
-			this.transBrandId = transBrandId;
 			return this;
 		}
 

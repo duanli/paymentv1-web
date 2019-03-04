@@ -9,7 +9,6 @@ import org.springframework.dao.DataAccessException;
 import cn.com.payment.admin.exceptions.DBAccessException;
 import cn.com.payment.admin.mapper.BaseMapper;
 import cn.com.payment.admin.service.BaseService;
-import cn.com.payment.admin.utils.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

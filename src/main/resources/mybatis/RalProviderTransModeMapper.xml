@@ -3,8 +3,10 @@
 <mapper namespace="cn.com.payment.admin.mapper.RalProviderTransModeMapper">
 	<resultMap type="cn.com.payment.admin.model.RalProviderTransMode" id="ralProviderTransModeResultMap">
 		<id column="prptm_productId" jdbcType="BIGINT" property="productId" />
+		<result column="prptm_parentId" jdbcType="BIGINT" property="parentId" />
+		<result column="prptm_proType" jdbcType="VARCHAR" property="proType" />
+		<result column="prptm_providerName" jdbcType="VARCHAR" property="providerName" />
 		<result column="prptm_productName" jdbcType="VARCHAR" property="productName" />
-		<result column="prptm_providerId" jdbcType="BIGINT" property="providerId" />
 		<result column="prptm_transModeId" jdbcType="BIGINT" property="transModeId" />
 		<result column="prptm_transRecordPrefix" jdbcType="VARCHAR" property="transRecordPrefix" />
 		<result column="prptm_serviceName" jdbcType="VARCHAR" property="serviceName" />
@@ -19,23 +21,23 @@
 		<result column="prptm_totleAmtLimit" jdbcType="BIGINT" property="totleAmtLimit" />
 		<result column="prptm_minAmt" jdbcType="BIGINT" property="minAmt" />
 		<result column="prptm_maxAmt" jdbcType="BIGINT" property="maxAmt" />
-		<result column="pratm_restrictState" jdbcType="VARCHAR" property="restrictState" />
-	</resultMap>
-	
-	<resultMap id="ralProviderTransModeResultMap1" type="cn.com.payment.admin.model.RalProviderTransMode" extends="ralProviderTransModeResultMap">
-		<collection column="ppa_providerId" property="provider" select="cn.com.payment.admin.mapper.ProviderMapper.selectOne"/>
+		<result column="prptm_restrictState" jdbcType="VARCHAR" property="restrictState" />
+		<result column="prptm_beginTime" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="prptm_endTime" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="prptm_validIP" jdbcType="VARCHAR" property="validIP" />
+		<result column="prptm_isDel" jdbcType="VARCHAR" property="isDel" />
+		<result column="prptm_settleType" jdbcType="VARCHAR" property="settleType" />
 	</resultMap>
 	
 	<resultMap id="ralProviderTransModeResultMap2" type="cn.com.payment.admin.model.RalProviderTransMode" extends="ralProviderTransModeResultMap">
 		<result column="ptm_transModeName" jdbcType="VARCHAR" property="transModeName" />
-		<result column="pp_providerAlias" jdbcType="VARCHAR" property="providerAlias" />
 	</resultMap>
 	
 	<insert id="save" parameterType="RalProviderTransMode" useGeneratedKeys="true" keyProperty="productId">
 	  INSERT INTO pay_ral_provider_trans_mode
-	  (prptm_productName,prptm_providerId,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,pratm_restrictState)
+	  (prptm_settleType,prptm_parentId,prptm_proType,prptm_providerName,prptm_productName,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,prptm_restrictState,prptm_beginTime,prptm_endTime,prptm_validIP,prptm_isDel)
 	  VALUES 
-	  (#{productName},#{providerId},#{transModeId},#{transRecordPrefix},#{serviceName},#{methodName},#{paramClass},#{desc},#{submitParamJson},#{feeRate},#{state},NOW(),NOW(),#{totleAmtLimit},#{minAmt},#{maxAmt},#{restrictState})
+	  (#{settleType},#{parentId},#{proType},#{providerName},#{productName},#{transModeId},#{transRecordPrefix},#{serviceName},#{methodName},#{paramClass},#{desc},#{submitParamJson},#{feeRate},#{state},NOW(),NOW(),#{totleAmtLimit},#{minAmt},#{maxAmt},#{restrictState},#{beginTime},#{endTime},#{validIP},#{isDel})
 	</insert>
 
 	<insert id="insertBatch" parameterType="RalProviderTransMode">
@@ -45,13 +47,16 @@
 		</selectKey>
 		INSERT INTO
 		pay_ral_provider_trans_mode
-		(prptm_providerId,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,pratm_restrictState)
+		(prptm_parentId,prptm_proType,prptm_providerName,prptm_productName,prptm_transModeId,prptm_transRecordPrefix,prptm_serviceName,prptm_methodName,prptm_paramClass,prptm_desc,prptm_submitParamJson,prptm_feeRate,prptm_state,prptm_createTime,prptm_updateTime,prptm_totleAmtLimit,prptm_minAmt,prptm_maxAmt,prptm_restrictState,prptm_beginTime,prptm_endTime,prptm_validIP,prptm_isDel)
 		SELECT *
 		FROM (
 		<foreach collection="list" item="ralProviderTransMode" index="index"
 			open="" close="" separator="union all">
 			SELECT
-					 #{providerId} as prptm_providerId,
+					 #{parentId} as prptm_parentId,
+					 #{proType} as prptm_proType,
+					 #{providerName} as prptm_providerName,
+					 #{productName} as prptm_productName,
 					 #{transModeId} as prptm_transModeId,
 					 #{transRecordPrefix} as prptm_transRecordPrefix,
 					 #{serviceName} as prptm_serviceName,
@@ -66,7 +71,11 @@
 					 #{totleAmtLimit} as prptm_totleAmtLimit,
 					 #{minAmt} as prptm_minAmt,
 					 #{maxAmt} as prptm_maxAmt,
-					 #{restrictState} as pratm_restrictState
+					 #{restrictState} as prptm_restrictState,
+					 #{beginTime} as prptm_beginTime,
+					 #{endTime} as prptm_endTime,
+					 #{validIP} as prptm_validIP,
+					 #{isDel} as prptm_isDel
 			FROM DUAL
 		</foreach>
 		) A
@@ -79,12 +88,18 @@
 		  <if test="productId !=null and productId >= 0 "> 
 			 prptm_productId = #{productId},
 	      </if>
-	      <if test="productName !=null and productName!='' ">
+		  <if test="parentId !=null and parentId >= 0 "> 
+			 prptm_parentId = #{parentId},
+	      </if>
+		  <if test="proType !=null and proType!='' ">
+			 prptm_proType=#{proType},  
+		  </if> 
+		  <if test="providerName !=null and providerName!='' ">
+			 prptm_providerName=#{providerName},  
+		  </if> 
+		  <if test="productName !=null and productName!='' ">
 			 prptm_productName=#{productName},  
 		  </if> 
-		  <if test="providerId !=null and providerId >= 0 "> 
-			 prptm_providerId = #{providerId},
-	      </if>
 		  <if test="transModeId !=null and transModeId >= 0 "> 
 			 prptm_transModeId = #{transModeId},
 	      </if>
@@ -122,9 +137,24 @@
 			 prptm_maxAmt = #{maxAmt},
 	      </if>
 		  <if test="restrictState !=null and restrictState!='' ">
-			 pratm_restrictState=#{restrictState}, 
+			 prptm_restrictState=#{restrictState},  
 		  </if> 
-		     prptm_updateTime=NOW() 
+		  <if test="beginTime !=null and beginTime!='' ">
+			 prptm_beginTime=#{beginTime},  
+		  </if> 
+		  <if test="endTime !=null and endTime!='' ">
+			 prptm_endTime=#{endTime},  
+		  </if> 
+		  <if test="validIP !=null and validIP!='' ">
+			 prptm_validIP=#{validIP},  
+		  </if> 
+		  <if test="isDel !=null and isDel!='' ">
+			 prptm_isDel=#{isDel},
+		  </if> 
+		  <if test="settleType !=null and settleType!='' ">
+			 prptm_settleType=#{settleType},
+		  </if>
+		   prptm_updateTime=NOW()  
 		</set>
 		WHERE prptm_productId = #{productId}
 	</update>
@@ -149,14 +179,9 @@
 		select count(*) from pay_ral_provider_trans_mode where prptm_productId = #{productId}
 	</select>
 	
-	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralProviderTransModeResultMap1">
+	<select id="selectOne" parameterType="java.lang.Long" resultMap="ralProviderTransModeResultMap">
 		select * from pay_ral_provider_trans_mode
 		where prptm_productId = #{productId}
-	</select>
-	
-	<select id="selectByProviderId" parameterType="java.lang.Long" resultMap="ralProviderTransModeResultMap">
-		select * from pay_ral_provider_trans_mode
-		where prptm_providerId=#{providerId} and prptm_state = '1'
 	</select>
 	
 	<select id="selectAll" resultMap="ralProviderTransModeResultMap">
@@ -171,23 +196,29 @@
 		</foreach>
 	</select>
 	
-	<select id="selectByProperty" parameterType="RalProviderTransMode" resultMap="ralProviderTransModeResultMap2">
+<select id="selectByProperty" parameterType="RalProviderTransMode" resultMap="ralProviderTransModeResultMap2">
 	  SELECT 
 	   ptm.*,
-	   tm.ptm_transModeName,
-	   p.pp_providerAlias
+	   tm.ptm_transModeName
 	  FROM 
 	  	pay_ral_provider_trans_mode ptm
 	  LEFT JOIN 
 	  	pay_trans_mode tm ON prptm_transModeId = ptm_transModeId
-	  LEFT JOIN 
-	  	pay_provider p ON prptm_providerId = pp_providerId
 		<where>
 		  <if test="productId !=null and productId >= 0 ">
 			 prptm_productId=#{productId}  
 		  </if> 
-		  <if test="providerId !=null and providerId >= 0 ">
-			AND prptm_providerId=#{providerId} 
+		  <if test="parentId !=null and parentId >= 0 ">
+			AND prptm_parentId=#{parentId} 
+		  </if> 
+	      <if test="proType !=null and proType!='' ">
+			AND prptm_proType=#{proType}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND prptm_providerName=#{providerName}  
+		  </if> 
+	      <if test="productName !=null and productName!='' ">
+			AND prptm_productName LIKE CONCAT(CONCAT('%', #{productName}),'%')
 		  </if> 
 		  <if test="transModeId !=null and transModeId >= 0 ">
 			AND prptm_transModeId=#{transModeId} 
@@ -216,12 +247,6 @@
 	      <if test="state !=null and state!='' ">
 			AND prptm_state=#{state}  
 		  </if> 
-	      <if test="createTime !=null and createTime!='' ">
-			AND prptm_createTime=#{createTime}  
-		  </if> 
-	      <if test="updateTime !=null and updateTime!='' ">
-			AND prptm_updateTime=#{updateTime}  
-		  </if> 
 		  <if test="totleAmtLimit !=null and totleAmtLimit >= 0 ">
 			AND prptm_totleAmtLimit=#{totleAmtLimit} 
 		  </if> 
@@ -232,7 +257,19 @@
 			AND prptm_maxAmt=#{maxAmt} 
 		  </if> 
 	      <if test="restrictState !=null and restrictState!='' ">
-			AND pratm_restrictState=#{restrictState}  
+			AND prptm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND prptm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND prptm_endTime=#{endTime}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND prptm_validIP=#{validIP}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND prptm_isDel=#{isDel}  
 		  </if> 
 		</where>
 	</select>
@@ -242,8 +279,17 @@
 		  <if test="productId !=null and productId >= 0 ">
 			 prptm_productId=#{productId}  
 		  </if> 
-		  <if test="providerId !=null and providerId >= 0 ">
-			AND prptm_providerId=#{providerId} 
+		  <if test="parentId !=null and parentId >= 0 ">
+			AND prptm_parentId=#{parentId} 
+		  </if> 
+	      <if test="proType !=null and proType!='' ">
+			AND prptm_proType=#{proType}  
+		  </if> 
+	      <if test="providerName !=null and providerName!='' ">
+			AND prptm_providerName=#{providerName}  
+		  </if> 
+	      <if test="productName !=null and productName!='' ">
+			AND prptm_productName=#{productName}  
 		  </if> 
 		  <if test="transModeId !=null and transModeId >= 0 ">
 			AND prptm_transModeId=#{transModeId} 
@@ -288,11 +334,29 @@
 			AND prptm_maxAmt=#{maxAmt} 
 		  </if> 
 	      <if test="restrictState !=null and restrictState!='' ">
-			AND pratm_restrictState=#{restrictState}  
+			AND prptm_restrictState=#{restrictState}  
+		  </if> 
+	      <if test="beginTime !=null and beginTime!='' ">
+			AND prptm_beginTime=#{beginTime}  
+		  </if> 
+	      <if test="endTime !=null and endTime!='' ">
+			AND prptm_endTime=#{endTime}  
+		  </if> 
+	      <if test="validIP !=null and validIP!='' ">
+			AND prptm_validIP=#{validIP}  
+		  </if> 
+	      <if test="isDel !=null and isDel!='' ">
+			AND prptm_isDel=#{isDel}  
 		  </if> 
 		  <if test="keyWord !=null and keyWord!='' ">
 			AND 
 				(
+		 		prptm_proType LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_providerName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_productName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
 		 		prptm_transRecordPrefix LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
 				 or
 		 		prptm_serviceName LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
@@ -307,7 +371,11 @@
 				 or
 		 		prptm_state LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
 				 or
-		 		pratm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+		 		prptm_restrictState LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_validIP LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
+				 or
+		 		prptm_isDel LIKE CONCAT(CONCAT('%', #{keyWord}),'%')
 				 
 			 	)
 		  </if> 

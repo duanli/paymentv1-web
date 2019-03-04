@@ -32,9 +32,10 @@
 			<div style="margin:1px 5px 5px 1px;float: left;">
 			 	<ul >
 				<li>通道名称:
-				<input id="providerId_s" name="providerId" type="text"  style="width: 100px;height: 26px;" class="easyui-combobox" data-options="valueField:'providerId',textField:'providerAlias',url:'${ctx}/provider/getProviderList',editable:false"></input>
+				<input id="productId_s" name="productId" type="text"  style="width: 100px;height: 26px;" class="easyui-combobox" data-options="valueField:'productId',textField:'productName',url:'${ctx}/ralProviderTransMode/getRalProviderTransModeList',editable:false"></input>
 				</li>
 				<li>通道账户:<input name="providerMchNo" type="text" maxlength="30" id="providerMchNo_s" class="easyui-textbox" style="width:100px;" value=""/></li>
+				<li>账户名称:<input name="accName" type="text" maxlength="30" id="accName_s" class="easyui-textbox" style="width:100px;" value=""/></li>
 				<li>启用状态:
 					<select id="state_s" style="width: 100px;height: 26px;">
 				 	 	<option value="">全部</option>
@@ -73,10 +74,10 @@
 			<table id="tt" style="width:1024px;height:420px"></table>
 		</div>
 		<!-- dialog -->
- 		<div id="providerAccountDialog" title="操作菜单" class="easyui-dialog" closed="true"  style="width:370px;height:435px;padding:10px" data-options="iconCls:'icon-save',modal:true" buttons="#dialog_buttons">
+ 		<div id="providerAccountDialog" title="操作菜单" class="easyui-dialog" closed="true"  style="width:670px;height:435px;padding:10px" data-options="iconCls:'icon-save',modal:true" buttons="#dialog_buttons">
 			<div class="tab">
  				<form class="easyui-form" id="providerAccountForm" method="post">
-					<fieldset style="width:300px;height:320px">
+					<fieldset style="width:600px;height:310px">
  						<legend>带<b>*</b>为必填项</legend>
  						<table border="0">
 								    <tr>
@@ -85,22 +86,16 @@
 									<tr>
                 					 <td>支付通道<b>*</b></td>
                 					 <td>
-                					 <input id="providerId" name="providerId" type="text" class="easyui-combobox" data-options="valueField:'providerId',textField:'providerAlias',url:'${ctx}/provider/getProviderList',editable:false"></input>
+                					 <input id="productId" name="productId" type="text" class="easyui-combobox" data-options="valueField:'productId',textField:'productName',url:'${ctx}/ralProviderTransMode/getRalProviderTransModeList',editable:false"></input>
                 					 </td>
-									</tr>
-									<tr>
                 					 <td>账户名称<b>*</b></td><td><input id="accName" name="accName" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'账户名称不能为空!'"></input></td>
 									</tr>
 									<tr>
                 					 <td>账户编号<b>*</b></td><td><input id="providerMchNo" name="providerMchNo" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'服务商账户号不能为空!'"></input></td>
-									</tr>
-									<tr>
                 					 <td>账户密钥<b>*</b></td><td><input id="providerMchKey" name="providerMchKey" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'服务商账户密钥不能为空!'"></input></td>
 									</tr>
 									<tr>
-                					 <td>账户应用ID<b>*</b></td><td><input id="providerAPPId" name="providerAPPId" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'服务商应用ID不能为空!'"></input></td>
-									</tr>
-									<tr>
+                					 <td>APPID<b>*</b></td><td><input id="providerAPPId" name="providerAPPId" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'服务商应用ID不能为空!'"></input></td>
                 					 <td>账户公钥<b>*</b></td><td><input id="providerRSAKey" name="providerRSAKey" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'服务商公钥不能为空!'"></input></td>
 									</tr>
 									<tr>
@@ -111,9 +106,27 @@
 										<option value="1">启用</option>
 										<option value="2">暂停</option>
 									  </select>
-									 </td>									</tr>
+									 </td>									
+                					 <td>每日限额<b>*</b></td><td><input id="totleAmtLimit" name="stotleAmt" type="text" class="easyui-numberbox" data-options="min:0,precision:2"></input></td>
+									</tr>
 									<tr>
-                					 <td>费率(万分之)<b>*</b></td><td><input id="feeRate" name="feeRate" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'手续费费率万分之不能为空!'"></input></td>
+                					 <td>单笔最低额<b>*</b></td><td><input id="minAmt" name="sminAmt" type="text" class="easyui-numberbox" data-options="min:0,precision:2"></input></td>
+                					 <td>单笔最高额<b>*</b></td><td><input id="maxAmt" name="smaxAmt" type="text" class="easyui-numberbox" data-options="min:0,precision:2"></input></td>
+									</tr>
+							 		 <!-- <td>有效起始时间<b>*</b></td><td><input id="beginTime" name="beginTime" type="text" class="easyui-datebox" data-options="formatter:formatter"></input></td>
+							 		 <td>有效截止时间<b>*</b></td><td><input id="endTime" name="endTime" type="text" class="easyui-datebox" data-options="formatter:formatter"></input></td> -->
+									<tr>
+                					 <td>限流状态<b>*</b></td>
+                					 <td>
+                					 <select id="restrictState" class="easyui-combobox" name="restrictState" panelHeight="80" style="width:175px;" data-options="editable:false">
+							 	 		<option value="0">停用</option>
+										<option value="1">启用</option>
+									 </select>
+                					 </td>                					 
+                					<td>权重<b>*</b></td><td><input id="percentage" name="percentage" type="text" class="easyui-numberbox" data-options="min:0,precision:0,required:false"></input></td>
+									</tr>
+									<tr>
+                					 <td>费率(万分之)<b>*</b></td><td><input id="feeRate" name="feeRate" type="text" class="easyui-numberbox" data-options="min:0,precision:0,required:false"></input></td>
 									</tr>
  						</table>
  					</fieldset>
@@ -143,29 +156,59 @@
 						frozenColumns : [[{field : 'ck',checkbox : true}]],
 						columns:[[
 				             /* {title:'支付账户主键', field:'providerAccId',width:50,align:'center'}, */
-				             {title:'支付通道', field:'providerId',width:50,align:'center',
-				            	 formatter: function(value,row,index){
-				            		 if (row.provider&&row.provider.providerAlias){
-				     					return "<font color='blue'>"+row.provider.providerAlias+"</font>";
-				     				} else {
-				     					return "暂无";
-				     				}
-				            	 }	 
+				             {title:'支付通道', field:'productName',width:50,align:'center',
+				            	 formatter:function(value){
+				            	 	 return "<font color='blue'>"+value+"</font>";
+				            	 }
 				             },
 				             {title:'账户名称', field:'accName',width:50,align:'center'},
 				             {title:'账户编号', field:'providerMchNo',width:50,align:'center'},
 				             {title:'账户密钥', field:'providerMchKey',width:50,align:'center'},
-				             {title:'应用ID', field:'providerAPPId',width:50,align:'center'},
+				             {title:'APPID', field:'providerAPPId',width:50,align:'center'},
 				             {title:'账户公钥', field:'providerRSAKey',width:50,align:'center'},
 				             {title:'启用状态', field:'state',width:30,align:'center',
 				            	 formatter:function(value){
 				            		 return value=='0'?"<font color='red'>停用</font>":value=='1'?"<font color='green'>启用</font>":value=='2'?'暂停':'未知';
 				            	 }		 
 				             },
+				             {title:'费率万分之', field:'feeRate',width:30,align:'center'},
+				             {title:'每日限额', field:'totleAmtLimit',width:30,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				             {title:'单笔最低额', field:'minAmt',width:30,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				             {title:'单笔最高额', field:'maxAmt',width:30,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				            /*  {title:'有效起始时间', field:'beginTime',width:50,align:'center'},
+				             {title:'有效截止时间', field:'endTime',width:50,align:'center'}, */
+				             {title:'限流状态', field:'restrictState',width:20,align:'center',
+				            	 formatter:function(value){
+				            		 return value=='0'?"<font color='red'>停用</font>":value=='1'?"<font color='green'>启用</font>":value=='2'?'暂停':'未知';
+				            	 }
+				             },
+				             {title:'权重', field:'percentage',width:20,align:'center'},
 				             {title:'创建时间', field:'createTime',width:50,align:'center'},
-				             {title:'更新时间', field:'updateTime',width:50,align:'center'},
-				             {title:'费率万分之', field:'feeRate',width:30,align:'center'}
-				             /* {title:'账户余额', field:'balance',width:50,align:'center'} */
+				             {title:'更新时间', field:'updateTime',width:50,align:'center'}
 						]]
 				 });
 			}
@@ -225,17 +268,21 @@
 	        	    		if(null!=data){
 			    				$('#providerAccountForm').form('clear');
 		    				  		$('#providerAccId').val(data.providerAccId);
-		    				  		$('#providerId').combobox('select',data.providerId);
+		    				  		$('#productId').combobox('select',data.productId);
 		    				  		$('#accName').val(data.accName);
 		    				  		$('#providerMchNo').val(data.providerMchNo);
 		    				  		$('#providerMchKey').val(data.providerMchKey);
 		    				  		$('#providerAPPId').val(data.providerAPPId);
 		    				  		$('#providerRSAKey').val(data.providerRSAKey);
 		    				  		$('#state').combobox('select',data.state);
-		    				  		$('#createTime').val(data.createTime);
-		    				  		$('#updateTime').val(data.updateTime);
-		    				  		$('#feeRate').val(data.feeRate);
-		    				  		$('#balance').val(data.balance);
+		    				  		$('#totleAmtLimit').numberbox('setValue', parseFloat(data.totleAmtLimit/100).toFixed(2));
+		    				  		$('#minAmt').numberbox('setValue', parseFloat(data.minAmt/100).toFixed(2));
+		    				  		$('#maxAmt').numberbox('setValue', parseFloat(data.maxAmt/100).toFixed(2));
+		    				  		/* $('#beginTime').val(data.beginTime);
+		    				  		$('#endTime').val(data.endTime); */
+		    				  		$('#restrictState').combobox('select',data.restrictState);
+		    				  		$('#percentage').numberbox('setValue', data.percentage);
+		    				  		$('#feeRate').numberbox('setValue', data.feeRate);
 				    			$('#providerAccountDialog').dialog('open');
 			    			}else
 			    				$.messager.alert('提示',"暂无用户数据!",'info');
@@ -283,28 +330,16 @@
 		     //查询方法
 		    function search(){
 		    	var providerAccId = $("#providerAccId_s").val();
-		    	var providerId = $("#providerId_s").val();
+		    	var productId = $("#productId_s").val();
 		    	var providerMchNo = $("#providerMchNo_s").val();
-		    	var providerMchKey = $("#providerMchKey_s").val();
-		    	var providerAPPId = $("#providerAPPId_s").val();
-		    	var providerRSAKey = $("#providerRSAKey_s").val();
+		    	var accName = $("#accName_s").val();
 		    	var state = $("#state_s").val();
-		    	var createTime = $("#createTime_s").val();
-		    	var updateTime = $("#updateTime_s").val();
-		    	var feeRate = $("#feeRate_s").val();
-		    	var balance = $("#balance_s").val();
 		    $("#tt").datagrid('load',{
 		    	   providerAccId:providerAccId,
-		    	   providerId:providerId,
+		    	   productId:productId,
+		    	   accName:accName,
 		    	   providerMchNo:providerMchNo,
-		    	   providerMchKey:providerMchKey,
-		    	   providerAPPId:providerAPPId,
-		    	   providerRSAKey:providerRSAKey,
 		    	   state:state,
-		    	   createTime:createTime,
-		    	   updateTime:updateTime,
-		    	   feeRate:feeRate,
-		    	   balance:balance,
 		    	})
 		    }
 		    

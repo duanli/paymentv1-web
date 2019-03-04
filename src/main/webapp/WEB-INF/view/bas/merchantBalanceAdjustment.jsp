@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="${ctx}/js/jquery.easyui.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="${ctx}/js/jquery.utils.js" charset="utf-8"></script>
 		<script type="text/javascript" src="${ctx}/js/jquery.form.js" charset="utf-8"></script>
+		<script type="text/javascript" src="${ctx}/js/locale/easyui-lang-zh_CN.js"></script>
 		<style type="text/css">
 		li{background:url(${ctx}/images/toolbg.gif) repeat-x; line-height:33px; height:33px; float:left; padding-right:10px; margin-right:5px;border-radius: 3px; behavior:url(${ctx}/js/pie.htc); cursor:pointer;}
 	  	a{text-decoration: none;color:black;}
@@ -23,23 +24,28 @@
 			<span>位置：</span>
 		    <ul class="placeul">
 			    <li><a href="#">首页</a></li>
-			    <li><a href="${ctx}/merchantBalanceAdjustment/toMerchantBalanceAdjustmentPage">MerchantBalanceAdjustment</a></li>
+			    <li><a href="${ctx}/merchantBalanceAdjustment/toMerchantBalanceAdjustmentPage">人工调账</a></li>
 		    </ul>
 		</div>
 		<!-- buttons -->
 		<div class="rightinfo">
 			<div style="margin:1px 5px 5px 1px;float: left;">
 			 	<ul >
-				<li>主键ID:<input name="adjustId" type="text" maxlength="30" id="adjustId_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>账户关联ID:<input name="ralAccProductId" type="text" maxlength="30" id="ralAccProductId_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>调账人ID:<input name="operatorId" type="text" maxlength="30" id="operatorId_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>调整方式0-扣减1-增加:<input name="adjustType" type="text" maxlength="30" id="adjustType_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>调账前余额:<input name="beforBalance" type="text" maxlength="30" id="beforBalance_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>调账后余额:<input name="afterBalance" type="text" maxlength="30" id="afterBalance_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>调账金额:<input name="adjustAmount" type="text" maxlength="30" id="adjustAmount_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-				<li>状态 0-无效1-有效:<input name="state" type="text" maxlength="30" id="state_s" class="easyui-textbox" style="width:100px;" value=""/></li>
-			 	<li>创建时间:<input name="createTime" type="text" maxlength="30" id="createTime_s" class="easyui-datebox" data-options="formatter:formatter" style="width:100px;" value=""/></li>
-			 	<li>修改时间:<input name="updateTime" type="text" maxlength="30" id="updateTime_s" class="easyui-datebox" data-options="formatter:formatter" style="width:100px;" value=""/></li>
+			 	<li>商户名称:
+				  <input id="mchId_s" name="mchId" type="text" style="width: 100px;height: 26px;" class="easyui-combobox"  data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false">
+				</li>
+				<li>交易方式:
+					<input id="transModeId_s" name="transModeId" type="text"  style="width: 100px;height: 26px;" class="easyui-combobox" data-options="valueField:'transModeId',textField:'transModeName',url:'${ctx}/transMode/getTransModeList',editable:false"></input>
+				</li>
+<!-- 				<li>调账人:<input name="operatorId" type="text" maxlength="30" id="operatorId_s" class="easyui-textbox" style="width:100px;" value=""/></li>
+ -->				
+ 				<li>调整方式:
+				<select id="adjustType_s" style="width: 100px;height: 26px;">
+			 	 		<option value="">全部</option>
+			 	 		<option value="0">扣减</option>
+						<option value="1">增加</option>
+			 	 </select>
+			 	</li>
 			 	<li class="click" id="toStorePage" onclick="javascript:search();" style="border:solid 1px #d3dbde;">
     				 <a href="#">
     					 <span style="display: block;float: left;margin: 5px;">
@@ -50,7 +56,7 @@
     			</li>
 			 		<shiro:hasPermission name="merchantBalanceAdjustment:add">
 			 		     <li class="click" id="addMerchantBalanceAdjustment" onclick="javascript:addMerchantBalanceAdjustmentDialog();">
-				     		<span><a href="#"><img src="${ctx}/images/t01.png"/></a></span>新增
+				     		<span><a href="#"><img src="${ctx}/images/t01.png"/></a></span>开始调账
 			     		</li>  
 					</shiro:hasPermission>   
 					<shiro:hasPermission name="merchantBalanceAdjustment:update">
@@ -71,38 +77,46 @@
 			<table id="tt" style="width:1024px;height:420px"></table>
 		</div>
 		<!-- dialog -->
- 		<div id="merchantBalanceAdjustmentDialog" title="操作菜单" class="easyui-dialog" closed="true"  style="width:830px;height:560px;padding:10px" data-options="iconCls:'icon-save',modal:true" buttons="#dialog_buttons">
+ 		<div id="merchantBalanceAdjustmentDialog" title="操作菜单" class="easyui-dialog" closed="true"  style="width:370px;height:340px;padding:10px" data-options="iconCls:'icon-save',modal:true" buttons="#dialog_buttons">
 			<div class="tab">
  				<form class="easyui-form" id="merchantBalanceAdjustmentForm" method="post">
-					<fieldset style="width:800px;height:530px">
+					<fieldset style="width:300px;height:220px">
  						<legend>带<b>*</b>为必填项</legend>
  						<table border="0">
 								    <tr>
 									 <td><input id="adjustId" name="adjustId" type="hidden"/></td>
 								    </tr>
+								    <tr>
+								    <td>选择商户<b>*</b></td>
+                					 <td><input id="mchId" name="mchId" type="text" class="easyui-combobox" data-options="valueField:'mchId',textField:'mchName',url:'${ctx}/merchantInfo/getMerchantList',editable:false,
+                					  onSelect: function(rec){
+            							var url = '${ctx}/ralMerchantTransMode/getRalMerchantTransModeList?mchId='+rec.mchId;
+            							$('#ralAccProductId').combobox('reload', url);}"></input>
+                					 </td>
+                					</tr>								
 									<tr>
-                					 <td>账户关联ID<b>*</b></td><td><input id="ralAccProductId" name="ralAccProductId" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'账户关联ID不能为空!'"></input></td>
+                					 <td>通道选择<b>*</b></td>
+                					 <td><input id="ralAccProductId" name="ralAccProductId" type="text" class="easyui-combobox" data-options="valueField:'ralMerTransModeId',textField:'ralMerTransModeId'"></input></td>
 									</tr>
 									<tr>
-                					 <td>调账人ID<b>*</b></td><td><input id="operatorId" name="operatorId" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'调账人ID不能为空!'"></input></td>
+                					 <td>调整方式<b>*</b></td>
+                					 <td>
+								 	 <select id="adjustType" class="easyui-combobox" name="adjustType" panelHeight="80" style="width:175px;" data-options="editable:false">
+							 	 		<option value="0">扣减</option>
+										<option value="1">增加</option>
+									 </select>
+                					 </td>
 									</tr>
 									<tr>
-                					 <td>调整方式0-扣减1-增加<b>*</b></td><td><input id="adjustType" name="adjustType" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'调整方式0-扣减1-增加不能为空!'"></input></td>
+                					 <td>调账金额<b>*</b></td><td><input id="adjustAmount" name="sadjustAmount" type="text" class="easyui-numberbox" data-options="min:0,precision:2"></input></td>
 									</tr>
 									<tr>
-                					 <td>调账前余额<b>*</b></td><td><input id="beforBalance" name="beforBalance" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'调账前余额不能为空!'"></input></td>
+                					 <td>备注<b>*</b></td><td><input id="remark" name="remark" type="text" class="easyui-validatebox" data-options="required:false,missingMessage:'调账金额不能为空!'"></input></td>
 									</tr>
-									<tr>
-                					 <td>调账后余额<b>*</b></td><td><input id="afterBalance" name="afterBalance" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'调账后余额不能为空!'"></input></td>
-									</tr>
-									<tr>
-                					 <td>调账金额<b>*</b></td><td><input id="adjustAmount" name="adjustAmount" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'调账金额不能为空!'"></input></td>
-									</tr>
-									<tr>
-                					 <td>状态 0-无效1-有效<b>*</b></td><td><input id="state" name="state" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'状态 0-无效1-有效不能为空!'"></input></td>
-									</tr>
-							 		 <td>创建时间<b>*</b></td><td><input id="createTime" name="createTime" type="text" class="easyui-datebox" data-options="formatter:formatter"></input></td>
-							 		 <td>修改时间<b>*</b></td><td><input id="updateTime" name="updateTime" type="text" class="easyui-datebox" data-options="formatter:formatter"></input></td>
+									<!-- <tr>
+                					 <td>状态 0-无效1-有效<b>*</b></td>
+                					 <td><input id="state" name="state" type="text" class="easyui-validatebox" data-options="required:true,missingMessage:'状态 0-无效1-有效不能为空!'"></input></td>
+									</tr> -->
  						</table>
  					</fieldset>
  				</form>
@@ -130,14 +144,58 @@
 						loadMsg : "数据加载中,请稍等...",
 						frozenColumns : [[{field : 'ck',checkbox : true}]],
 						columns:[[
-				             {title:'主键ID', field:'adjustId',width:50,align:'center'},
-				             {title:'账户关联ID', field:'ralAccProductId',width:50,align:'center'},
-				             {title:'调账人ID', field:'operatorId',width:50,align:'center'},
-				             {title:'调整方式0-扣减1-增加', field:'adjustType',width:50,align:'center'},
-				             {title:'调账前余额', field:'beforBalance',width:50,align:'center'},
-				             {title:'调账后余额', field:'afterBalance',width:50,align:'center'},
-				             {title:'调账金额', field:'adjustAmount',width:50,align:'center'},
-				             {title:'状态 0-无效1-有效', field:'state',width:50,align:'center'},
+							 {title:'商户名称', field:'mchId',width:50,align:'center',
+								 formatter: function(value,row,index){
+				            		 if (row.merchantInfo&&row.merchantInfo.mchName){
+				     					return "<font color='blue'>"+row.merchantInfo.mchName+"</font>";
+				     				} else {
+				     					return "暂无";
+				     				}
+				            	 }	 
+							 },
+				             {title:'通道名称', field:'ralAccProductId',width:50,align:'center',
+								 formatter: function(value,row,index){
+				            		 if (row.transMode&&row.transMode.transModeName){
+				     					return "<font color='blue'>"+row.transMode.transModeName+"</font>";
+				     				} else {
+				     					return "暂无";
+				     				}
+				            	 }	 
+				             },
+				             {title:'调账人', field:'operatorId',width:50,align:'center'},
+				             {title:'调整方式', field:'adjustType',width:50,align:'center',
+				            	 formatter:function(value){
+				            		 return value=='0'?"<font color='red'>扣减</font>":value=='1'?"<font color='green'>增加</font>":'未知';
+				            	 }
+				             },
+				             {title:'调账前余额', field:'beforBalance',width:50,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				             {title:'调账后余额', field:'afterBalance',width:50,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				             {title:'调账金额', field:'adjustAmount',width:50,align:'center',
+				            	 formatter: function (value) {  
+				                     if (value) {  
+				                         return "<font color='red'>"+parseFloat(value/100).toFixed(2)+"</font>"  
+				                     }else {  
+				                         return value;  
+				                     }  
+				            	 }	 	 
+				             },
+				             /* {title:'状态 0-无效1-有效', field:'state',width:50,align:'center'}, */
 				             {title:'创建时间', field:'createTime',width:50,align:'center'},
 				             {title:'修改时间', field:'updateTime',width:50,align:'center'}
 						]]

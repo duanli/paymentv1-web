@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * ProviderAccount
  *
- * Date:2019-1-30 14:14:58
+ * Date:2019-3-2 15:09:00
  * 
  * @author dl
  */
@@ -19,10 +19,12 @@ public class ProviderAccount implements Serializable {
 	 */
 	private Long providerAccId;
 	/**
-	 * 服务商主键ID
+	 * 产品ID
 	 */
-	private Long providerId;
-
+	private Long productId;
+	/**
+	 * 账户名称
+	 */
 	private String accName;
 	/**
 	 * 服务商账户号
@@ -45,6 +47,38 @@ public class ProviderAccount implements Serializable {
 	 */
 	private String state;
 	/**
+	 * 每日限额
+	 */
+	private Long totleAmtLimit;
+	/**
+	 * 单笔最低额度
+	 */
+	private Long minAmt;
+	/**
+	 * 单笔最高额度
+	 */
+	private Long maxAmt;
+	/**
+	 * 有效起始时间
+	 */
+	private Date beginTime;
+	/**
+	 * 有效截止时间
+	 */
+	private Date endTime;
+	/**
+	 * 限流状态0-停用；1-启用
+	 */
+	private String restrictState;
+	/**
+	 * 权重
+	 */
+	private Integer percentage;
+	/**
+	 * 基准费率(单位:万分之)
+	 */
+	private Integer feeRate;
+	/**
 	 * 创建时间
 	 */
 	private Date createTime;
@@ -53,63 +87,68 @@ public class ProviderAccount implements Serializable {
 	 */
 	private Date updateTime;
 	/**
-	 * 手续费费率万分之
+	 * 是否删除
 	 */
-	private Integer feeRate;
-	/**
-	 * 账户总余额
-	 */
-	private Long balance;
+	private String isDel;
 
-	private Provider provider;
+	private String productName;
 
 	public ProviderAccount() {
 	}
 
-	public ProviderAccount(Long providerAccId, Long providerId, String providerMchNo, String providerMchKey,
-			String providerAPPId, String providerRSAKey, String state, Date createTime, Date updateTime,
-			Integer feeRate, Long balance) {
+	public ProviderAccount(Long providerAccId, Long productId, String accName, String providerMchNo,
+			String providerMchKey, String providerAPPId, String providerRSAKey, String state, Long totleAmtLimit,
+			Long minAmt, Long maxAmt, Date beginTime, Date endTime, String restrictState, Integer percentage,
+			Integer feeRate, Date createTime, Date updateTime, String isDel) {
 		this.providerAccId = providerAccId;
-		this.providerId = providerId;
+		this.productId = productId;
+		this.accName = accName;
 		this.providerMchNo = providerMchNo;
 		this.providerMchKey = providerMchKey;
 		this.providerAPPId = providerAPPId;
 		this.providerRSAKey = providerRSAKey;
 		this.state = state;
+		this.totleAmtLimit = totleAmtLimit;
+		this.minAmt = minAmt;
+		this.maxAmt = maxAmt;
+		this.beginTime = beginTime;
+		this.endTime = endTime;
+		this.restrictState = restrictState;
+		this.percentage = percentage;
+		this.feeRate = feeRate;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
-		this.feeRate = feeRate;
-		this.balance = balance;
+		this.isDel = isDel;
 	}
 
 	private ProviderAccount(ProviderAccountBuilder builder) {
 		this.providerAccId = builder.providerAccId;
-		this.providerId = builder.providerId;
+		this.productId = builder.productId;
+		this.accName = builder.accName;
 		this.providerMchNo = builder.providerMchNo;
 		this.providerMchKey = builder.providerMchKey;
 		this.providerAPPId = builder.providerAPPId;
 		this.providerRSAKey = builder.providerRSAKey;
 		this.state = builder.state;
+		this.totleAmtLimit = builder.totleAmtLimit;
+		this.minAmt = builder.minAmt;
+		this.maxAmt = builder.maxAmt;
+		this.beginTime = builder.beginTime;
+		this.endTime = builder.endTime;
+		this.restrictState = builder.restrictState;
+		this.percentage = builder.percentage;
+		this.feeRate = builder.feeRate;
 		this.createTime = builder.createTime;
 		this.updateTime = builder.updateTime;
-		this.feeRate = builder.feeRate;
-		this.balance = builder.balance;
+		this.isDel = builder.isDel;
 	}
 
-	public String getAccName() {
-		return accName;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setAccName(String accName) {
-		this.accName = accName;
-	}
-
-	public Provider getProvider() {
-		return provider;
-	}
-
-	public void setProvider(Provider provider) {
-		this.provider = provider;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
 	/**
@@ -131,21 +170,39 @@ public class ProviderAccount implements Serializable {
 	}
 
 	/**
-	 * 服务商主键ID
+	 * 产品ID
 	 * 
-	 * @return providerId
+	 * @return productId
 	 */
-	public Long getProviderId() {
-		return providerId;
+	public Long getProductId() {
+		return productId;
 	}
 
 	/**
-	 * 服务商主键ID
+	 * 产品ID
 	 * 
-	 * @param providerId
+	 * @param productId
 	 */
-	public void setProviderId(Long providerId) {
-		this.providerId = providerId;
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
+
+	/**
+	 * 账户名称
+	 * 
+	 * @return accName
+	 */
+	public String getAccName() {
+		return accName;
+	}
+
+	/**
+	 * 账户名称
+	 * 
+	 * @param accName
+	 */
+	public void setAccName(String accName) {
+		this.accName = accName;
 	}
 
 	/**
@@ -239,6 +296,150 @@ public class ProviderAccount implements Serializable {
 	}
 
 	/**
+	 * 每日限额
+	 * 
+	 * @return totleAmtLimit
+	 */
+	public Long getTotleAmtLimit() {
+		return totleAmtLimit;
+	}
+
+	/**
+	 * 每日限额
+	 * 
+	 * @param totleAmtLimit
+	 */
+	public void setTotleAmtLimit(Long totleAmtLimit) {
+		this.totleAmtLimit = totleAmtLimit;
+	}
+
+	/**
+	 * 单笔最低额度
+	 * 
+	 * @return minAmt
+	 */
+	public Long getMinAmt() {
+		return minAmt;
+	}
+
+	/**
+	 * 单笔最低额度
+	 * 
+	 * @param minAmt
+	 */
+	public void setMinAmt(Long minAmt) {
+		this.minAmt = minAmt;
+	}
+
+	/**
+	 * 单笔最高额度
+	 * 
+	 * @return maxAmt
+	 */
+	public Long getMaxAmt() {
+		return maxAmt;
+	}
+
+	/**
+	 * 单笔最高额度
+	 * 
+	 * @param maxAmt
+	 */
+	public void setMaxAmt(Long maxAmt) {
+		this.maxAmt = maxAmt;
+	}
+
+	/**
+	 * 有效起始时间
+	 * 
+	 * @return beginTime
+	 */
+	public Date getBeginTime() {
+		return beginTime;
+	}
+
+	/**
+	 * 有效起始时间
+	 * 
+	 * @param beginTime
+	 */
+	public void setBeginTime(Date beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	/**
+	 * 有效截止时间
+	 * 
+	 * @return endTime
+	 */
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * 有效截止时间
+	 * 
+	 * @param endTime
+	 */
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * 限流状态0-停用；1-启用
+	 * 
+	 * @return restrictState
+	 */
+	public String getRestrictState() {
+		return restrictState;
+	}
+
+	/**
+	 * 限流状态0-停用；1-启用
+	 * 
+	 * @param restrictState
+	 */
+	public void setRestrictState(String restrictState) {
+		this.restrictState = restrictState;
+	}
+
+	/**
+	 * 权重
+	 * 
+	 * @return percentage
+	 */
+	public Integer getPercentage() {
+		return percentage;
+	}
+
+	/**
+	 * 权重
+	 * 
+	 * @param percentage
+	 */
+	public void setPercentage(Integer percentage) {
+		this.percentage = percentage;
+	}
+
+	/**
+	 * 基准费率(单位:万分之)
+	 * 
+	 * @return feeRate
+	 */
+	public Integer getFeeRate() {
+		return feeRate;
+	}
+
+	/**
+	 * 基准费率(单位:万分之)
+	 * 
+	 * @param feeRate
+	 */
+	public void setFeeRate(Integer feeRate) {
+		this.feeRate = feeRate;
+	}
+
+	/**
 	 * 创建时间
 	 * 
 	 * @return createTime
@@ -275,53 +476,43 @@ public class ProviderAccount implements Serializable {
 	}
 
 	/**
-	 * 手续费费率万分之
+	 * 是否删除
 	 * 
-	 * @return feeRate
+	 * @return isDel
 	 */
-	public Integer getFeeRate() {
-		return feeRate;
+	public String getIsDel() {
+		return isDel;
 	}
 
 	/**
-	 * 手续费费率万分之
+	 * 是否删除
 	 * 
-	 * @param feeRate
+	 * @param isDel
 	 */
-	public void setFeeRate(Integer feeRate) {
-		this.feeRate = feeRate;
-	}
-
-	/**
-	 * 账户总余额
-	 * 
-	 * @return balance
-	 */
-	public Long getBalance() {
-		return balance;
-	}
-
-	/**
-	 * 账户总余额
-	 * 
-	 * @param balance
-	 */
-	public void setBalance(Long balance) {
-		this.balance = balance;
+	public void setIsDel(String isDel) {
+		this.isDel = isDel;
 	}
 
 	public static class ProviderAccountBuilder {
 		private Long providerAccId; // 支付账户主键
-		private Long providerId; // 服务商主键ID
+		private Long productId; // 产品ID
+		private String accName; // 账户名称
 		private String providerMchNo; // 服务商账户号
 		private String providerMchKey; // 服务商账户密钥
 		private String providerAPPId; // 服务商应用ID
 		private String providerRSAKey; // 服务商公钥
 		private String state; // 状态0-未启用;1-启用2-暂停
+		private Long totleAmtLimit; // 每日限额
+		private Long minAmt; // 单笔最低额度
+		private Long maxAmt; // 单笔最高额度
+		private Date beginTime; // 有效起始时间
+		private Date endTime; // 有效截止时间
+		private String restrictState; // 限流状态0-停用；1-启用
+		private Integer percentage; // 权重
+		private Integer feeRate; // 基准费率(单位:万分之)
 		private Date createTime; // 创建时间
 		private Date updateTime; // 更新时间
-		private Integer feeRate; // 手续费费率万分之
-		private Long balance; // 账户总余额
+		private String isDel; // 是否删除
 
 		/**
 		 * 支付账户主键
@@ -334,12 +525,22 @@ public class ProviderAccount implements Serializable {
 		}
 
 		/**
-		 * 服务商主键ID
+		 * 产品ID
 		 * 
 		 * @return ProviderAccountBuilder
 		 */
-		public ProviderAccountBuilder addProviderId(Long providerId) {
-			this.providerId = providerId;
+		public ProviderAccountBuilder addProductId(Long productId) {
+			this.productId = productId;
+			return this;
+		}
+
+		/**
+		 * 账户名称
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addAccName(String accName) {
+			this.accName = accName;
 			return this;
 		}
 
@@ -394,6 +595,86 @@ public class ProviderAccount implements Serializable {
 		}
 
 		/**
+		 * 每日限额
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addTotleAmtLimit(Long totleAmtLimit) {
+			this.totleAmtLimit = totleAmtLimit;
+			return this;
+		}
+
+		/**
+		 * 单笔最低额度
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addMinAmt(Long minAmt) {
+			this.minAmt = minAmt;
+			return this;
+		}
+
+		/**
+		 * 单笔最高额度
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addMaxAmt(Long maxAmt) {
+			this.maxAmt = maxAmt;
+			return this;
+		}
+
+		/**
+		 * 有效起始时间
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addBeginTime(Date beginTime) {
+			this.beginTime = beginTime;
+			return this;
+		}
+
+		/**
+		 * 有效截止时间
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addEndTime(Date endTime) {
+			this.endTime = endTime;
+			return this;
+		}
+
+		/**
+		 * 限流状态0-停用；1-启用
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addRestrictState(String restrictState) {
+			this.restrictState = restrictState;
+			return this;
+		}
+
+		/**
+		 * 权重
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addPercentage(Integer percentage) {
+			this.percentage = percentage;
+			return this;
+		}
+
+		/**
+		 * 基准费率(单位:万分之)
+		 * 
+		 * @return ProviderAccountBuilder
+		 */
+		public ProviderAccountBuilder addFeeRate(Integer feeRate) {
+			this.feeRate = feeRate;
+			return this;
+		}
+
+		/**
 		 * 创建时间
 		 * 
 		 * @return ProviderAccountBuilder
@@ -414,22 +695,12 @@ public class ProviderAccount implements Serializable {
 		}
 
 		/**
-		 * 手续费费率万分之
+		 * 是否删除
 		 * 
 		 * @return ProviderAccountBuilder
 		 */
-		public ProviderAccountBuilder addFeeRate(Integer feeRate) {
-			this.feeRate = feeRate;
-			return this;
-		}
-
-		/**
-		 * 账户总余额
-		 * 
-		 * @return ProviderAccountBuilder
-		 */
-		public ProviderAccountBuilder addBalance(Long balance) {
-			this.balance = balance;
+		public ProviderAccountBuilder addIsDel(String isDel) {
+			this.isDel = isDel;
 			return this;
 		}
 
