@@ -45,8 +45,6 @@ public class MerchantInfoServiceImpl extends BaseServiceImpl<MerchantInfo, Long>
 	@Autowired
 	private AdminRoleMapper adminRoleMapper;
 
-	@Autowired
-	private RalAccountTransModeMapper ralAccountTransModeMapper;
 
 	@Override
 	public BaseMapper<MerchantInfo, Long> getBaseMapper() {
@@ -177,7 +175,8 @@ public class MerchantInfoServiceImpl extends BaseServiceImpl<MerchantInfo, Long>
 		model.addAttribute("todayFee", merchantInfo.getBalance());
 		model.addAttribute("todayIncome", merchantInfo.getBalance());
 		// 设置交易方式交易数据
-		List<RalAccountTransMode> list = ralAccountTransModeMapper.selectByMchId(merchantInfo.getMchId());
+//		List<RalAccountTransMode> list = ralAccountTransModeMapper.selectByMchId(merchantInfo.getMchId());
+		
 		model.addAttribute("transModeList", null);
 		return null;
 	}
