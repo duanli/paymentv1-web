@@ -7,5 +7,6 @@ public class Test {
 		System.out.println(Long.valueOf(AmtUtils.yuanToFen("10.00")));
 		System.out.println(Long.valueOf(AmtUtils.yuanToFen("10.00")));
 		System.out.println(Long.valueOf(AmtUtils.yuanToFen("10.00")));
+		System.out.println(Long.valueOf(AmtUtils.yuanToFen("10.00")));
 	}
 }
